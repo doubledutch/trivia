@@ -1,0 +1,49 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+}
+
+.droppable {
+  overflow: auto;
+  flex: 1;
+}
+
+.draggable {
+  display: flex;
+  outline: 1px solid #dcdcdc;
+  background-color: #fff;
+}
+
+li .draggable {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+li .draggable-inner {
+  flex: 1;
+}
+
+li .draggable.vertical-handle {
+  flex-direction: column;
+}
+
+li .draggable :not(.drag-handle) {
+  flex: 1;
+}
+
+li .draggable .drag-handle {
+  font-size: 0.8em;
+  display: flex;
+  flex-direction: column;
+  padding: 0.7em;
+  user-select: none;
+}
+
+li .draggable .drag-handle .dots {
+  line-height: 0.4em;
+}

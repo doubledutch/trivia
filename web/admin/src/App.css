@@ -14,11 +14,42 @@
  * limitations under the License.
  */
 
- .App-intro {
-  font-size: large;
-  text-align: center;
+.row {
+  display: block;
+  margin-bottom: 1em;
 }
 
-.avatar {
-  width: 40px;
+button, input, select {
+  height: 2.8em;
+  font-size: 1em;
+}
+
+input {
+  padding: 0 0.5em;
+}
+
+button {
+  cursor: pointer;
+  outline: none;
+  border-radius: 1.4em;
+  padding: 0 1.7em;
+  color: #fff;
+  background-color: #4e92df;
+  border: none;
+}
+
+button:active {
+  opacity: 0.6;
+}
+
+button.secondary {
+  color: #4e92df;
+  border: 1px solid #4e92df;
+  background-color: #fff;
+}
+
+button.tertiary {
+  color: #4e93df;
+  border: none;
+  background: transparent;
 }

@@ -1,0 +1,21 @@
+.questions {
+  width: 800px;
+  height: 400px;
+}
+
+.question {
+  padding: 0.4em;
+  width: 800px;
+}
+
+button {
+  margin-left: 1em;
+}
+
+footer {
+  display: flex;
+  justify-content: flex-end;
+  background-color: #f3f3f3;
+  padding: 0.8em;
+  border-top: 1px solid #dcdcdc;
+}

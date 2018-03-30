@@ -14,62 +14,61 @@
  * limitations under the License.
  */
 
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import './App.css'
 
 import client from '@doubledutch/admin-client'
 import FirebaseConnector from '@doubledutch/firebase-connector'
+import {mapPushedDataToStateObjects, mapPushedDataToObjectOfStateObjects} from './firebaseHelpers'
+import Questions from './Questions'
 const fbc = FirebaseConnector(client, 'trivia')
 
 fbc.initializeAppWithSimpleBackend()
+const sessionsRef = () => fbc.database.private.adminRef('sessions')
+const questionsRef = () => fbc.database.private.adminRef('questions')
 
-export default class App extends Component {
-  constructor() {
-    super()
-
-    this.state = { sharedTasks: [] }
+export default class App extends PureComponent {
+  state = {
+    sessions: {},
+    questionsBySession: {}
   }
 
   componentDidMount() {
     fbc.signinAdmin()
     .then(user => {
-      const sharedRef = fbc.database.public.allRef('tasks')
-      sharedRef.on('child_added', data => {
-        this.setState({ sharedTasks: [...this.state.sharedTasks, {...data.val(), key: data.key }] })
-      })
-      sharedRef.on('child_removed', data => {
-        this.setState({ sharedTasks: this.state.sharedTasks.filter(x => x.key !== data.key) })
-      })  
+      mapPushedDataToStateObjects(fbc, sessionsRef(), this, 'sessions')
+      mapPushedDataToObjectOfStateObjects(fbc, questionsRef(), this, 'questionsBySession', (key, value) => value.sessionId)
     })
   }
 
   render() {
+    const {questionsBySession, sessionId, sessions} = this.state
     return (
       <div className="App">
-        <p className="App-intro">
-          This is a sample admin page. Developers should replace this page, or remove the <code>web/admin</code> folder entirely
-        </p>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-        <h3>Public tasks:</h3>
-        <ul>
-          { this.state.sharedTasks.map(task => {
-            const { image, firstName, lastName } = task.creator
-            return (
-              <li key={task.key}>
-                <img className="avatar" src={image} alt="" />
-                <span> {firstName} {lastName} - {task.text} - </span>
-                <button onClick={()=>this.markComplete(task)}>Mark complete</button>
-              </li>
-            )
-          }) }
-        </ul>
+        <div className="row">
+          <select value={sessionId} onChange={this.onSessionChange}>
+            <option value="">-- Select a session --</option>
+            { Object.values(sessions).map(s => <option key={s.id} value={s.id}>{s.name}</option>) }
+          </select>
+          <button onClick={this.createSession}>Create new session</button>
+        </div>
+        { sessionId && <div>
+            <label className="row">
+              <span>Session Name: </span>
+              <input type="text" value={sessions[sessionId].name} onChange={this.onSessionNameChange} />
+            </label>
+            <Questions
+              questions={Object.values(this.state.questionsBySession[sessionId] || {})}
+              refForQuestion={this.refForQuestion}
+            />
+          </div>
+        }
       </div>
     )
   }
 
-  markComplete(task) {
-    fbc.database.public.allRef('tasks').child(task.key).remove()
-  }
+  refForQuestion = q => questionsRef().child(q.id)
+  onSessionChange = e => this.setState({sessionId: e.target.value})
+  onSessionNameChange = e => sessionsRef().child(this.state.sessionId).update({name: e.target.value})
+  createSession = () => sessionsRef().push({name: 'New Session'}).then(ref => this.setState({sessionId: ref.key}))
 }
