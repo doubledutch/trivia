@@ -56,9 +56,10 @@ export default class App extends PureComponent {
             <label className="row">
               <span>Session Name: </span>
               <input type="text" value={sessions[sessionId].name} onChange={this.onSessionNameChange} />
+              <button className="secondary" onClick={this.deleteSession}>Delete Session</button>
             </label>
             <Questions
-              questions={Object.values(this.state.questionsBySession[sessionId] || {})}
+              questions={Object.values(questionsBySession[sessionId] || {})}
               refForQuestion={this.refForQuestion}
             />
           </div>
@@ -71,4 +72,11 @@ export default class App extends PureComponent {
   onSessionChange = e => this.setState({sessionId: e.target.value})
   onSessionNameChange = e => sessionsRef().child(this.state.sessionId).update({name: e.target.value})
   createSession = () => sessionsRef().push({name: 'New Session'}).then(ref => this.setState({sessionId: ref.key}))
+  deleteSession = () => {
+    const {sessionId, sessions} = this.state
+    if (window.confirm(`Are you sure you want to delete session '${sessions[sessionId].name}'?`)) {
+      this.setState({sessionId: ''})
+      sessionsRef().child(sessionId).remove()
+    }
+  }
 }
