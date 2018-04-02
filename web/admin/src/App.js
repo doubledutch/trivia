@@ -42,7 +42,7 @@ export default class App extends PureComponent {
   }
 
   render() {
-    const {questionsBySession, sessionId, sessions} = this.state
+    const {sessionId, sessions} = this.state
     return (
       <div className="App">
         <div className="row">
@@ -59,8 +59,9 @@ export default class App extends PureComponent {
               <button className="secondary" onClick={this.deleteSession}>Delete Session</button>
             </label>
             <Questions
-              questions={Object.values(questionsBySession[sessionId] || {})}
-              refForQuestion={this.refForQuestion}
+              questions={Object.values(this.questionsForCurrentSession())}
+              questionsRef={questionsRef()}
+              onAdd={this.addQuestion}
             />
           </div>
         }
@@ -68,7 +69,8 @@ export default class App extends PureComponent {
     )
   }
 
-  refForQuestion = q => questionsRef().child(q.id)
+  questionsForCurrentSession = () => Object.values(this.state.questionsBySession[this.state.sessionId] || {})
+
   onSessionChange = e => this.setState({sessionId: e.target.value})
   onSessionNameChange = e => sessionsRef().child(this.state.sessionId).update({name: e.target.value})
   createSession = () => sessionsRef().push({name: 'New Session'}).then(ref => this.setState({sessionId: ref.key}))
@@ -78,5 +80,10 @@ export default class App extends PureComponent {
       this.setState({sessionId: ''})
       sessionsRef().child(sessionId).remove()
     }
+  }
+
+  addQuestion = () => {
+    const {sessionId} = this.state
+    questionsRef().push({sessionId, order: this.questionsForCurrentSession().length, text: ''})
   }
 }

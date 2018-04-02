@@ -12,15 +12,22 @@ export default class Reorderable extends PureComponent {
         <DragDropContext onDragEnd={this.onDragEnd}>
           <Droppable droppableId={droppableId}>
             {(provided, snapshot) => (
-              <div className={this.classNames(provided)} ref={provided.innerRef} {...provided.droppableProps}>
+              <div className={this.classNames(provided)}
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
                 { data.map((item, index) => {
                     const id = getItemId(item)
                     return (
                       <Draggable draggableId={id} type={draggableType} key={id} index={index}>
                         {(provided, snapshot) => (
                           <div className="draggable" {...provided.draggableProps}>
-                            <div className="draggable-inner" ref={provided.innerRef} {...(renderDragHandle ? null : provided.dragHandleProps )}>
-                              { renderItem({item, dragHandle: enabled && renderDragHandle ? renderDragHandle(provided.dragHandleProps) : null}) }
+                            <div className="draggable-inner"
+                              ref={provided.innerRef}
+                              {...(renderDragHandle ? null : provided.dragHandleProps )}
+                              onFocus={this.onItemFocus}
+                            >
+                              { renderItem({item, index, dragHandle: enabled && renderDragHandle ? renderDragHandle(provided.dragHandleProps) : null}) }
                             </div>
                             { provided.placeholder }
                           </div>
@@ -55,6 +62,8 @@ export default class Reorderable extends PureComponent {
     if (provided.isDragging) classes.push('is-dragging')
     return classes.join(' ')
   }
+
+  onItemFocus = item => () => this.props.onItemFocus && this.props.onItemFocus(item)
 }
 
 export const renderLeftDragHandle = dragHandleProps => (

@@ -5,7 +5,32 @@
 
 .question {
   padding: 0.4em;
-  width: 800px;
+}
+
+.question-details {
+  padding: 1em 1em 1em 1.5em;
+  display: flex;
+}
+
+.question-number {
+  font-size: 1.5em;
+  color: #fff;
+  background-color: #a7c8ee;
+  height: 2.2em;
+  width: 2.2em;
+  line-height: 2.2em;
+  border-radius: 1.1em;
+  text-align: center;
+}
+
+.question-fields {
+  flex: 1;
+  padding-left: 1em;
+}
+
+.question-text {
+  font-size: 1.6em;
+  width: 100%;
 }
 
 button {
