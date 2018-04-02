@@ -84,6 +84,6 @@ export default class App extends PureComponent {
 
   addQuestion = () => {
     const {sessionId} = this.state
-    questionsRef().push({sessionId, order: this.questionsForCurrentSession().length, text: ''})
+    questionsRef().push({sessionId, order: this.questionsForCurrentSession().length, text: '', options: []})
   }
 }

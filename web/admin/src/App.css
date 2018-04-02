@@ -19,22 +19,22 @@
   margin-bottom: 1em;
 }
 
-button, input, select {
+button, input[type="text"], select {
   height: 2.8em;
   font-size: 1em;
 }
 
-input {
+input[type="text"] {
   padding: 0 0.5em;
 }
 
-input.underbar {
+input.underbar, .underbar input {
   border: none;
   border-bottom: 2px solid #e1e1e1;
   height: 1.5em;
   padding: 0;
 }
-input.underbar:focus {
+input.underbar:focus, .underbar input:focus {
   border-bottom-color: #a8c9ee;
   outline: none;
 }
@@ -45,8 +45,10 @@ input.underbar:focus {
 }
 .input-container input {
   padding-right: 1em;
+  flex: 1;
 }
 .input-chars-remaining {
+  font-size: 0.8em;
   position: absolute;
   right: 0;
   bottom: 0.2em;

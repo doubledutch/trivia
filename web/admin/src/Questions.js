@@ -6,6 +6,7 @@ import './Questions.css'
 
 export default class Questions extends PureComponent {
   state = { selectedQuestionId: null }
+  updaters = {}
 
   render() {
     return (
@@ -18,6 +19,7 @@ export default class Questions extends PureComponent {
         data={this.sortedQuestions()}
         renderItem={({item, index, dragHandle}) => {
           const updater = groupUpdater()
+          this.updaters[item.id] = updater
           return (
             <div className="question draggable">
               {dragHandle}
@@ -25,6 +27,15 @@ export default class Questions extends PureComponent {
                 <div className="question-number">{index + 1}</div>
                 <div className="question-fields">
                   <Text className="question-text underbar" updater={updater} value={item.text} maxLength={250} />
+                  <div className="question-options">
+                    <div className="question-option"><div>&nbsp;</div><div>Correct answer</div></div>
+                    { [0,1,2,3].map(i => (
+                      <div className="question-option" key={i}>
+                        <Text className="underbar" updater={updater} value={""} maxLength={30} placeholder={`Answer ${letters[i]}`} />
+                        <div><input type="radio" name={item.id} /></div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -33,10 +44,10 @@ export default class Questions extends PureComponent {
         renderFooter={() => (
           <footer>
             <div></div>
-            { this.state.selectedQuestionId
+            { this.hasPendingQuestionChanges()
               ? <div>
                   <button className="tertiary">Delete Question</button>
-                  <button className="secondary">Cancel Changes</button>
+                  <button className="secondary" onClick={this.cancelChanges}>Cancel Changes</button>
                   <button>Save Question</button>
                 </div>
               : <div>
@@ -49,7 +60,9 @@ export default class Questions extends PureComponent {
     )
   }
 
-  onQuestionFocus = q => console.log(q) || this.setState({selectedQuestionId: q.id})
+  hasPendingQuestionChanges = () => this.state.selectedQuestionId // && any changes?
+
+  onQuestionFocus = q => this.setState({selectedQuestionId: q ? q.id : null})
 
   moveQuestion = (sourceIndex, destinationIndex) => {
     const {questionsRef} = this.props
@@ -60,4 +73,8 @@ export default class Questions extends PureComponent {
   }
 
   sortedQuestions = () => this.props.questions.sort((a,b) => a.order - b.order)
+
+  cancelChanges = () => this.updaters[this.state.selectedQuestionId].cancel()
 }
+
+const letters = ['A','B','C','D']

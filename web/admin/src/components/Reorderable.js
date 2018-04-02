@@ -25,7 +25,7 @@ export default class Reorderable extends PureComponent {
                             <div className="draggable-inner"
                               ref={provided.innerRef}
                               {...(renderDragHandle ? null : provided.dragHandleProps )}
-                              onFocus={this.onItemFocus}
+                              onFocus={this.onItemFocus(item)}
                             >
                               { renderItem({item, index, dragHandle: enabled && renderDragHandle ? renderDragHandle(provided.dragHandleProps) : null}) }
                             </div>

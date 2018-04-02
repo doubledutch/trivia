@@ -1,17 +1,15 @@
 .questions {
   width: 800px;
-  height: 400px;
+  height: 500px;
 }
 
 .question {
   padding: 0.4em;
 }
-
 .question-details {
   padding: 1em 1em 1em 1.5em;
   display: flex;
 }
-
 .question-number {
   font-size: 1.5em;
   color: #fff;
@@ -22,15 +20,31 @@
   border-radius: 1.1em;
   text-align: center;
 }
-
 .question-fields {
   flex: 1;
   padding-left: 1em;
 }
-
 .question-text {
   font-size: 1.6em;
   width: 100%;
+}
+.question-options {
+  padding-left: 1em;
+}
+.question-option {
+  padding-top: 1.5em;
+  display: flex;
+}
+.question-option > :first-child {
+  width: 20em;
+}
+.question-option > :last-child {
+  width: 10em;
+  font-size: 1em;
+  text-align: center;
+}
+.question-option > :last-child * {
+  font-size: 1em;
 }
 
 button {

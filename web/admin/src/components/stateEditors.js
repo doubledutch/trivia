@@ -48,11 +48,11 @@ class SaveCancelEditor extends PureComponent {
 
 export class Text extends SaveCancelEditor {
   render() {
-    const {className, maxLength} = this.props
+    const {className, maxLength, placeholder} = this.props
     const {pendingValue} = this.state
     return (
-      <div className="input-container">
-        <input type="text" maxLength={maxLength} className={className} onChange={this.onChange} value={pendingValue} />
+      <div className={`input-container ${className}`}>
+        <input type="text" maxLength={maxLength} onChange={this.onChange} value={pendingValue} placeholder={placeholder} />
         { maxLength && <div className="input-chars-remaining">{maxLength - pendingValue.length}</div> }
       </div>
     )
