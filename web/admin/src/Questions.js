@@ -1,12 +1,12 @@
 import React, {PureComponent} from 'react'
 import Reorderable, {renderLeftDragHandle} from './components/Reorderable'
-import {groupUpdater, Text} from './components/stateEditors'
+import {GroupUpdater, Text} from './components/stateEditors'
 
 import './Questions.css'
 
 export default class Questions extends PureComponent {
   state = { selectedQuestionId: null }
-  updaters = {}
+  // updaters = {}
 
   render() {
     return (
@@ -18,49 +18,55 @@ export default class Questions extends PureComponent {
         onItemFocus={this.onQuestionFocus}
         data={this.sortedQuestions()}
         renderItem={({item, index, dragHandle}) => {
-          const updater = groupUpdater()
-          this.updaters[item.id] = updater
+          // this.updaters[item.id] = updater
           return (
-            <div className="question draggable">
-              {dragHandle}
-              <div className="question-details">
-                <div className="question-number">{index + 1}</div>
-                <div className="question-fields">
-                  <Text className="question-text underbar" updater={updater} value={item.text} maxLength={250} />
-                  <div className="question-options">
-                    <div className="question-option"><div>&nbsp;</div><div>Correct answer</div></div>
-                    { [0,1,2,3].map(i => (
-                      <div className="question-option" key={i}>
-                        <Text className="underbar" updater={updater} value={""} maxLength={30} placeholder={`Answer ${letters[i]}`} />
-                        <div><input type="radio" name={item.id} /></div>
+            <GroupUpdater render={updater => (
+              <div className="question draggable">
+                {dragHandle}
+                <div className="question-details">
+                  <div className="question-number">{index + 1}</div>
+                  <div className="question-fields">
+                    <Text className="question-text underbar" updater={updater} value={item.text} maxLength={250} />
+                    <div className="question-main">
+                      <div className="question-options">
+                        <div className="question-option"><div>&nbsp;</div><div>Correct answer</div></div>
+                        { [0,1,2,3].map(i => (
+                          <div className="question-option" key={i}>
+                            <Text className="underbar" updater={updater} value={""} maxLength={30} placeholder={`Answer ${letters[i]}`} />
+                            <div><input type="radio" name={item.id} /></div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                      <div className="question-buttons">
+                        { updater.state.hasPendingChanges && <button>Save Question</button> }
+                        { updater.state.hasPendingChanges && <button className="secondary">Cancel Changes</button> }
+                        <button className="tertiary">Delete Question</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )} />
           )
         }}
         renderFooter={() => (
           <footer>
             <div></div>
-            { this.hasPendingQuestionChanges()
-              ? <div>
-                  <button className="tertiary">Delete Question</button>
-                  <button className="secondary" onClick={this.cancelChanges}>Cancel Changes</button>
-                  <button>Save Question</button>
-                </div>
-              : <div>
-                  <button onClick={this.props.onAdd}>Add New Question</button>
-                </div>
-            }
+            <div>
+              <button onClick={this.props.onAdd}>Add New Question</button>
+            </div>
           </footer>
         )}
       />
     )
   }
 
-  hasPendingQuestionChanges = () => this.state.selectedQuestionId // && any changes?
+  // hasPendingQuestionChanges = () => {
+  //   const {selectedQuestionId} = this.state
+  //   if (!selectedQuestionId) return false
+  //   const updater = this.updaters[selectedQuestionId]
+  //   return updater.hasPendingChanges()
+  // }
 
   onQuestionFocus = q => this.setState({selectedQuestionId: q ? q.id : null})
 

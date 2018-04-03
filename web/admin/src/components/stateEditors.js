@@ -1,25 +1,31 @@
 import React, {PureComponent} from 'react'
 
-export function groupUpdater() {
-  const editors = []
+export class GroupUpdater extends PureComponent {
+  state = {}
+  editors = []
 
-  return {
-    addEditor(editor) {
-      editors.push(editor)
-    },
-    removeEditor(editor) {
-      const index = editors.indexOf(editor)
-      if (index >= 0) editors.splice(index, 1)
-    },
-    build() {
-      return editors.reduce((obj, editor) => editor.props.saveTo(obj, editor.state.pendingValue), {})
-    },
-    cancel() {
-      editors.forEach(editor => editor.setState({pendingValue: editor.value}))
-    },
-    hasPendingChanges() {
-      return editors.reduce((hpc, editor) => hpc || editor.value !== editor.state.pendingValue, false)
-    }
+  render() {
+    return this.props.render(this)
+  }
+
+  addEditor(editor) {
+    this.editors.push(editor)
+  }
+  removeEditor(editor) {
+    const index = this.editors.indexOf(editor)
+    if (index >= 0) this.editors.splice(index, 1)
+  }
+  build() {
+    return this.editors.reduce((obj, editor) => editor.props.saveTo(obj, editor.state.pendingValue), {})
+  }
+  cancel() {
+    this.editors.forEach(editor => editor.setState({pendingValue: editor.value}))
+  }
+  hasPendingChanges() {
+    return 
+  }
+  onChange(editor, value) {
+    this.setState({hasPendingChanges: this.editors.reduce((hpc, ed) => hpc || ed.value !== (editor === ed ? value : ed.state.pendingValue), false)})
   }
 }
 
@@ -43,7 +49,10 @@ class SaveCancelEditor extends PureComponent {
     this.props.updater.removeEditor(this)
   }
 
-  onChange = e => this.setState({pendingValue: e.target.value})
+  onChange = e => {
+    this.setState({pendingValue: e.target.value})
+    this.props.updater.onChange(this, e.target.value)
+  }
 }
 
 export class Text extends SaveCancelEditor {
