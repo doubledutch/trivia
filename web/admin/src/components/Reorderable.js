@@ -4,6 +4,13 @@ import {DragDropContext, Draggable, Droppable} from 'react-beautiful-dnd'
 import './Reorderable.css'
 
 export default class Reorderable extends PureComponent {
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data.length > this.props.data.length) {
+      // Item added. Scroll to it.
+      setTimeout(() => this.bottom.scrollIntoView({behavior: 'smooth'}), 400)
+    }
+  }
+
   render() {
     const {className, data, draggableType, droppableId, enabled, renderDragHandle, renderFooter, renderItem} = this.props
     const getItemId = this.props.getItemId || (x => x.id)
@@ -36,7 +43,8 @@ export default class Reorderable extends PureComponent {
                     )
                   })
                 }
-                <div>{ provided.placeholder }</div>
+                <div ref={elem => this.bottom = elem} />
+                { provided.placeholder }
               </div>
             )}
           </Droppable>
