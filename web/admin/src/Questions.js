@@ -5,9 +5,6 @@ import {GroupUpdater, Text} from './components/stateEditors'
 import './Questions.css'
 
 export default class Questions extends PureComponent {
-  state = { selectedQuestionId: null }
-  // updaters = {}
-
   render() {
     return (
       <Reorderable className="questions"
@@ -20,27 +17,27 @@ export default class Questions extends PureComponent {
         renderItem={({item, index, dragHandle}) => {
           // this.updaters[item.id] = updater
           return (
-            <GroupUpdater render={updater => (
+            <GroupUpdater additionalProps={item} render={updater => (
               <div className="question draggable">
                 {dragHandle}
                 <div className="question-details">
                   <div className="question-number">{index + 1}</div>
                   <div className="question-fields">
-                    <Text className="question-text underbar" updater={updater} value={item.text} maxLength={250} />
+                    <Text className="question-text underbar" updater={updater} value={item.text} maxLength={250} saveTo={this.saveQuestionText} />
                     <div className="question-main">
                       <div className="question-options">
                         <div className="question-option"><div>&nbsp;</div><div>Correct answer</div></div>
                         { [0,1,2,3].map(i => (
                           <div className="question-option" key={i}>
-                            <Text className="underbar" updater={updater} value={""} maxLength={30} placeholder={`Answer ${letters[i]}`} />
-                            <div><input type="radio" name={item.id} /></div>
+                            <Text className="underbar" updater={updater} value={item.options[i]} maxLength={30} placeholder={`Answer ${letters[i]}`} saveTo={this.saveOption(i)} />
+                            <div><input type="radio" name={item.id} value={i} /></div>
                           </div>
                         ))}
                       </div>
                       <div className="question-buttons">
-                        { updater.state.hasPendingChanges && <button>Save Question</button> }
-                        { updater.state.hasPendingChanges && <button className="secondary">Cancel Changes</button> }
-                        <button className="tertiary">Delete Question</button>
+                        { updater.state.hasPendingChanges && <button onClick={() => this.saveQuestion(item, updater)}>Save Question</button> }
+                        { updater.state.hasPendingChanges && <button className="secondary" onClick={() => updater.cancel()}>Cancel Changes</button> }
+                        <button className="tertiary" onClick={this.deleteQuestion(item)}>Delete Question</button>
                       </div>
                     </div>
                   </div>
@@ -61,14 +58,9 @@ export default class Questions extends PureComponent {
     )
   }
 
-  // hasPendingQuestionChanges = () => {
-  //   const {selectedQuestionId} = this.state
-  //   if (!selectedQuestionId) return false
-  //   const updater = this.updaters[selectedQuestionId]
-  //   return updater.hasPendingChanges()
-  // }
-
-  onQuestionFocus = q => this.setState({selectedQuestionId: q ? q.id : null})
+  saveQuestion = (q, updater) => this.props.questionsRef.child(q.id).update(updater.build({options: []}))
+  saveQuestionText = (obj, val) => obj.text = val
+  saveOption = i => (obj, val) => obj.options[i] = val
 
   moveQuestion = (sourceIndex, destinationIndex) => {
     const {questionsRef} = this.props
@@ -80,7 +72,7 @@ export default class Questions extends PureComponent {
 
   sortedQuestions = () => this.props.questions.sort((a,b) => a.order - b.order)
 
-  cancelChanges = () => this.updaters[this.state.selectedQuestionId].cancel()
+  deleteQuestion = q => () => this.props.questionsRef.child(q.id).remove()
 }
 
 const letters = ['A','B','C','D']

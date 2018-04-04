@@ -3,6 +3,10 @@ import React, {PureComponent} from 'react'
 export class GroupUpdater extends PureComponent {
   state = {}
   editors = []
+  
+  componentDidUpdate() {
+    this.onChange()
+  }
 
   render() {
     return this.props.render(this)
@@ -15,14 +19,15 @@ export class GroupUpdater extends PureComponent {
     const index = this.editors.indexOf(editor)
     if (index >= 0) this.editors.splice(index, 1)
   }
-  build() {
-    return this.editors.reduce((obj, editor) => editor.props.saveTo(obj, editor.state.pendingValue), {})
+  build(obj) {
+    return this.editors.reduce((o, editor) => {
+      editor.props.saveTo(o, editor.state.pendingValue)
+      return o
+    }, obj || {})
   }
   cancel() {
     this.editors.forEach(editor => editor.setState({pendingValue: editor.value}))
-  }
-  hasPendingChanges() {
-    return 
+    this.setState({hasPendingChanges: false})
   }
   onChange(editor, value) {
     this.setState({hasPendingChanges: this.editors.reduce((hpc, ed) => hpc || ed.value !== (editor === ed ? value : ed.state.pendingValue), false)})

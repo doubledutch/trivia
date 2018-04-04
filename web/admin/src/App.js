@@ -41,6 +41,13 @@ export default class App extends PureComponent {
     })
   }
 
+  componentDidUpdate() {
+    if (!this.state.sessionId) {
+      const sessionIds = Object.keys(this.state.sessions)
+      if (sessionIds.length) this.setState({sessionId: sessionIds[0]})
+    }
+  }
+
   render() {
     const {sessionId, sessions} = this.state
     return (
@@ -84,6 +91,6 @@ export default class App extends PureComponent {
 
   addQuestion = () => {
     const {sessionId} = this.state
-    questionsRef().push({sessionId, order: this.questionsForCurrentSession().length, text: '', options: []})
+    questionsRef().push({sessionId, order: this.questionsForCurrentSession().length, text: '', options: ['','','','']})
   }
 }

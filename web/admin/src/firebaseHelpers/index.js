@@ -35,7 +35,7 @@ export function mapPushedDataToObjectOfStateObjects(fbc, ref, component, stateKe
     const subKey = subKeyFn ? subKeyFn(data.key, valueInData) : data.key
 
     component.setState(state => {
-      const stateAtKey = {...(state[stateKey][key] || {}), [subKey]: {...valueInData, id: key}}
+      const stateAtKey = {...(state[stateKey][key] || {}), [subKey]: {...valueInData, id: subKey}}
       return {
         [stateKey]: {...state[stateKey], [key]: stateAtKey}
       }
