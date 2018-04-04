@@ -19,13 +19,20 @@
   margin-bottom: 1em;
 }
 
-button, input[type="text"], select {
+button, input[type="text"], input[type="number"], select {
   height: 2.8em;
   font-size: 1em;
 }
 
-input[type="text"] {
+input[type="text"], input[type="number"] {
   padding: 0 0.5em;
+  border: 1px solid #979797;
+  border-radius: 4px;
+}
+
+input[type="number"] {
+  width: 4em;
+  text-align: center;
 }
 
 input.underbar, .underbar input {

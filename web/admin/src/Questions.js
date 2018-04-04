@@ -15,7 +15,6 @@ export default class Questions extends PureComponent {
         onItemFocus={this.onQuestionFocus}
         data={this.sortedQuestions()}
         renderItem={({item, index, dragHandle}) => {
-          // this.updaters[item.id] = updater
           return (
             <GroupUpdater additionalProps={item} render={updater => (
               <div className="question draggable">
@@ -48,14 +47,7 @@ export default class Questions extends PureComponent {
             )} />
           )
         }}
-        renderFooter={() => (
-          <footer>
-            <div></div>
-            <div>
-              <button onClick={this.props.onAdd}>Add New Question</button>
-            </div>
-          </footer>
-        )}
+        renderFooter={this.props.renderFooter}
       />
     )
   }

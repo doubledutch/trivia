@@ -68,7 +68,14 @@ export default class App extends PureComponent {
             <Questions
               questions={Object.values(this.questionsForCurrentSession())}
               questionsRef={questionsRef()}
-              onAdd={this.addQuestion}
+              renderFooter={() => (
+                <footer>
+                  <div><label>Time per question: <input type="number" value={sessions[sessionId].secondsPerQuestion} onChange={this.onSecondsChange} /> seconds</label></div>
+                  <div>
+                    <button onClick={this.addQuestion}>Add New Question</button>
+                  </div>
+                </footer>
+              )}
             />
           </div>
         }
@@ -80,7 +87,8 @@ export default class App extends PureComponent {
 
   onSessionChange = e => this.setState({sessionId: e.target.value})
   onSessionNameChange = e => sessionsRef().child(this.state.sessionId).update({name: e.target.value})
-  createSession = () => sessionsRef().push({name: 'New Session'}).then(ref => this.setState({sessionId: ref.key}))
+  onSecondsChange = e => sessionsRef().child(this.state.sessionId).update({secondsPerQuestion: e.target.value})
+  createSession = () => sessionsRef().push({name: 'New Session', secondsPerQuestion: 30}).then(ref => this.setState({sessionId: ref.key}))
   deleteSession = () => {
     const {sessionId, sessions} = this.state
     if (window.confirm(`Are you sure you want to delete session '${sessions[sessionId].name}'?`)) {
