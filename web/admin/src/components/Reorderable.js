@@ -49,8 +49,8 @@ export default class Reorderable extends PureComponent {
   onDragEnd = ({destination, source}) => {
     if (destination) {
       if (source.droppableId === destination.droppableId) {
-        if (source.index !== destination.index) {
-          this.props.move(source.index, destination.index)
+        if (source.index !== destination.index && destination.index >= 0) {
+          this.props.onMove(source.index, destination.index)
         }
       }
       // Dragging between lists is not implemented

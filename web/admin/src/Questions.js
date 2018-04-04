@@ -69,8 +69,12 @@ export default class Questions extends PureComponent {
     const {questionsRef} = this.props
     const questions = this.sortedQuestions()
     const [question] = questions.splice(sourceIndex, 1)
-    const newOrder = questions.splice(destinationIndex, 0, question)
-    newOrder.forEach((q, order) => questionsRef.child(q.id).update({order}))
+    questions.splice(destinationIndex, 0, question)
+    const minIndex = Math.min(sourceIndex, destinationIndex)
+    const maxIndex = Math.max(sourceIndex, destinationIndex) + 1
+    for (let order = minIndex; order < maxIndex; ++order) {
+      questionsRef.child(questions[order].id).update({order})
+    }
   }
 
   sortedQuestions = () => this.props.questions.sort((a,b) => a.order - b.order)
