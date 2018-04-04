@@ -1,4 +1,4 @@
-import React, {PureComponent} from 'react'
+import React, {Component, PureComponent} from 'react'
 
 export class GroupUpdater extends PureComponent {
   state = {}
@@ -30,7 +30,7 @@ export class GroupUpdater extends PureComponent {
     this.setState({hasPendingChanges: false})
   }
   onChange(editor, value) {
-    this.setState({hasPendingChanges: this.editors.reduce((hpc, ed) => hpc || ed.value !== (editor === ed ? value : ed.state.pendingValue), false)})
+    this.setState({hasPendingChanges: this.editors.reduce((hpc, ed) => hpc || `${ed.value}` !== (editor === ed ? `${value}` : `${ed.state.pendingValue}`), false)})
   }
 }
 
@@ -82,5 +82,23 @@ export class Select extends SaveCancelEditor {
         { options.map(o => <option value={optionValueFn(o)}>{optionNameFn(o)}</option>) }
       </select>
     )
+  }
+}
+
+export class RadioGroup extends SaveCancelEditor {
+  render() {
+    return this.props.render(this)
+  }
+}
+export class Radio extends Component {
+  render() {
+    const {className, group, value} = this.props
+    return (
+      <input className={className} type="radio" value={value} checked={`${group.state.pendingValue}` === `${value}`} onChange={this.onChange} />
+    )
+  }
+
+  onChange = e => {
+    this.props.group.onChange(e)
   }
 }
