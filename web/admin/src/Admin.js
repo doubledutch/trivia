@@ -32,9 +32,9 @@ export default class Admin extends PureComponent {
 
   componentDidMount() {
     const {fbc} = this.props
-    mapPushedDataToStateObjects(fbc, this.sessionsRef(), this, 'sessions')
-    mapPushedDataToObjectOfStateObjects(fbc, this.questionsRef(), this, 'questionsBySession', (key, value) => value.sessionId)
-    this.props.fbc.getLongLivedAdminToken().then(longLivedToken => this.setState({longLivedToken}))
+    mapPushedDataToStateObjects(this.sessionsRef(), this, 'sessions')
+    mapPushedDataToObjectOfStateObjects(this.questionsRef(), this, 'questionsBySession', (key, value) => value.sessionId)
+    fbc.getLongLivedAdminToken().then(longLivedToken => this.setState({longLivedToken}))
   }
 
   componentDidUpdate() {
@@ -106,5 +106,5 @@ export default class Admin extends PureComponent {
     openTab(this.bigScreenUrl())
   }
 
-  bigScreenUrl = () => this.state.longLivedToken ? `?page=bigScreen&session=${encodeURIComponent(this.state.sessionId)}&token=${encodeURIComponent(this.state.longLivedToken)}` : null
+  bigScreenUrl = () => this.state.longLivedToken ? `?page=bigScreen&sessionId=${encodeURIComponent(this.state.sessionId)}&token=${encodeURIComponent(this.state.longLivedToken)}` : null
 }

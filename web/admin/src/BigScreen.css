@@ -1,6 +1,40 @@
 .big-screen {
+  font-size: 3vh;
   height: 100vh;
   width: 100vw;
   background: url(./background.jpg);
   background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.box {
+  background-color: #fff;
+  border-radius: 2vh;
+  padding: 3vh 6vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.joined {
+  color: #6a4e83;
+}
+
+h1 {
+  color: #1aaaa0;
+  font-size: 2.5em;
+  padding: 0;
+  margin: 0 0 0.5em 0;
+}
+
+h2 {
+  font-size: 1.4em;
+  padding: 0;
+  margin: 0 0 0.5em 0;
+}
+
+.attendees-joined {
+  
 }

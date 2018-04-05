@@ -44,7 +44,7 @@ export default class App extends PureComponent {
 
     switch (qs.page) {
       case 'bigScreen':
-        return <BigScreen fbc={fbc} game={qs.game} />
+        return <BigScreen fbc={fbc} sessionId={qs.sessionId} />
       default:
         return <Admin fbc={fbc} />
     }
