@@ -20,17 +20,22 @@ import { Image, ImageBackground, TouchableOpacity, Text, View, ScrollView, Style
 // rn-client must be imported before FirebaseConnector
 import client, { Avatar, TitleBar } from '@doubledutch/rn-client'
 import FirebaseConnector from '@doubledutch/firebase-connector'
-import {mapPushedDataToStateObjects} from './firebaseHelpers'
+import {mapPerUserPushedDataToStateObjects} from './firebaseHelpers'
 import {background, trophy} from './images'
 import {Button} from './components'
+import { mapPushedDataToStateObjects } from './firebaseHelpers';
+
 const fbc = FirebaseConnector(client, 'trivia')
 
 fbc.initializeAppWithSimpleBackend()
 const sessionsRef = fbc.database.public.adminRef('sessions')
 const userRef = fbc.database.public.userRef()
+const usersRef = fbc.database.public.usersRef()
+
+const numJoinedToShow = 5
 
 export default class HomeView extends Component {
-  state = {sessions: {}}
+  state = {sessions: {}, users: {}}
   constructor() {
     super()
     this.signin = fbc.signin()
@@ -51,6 +56,7 @@ export default class HomeView extends Component {
     this.signin.then(() => {
       sessionsRef.on('value', data => this.setState({sessions: data.val()}))
       userRef.on('value', data => this.setState({me: data.val()}))
+      mapPushedDataToStateObjects(usersRef, this, 'users')
     })
   }
 
@@ -114,9 +120,19 @@ export default class HomeView extends Component {
   }
   
   renderNotStartedSession = session => {
+    const {users, sessionId} = this.state
+    const joined = Object.values(users).filter(u => u.sessionId === sessionId)
     return (
       <View style={s.box}>
-        <Text>Waiting...</Text>
+        <Text style={s.youAreIn}>You are in!</Text>
+        <Text style={s.joinCount}>{joined.length - 1}</Text>
+        <Text style={s.haveJoined}>{joined.length === 1 ? 'Other Has Joined':'Others Have Joined'}</Text>
+        { joined.slice(Math.max(0,joined.length-numJoinedToShow)).map((u,i) => (
+          <View key={u.id} style={[s.joinedUser, i===0 ? {opacity:0.5} : null]}>
+            <Avatar user={u} size={30} />
+            <Text style={s.joinedUserName}>{u.firstName} {u.lastName}</Text><Text style={s.hasJoined}> has joined</Text>
+          </View>
+        ))}
       </View>
     )
   }
@@ -146,6 +162,9 @@ export default class HomeView extends Component {
   selectSession = session => () => this.setState({sessionId: session.id})
 }
 
+const orange = '#f97d64'
+const purple = '#684f82'
+const teal = '#2da99f'
 const s = StyleSheet.create({
   container: {
     flex: 1,
@@ -156,9 +175,10 @@ const s = StyleSheet.create({
   },
   box: {
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.8)',
+    backgroundColor: 'rgba(255,255,255,0.75)',
     borderRadius: 10,
-    padding: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
   },
   notJoined: {
     alignItems: 'center',
@@ -171,7 +191,7 @@ const s = StyleSheet.create({
     color: '#fff',
   },
   tealText: {
-    color: '#2da99f',
+    color: teal,
     fontSize: 20,
   },
   joinSessionName: {
@@ -185,5 +205,37 @@ const s = StyleSheet.create({
     width: 200,
     height: 159,
     marginVertical: 30,
+  },
+  youAreIn: {
+    color: orange,
+    fontSize: 16,
+  },
+  joinCount: {
+    color: teal,
+    fontSize: 100,
+    fontWeight: 'bold',
+    marginVertical: 10,
+  },
+  haveJoined: {
+    color: purple,
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  joinedUser: {
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+    marginVertical: 7,
+  },
+  joinedUserName: {
+    marginLeft: 10,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: purple,
+  },
+  hasJoined: {
+    fontSize: 16,
+    color: purple,    
   },
 })

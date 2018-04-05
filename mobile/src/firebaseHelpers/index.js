@@ -122,7 +122,8 @@ export function convertPerUserDataToState(fbc, userRefKey, component, stateKey, 
 
   function onUserData(data) {
     const userId = data.key
-    const userData = (data.val() || {})[userRefKey] || {}
+    const allUserData = (data.val() || {})
+    const userData = allUserData[userRefKey] || {}
     component.setState(state => {
       const stateForKey = state[stateKey]
       const newStateForKey = {...stateForKey}
