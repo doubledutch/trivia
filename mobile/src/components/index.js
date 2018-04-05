@@ -19,7 +19,10 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 
 export class Button extends PureComponent {
   render() {
-    const {backgroundColor, color, onPress, title} = this.props
+    const {onPress, title} = this.props
+    let {backgroundColor, color} = this.props
+    if (!backgroundColor) backgroundColor = '#2da99f'
+    if (!color) color = '#fff'
     return (
       <TouchableOpacity style={[s.button, {backgroundColor}]} onPress={onPress}>
         <Text style={[s.buttonText, {color}]}>{title}</Text>
@@ -34,6 +37,7 @@ const s = StyleSheet.create({
     borderRadius: 25,
     justifyContent: 'center',
     width: '100%',
+    marginTop: 20,
   },
   buttonText: {
     backgroundColor: 'transparent',

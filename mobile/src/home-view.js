@@ -26,7 +26,8 @@ import {Button} from './components'
 const fbc = FirebaseConnector(client, 'trivia')
 
 fbc.initializeAppWithSimpleBackend()
-const userRef = fbc.database.private.adminableUserRef()
+const sessionsRef = fbc.database.public.adminRef('sessions')
+const userRef = fbc.database.public.userRef()
 
 export default class HomeView extends Component {
   state = {sessions: {}}
@@ -48,7 +49,7 @@ export default class HomeView extends Component {
 
   componentDidMount() {
     this.signin.then(() => {
-      mapPushedDataToStateObjects(fbc.database.public.adminRef('sessions'), this, 'sessions')
+      sessionsRef.on('value', data => this.setState({sessions: data.val()}))
       userRef.on('value', data => this.setState({me: data.val()}))
     })
   }
@@ -62,9 +63,11 @@ export default class HomeView extends Component {
       <ImageBackground style={s.container} source={background}>
         <TitleBar title="Trivia" client={client} signin={this.signin} />
         <ScrollView style={s.scroll}>
-          { session
-            ? this.renderSession(session, meJoined)
-            : this.renderSessions(sessions)
+          { me === undefined
+            ? null
+            : session
+              ? this.renderSession(session, meJoined)
+              : this.renderSessions(sessions, me)
           }
         </ScrollView>
       </ImageBackground>
@@ -86,18 +89,26 @@ export default class HomeView extends Component {
   renderNotJoined = session => {
     return (
       <View style={s.notJoined}>
-        <Text style={s.joinTitle}>TRIVIA</Text>
+        <Text style={s.whiteTitle}>TRIVIA</Text>
         <Image source={trophy} style={s.trophy} />
-        <Text style={s.joinTitle}>CHALLENGE</Text>
+        <Text style={s.whiteTitle}>CHALLENGE</Text>
         <Text style={s.joinSessionName}>{session.name}</Text>
-        <Button title="Let's Play!" onPress={this.join} backgroundColor="#2da99f" color="#fff" />
+        <Button title="Let's Play!" onPress={this.join} />
       </View>
     )
   }
 
-  renderSessions = sessions => {
+  renderSessions = (sessions, me) => {
+    const currentSessions = Object.keys(sessions)
+      .map(id => ({...sessions[id], id}))
+      .filter(s => s.state !== 'ENDED' || s.id === me.sessionId)
+    if (currentSessions.length === 0) return <Text style={s.whiteTitle}>No trivia games currently. Try back later!</Text>
     return (
       <View style={s.box}>
+        <Text style={s.tealText}>Choose a trivia game</Text>
+        { currentSessions.map(s => (
+          <Button key={s.id} title={s.name} onPress={this.selectSession(s)} />
+        ))}
       </View>
     )
   }
@@ -132,9 +143,8 @@ export default class HomeView extends Component {
   }
 
   join = () => userRef.set({...client.currentUser, sessionId: this.state.sessionId})
+  selectSession = session => () => this.setState({sessionId: session.id})
 }
-
-const sessionsRef = () => fbc.database.public.adminRef('sessions')
 
 const s = StyleSheet.create({
   container: {
@@ -146,19 +156,23 @@ const s = StyleSheet.create({
   },
   box: {
     alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 5,
+    backgroundColor: 'rgba(255,255,255,0.8)',
+    borderRadius: 10,
     padding: 10,
   },
   notJoined: {
     alignItems: 'center',
   },
-  joinTitle: {
+  whiteTitle: {
     backgroundColor: 'transparent',
     textAlign: 'center',
     fontSize: 40,
     fontWeight: 'bold',
     color: '#fff',
+  },
+  tealText: {
+    color: '#2da99f',
+    fontSize: 20,
   },
   joinSessionName: {
     textAlign: 'center',
