@@ -7,6 +7,7 @@
   "dependencies": {
     "@doubledutch/admin-client": "^1.2.0",
     "@doubledutch/firebase-connector": "^3.3.1",
+    "qs": "^6.5.1",
     "react": "^16.0.0",
     "react-beautiful-dnd": "^6.0.1",
     "react-dom": "^16.0.0",
