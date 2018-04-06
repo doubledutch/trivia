@@ -78,7 +78,7 @@ export default class BigScreen extends PureComponent {
     return (
       <Question question={question} number={question.index+1} secondsLeft={question.seconds} totalSeconds={question.totalSeconds}>
         { question.options.map((opt,i) => (
-          <Option key={i} text={opt} guesses={4} totalGuesses={50} />
+          <Option key={i} text={opt} guesses={7} totalGuesses={50} correct={i===2} />
         ))}
       </Question>
     )

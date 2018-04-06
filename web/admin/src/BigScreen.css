@@ -67,7 +67,7 @@
   font-size: 1.3em;
   width: 75vh;
 }
-.big-screen .option-text-back {
+.big-screen .option .option-text-back {
   border: 0.5vh solid #9b9b9b;
   height: 10vh;
   border-radius: 5.5vh;
@@ -89,7 +89,7 @@
   padding: 0 4.5vh;
 }
 
-.big-screen .option.correct {
+.big-screen .option.correct .option-text-back {
   border-color: #2daaa0;
   color: #2daaa0;
 }
@@ -103,13 +103,16 @@
   top: 0;
   bottom: 0;
 }
-.big-screen .option-overlay > * {
+.big-screen .option .option-overlay > * {
   border-radius: 5.5vh;
   height: 11vh;
   line-height: 11vh;
   overflow: hidden;
   background-color: #9b9b9b;
   color: #fff;
+}
+.big-screen .option.correct .option-overlay > * {
+  background-color: #2daaa0;
 }
 
 .attendees-joined {
