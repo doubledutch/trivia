@@ -56,7 +56,7 @@ export default class PresentationDriver extends PureComponent {
     if (!session || !publicSession) return <div className="presentation-driver" />
 
     switch (publicSession.state) {
-      case 'NOT_STARTED': return this.renderNextQuestion(session, 0)
+      case 'NOT_STARTED': return this.renderNextQuestion(session, 0, true)
       case 'QUESTION_OPEN': return this.renderNextQuestion(session, publicSession.question.index + 1, false)
       case 'QUESTION_CLOSED': return this.renderNextQuestion(session, publicSession.question.index + 1, true)
 
