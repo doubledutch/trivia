@@ -49,5 +49,5 @@ export default class BigScreen extends PureComponent {
   }
 
   sessionRef = () => this.props.fbc.database.public.adminRef('sessions').child(this.props.sessionId)
-  usersRef = () => this.props.fbc.database.private.adminableUsersRef()
+  usersRef = () => this.props.fbc.database.public.usersRef()
 }

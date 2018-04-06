@@ -7,8 +7,13 @@ export default class Reorderable extends PureComponent {
   componentWillReceiveProps(nextProps) {
     if (nextProps.data.length > this.props.data.length) {
       // Item added. Scroll to it.
-      setTimeout(() => this.bottom.scrollIntoView({behavior: 'smooth'}), 400)
+      if (this.scrollTimeout) clearTimeout(this.scrollTimeout)
+      this.scrollTimeout = setTimeout(() => this.bottom.scrollIntoView({behavior: 'smooth'}), 400)
     }
+  }
+
+  componentWillUnmount() {
+    if (this.scrollTimeout) clearTimeout(this.scrollTimeout)
   }
 
   render() {

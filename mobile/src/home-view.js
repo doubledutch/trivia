@@ -126,7 +126,7 @@ export default class HomeView extends Component {
       <View style={s.box}>
         <Text style={s.youAreIn}>You are in!</Text>
         <Text style={s.joinCount}>{joined.length - 1}</Text>
-        <Text style={s.haveJoined}>{joined.length === 1 ? 'Other Has Joined':'Others Have Joined'}</Text>
+        <Text style={s.haveJoined}>{joined.length === 2 ? 'Other Has Joined':'Others Have Joined'}</Text>
         { joined.slice(Math.max(0,joined.length-numJoinedToShow)).map((u,i) => (
           <View key={u.id} style={[s.joinedUser, i===0 ? {opacity:0.5} : null]}>
             <Avatar user={u} size={30} />
@@ -171,11 +171,11 @@ const s = StyleSheet.create({
   },
   scroll: {
     flex: 1,
-    padding: 15
+    padding: 20,
   },
   box: {
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.75)',
+    backgroundColor: 'rgba(255,255,255,0.8)',
     borderRadius: 10,
     paddingVertical: 15,
     paddingHorizontal: 20,

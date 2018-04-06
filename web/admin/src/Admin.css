@@ -18,8 +18,29 @@
   padding: 10px;  
 }
 
-iframe.big-screen-container {
+.presentation-container {
   border: 1px solid #dcdcdc;
-  height: 300px;
-  width: 400px;
+  border-radius: 5px;
+  width: 800px;
+  height: 400px;
+  display: flex;
+  position: relative;
+}
+
+iframe.big-screen-container {
+  border: none;
+  flex: 1;
+}
+
+.presentation-overlays {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  background-color: rgba(255,255,255,0.5);
+  display: flex;
+  padding: 1em 0;
+}
+.presentation-overlays > * {
+  flex: 1;
+  text-align: center;
 }

@@ -19,6 +19,7 @@ import './Admin.css'
 
 import {mapPushedDataToStateObjects, mapPushedDataToObjectOfStateObjects} from './firebaseHelpers'
 import Questions from './Questions'
+import PresentationDriver from './PresentationDriver'
 import {openTab} from './utils'
 
 export default class Admin extends PureComponent {
@@ -63,7 +64,7 @@ export default class Admin extends PureComponent {
               { <button onClick={this.launchPresentation} disabled={launchDisabled || !this.bigScreenUrl()}>Launch Presentation</button> }
             </label>
             <Questions
-              questions={Object.values(this.questionsForCurrentSession())}
+              questions={this.questionsForCurrentSession()}
               questionsRef={this.questionsRef()}
               renderFooter={() => (
                 <footer>
@@ -74,14 +75,18 @@ export default class Admin extends PureComponent {
                 </footer>
               )}
             />
+            <div className="presentation-container">
+              <iframe className="big-screen-container" src={this.bigScreenUrl()} title="presentation" />
+              <PresentationDriver fbc={this.props.fbc} session={sessions[sessionId]} questions={this.questionsForCurrentSession()} />
+              <div className="presentation-overlays"><div>Presentation Screen</div><div>Up Next</div></div>
+            </div>
           </div>
         }
-        <iframe className="big-screen-container" src={this.bigScreenUrl()} title="presentation" />
       </div>
     )
   }
 
-  questionsForCurrentSession = () => Object.values(this.state.questionsBySession[this.state.sessionId] || {})
+  questionsForCurrentSession = () => Object.values(this.state.questionsBySession[this.state.sessionId] || {}).sort((a,b) => a.order - b.order)
 
   onSessionChange = e => this.setState({sessionId: e.target.value})
   onSessionNameChange = e => this.sessionsRef().child(this.state.sessionId).update({name: e.target.value})

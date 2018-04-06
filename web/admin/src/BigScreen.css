@@ -9,7 +9,7 @@
   align-items: center;
 }
 
-.box {
+.big-screen .box {
   background-color: #fff;
   border-radius: 2vh;
   padding: 3vh 6vh;
@@ -22,19 +22,19 @@
   color: #6a4e83;
 }
 
-h1 {
+.big-screen h1 {
   color: #1aaaa0;
   font-size: 2.5em;
   padding: 0;
   margin: 0 0 0.5em 0;
 }
 
-h2 {
+.big-screen h2 {
   font-size: 1.4em;
   padding: 0;
   margin: 0 0 0.5em 0;
 }
 
 .attendees-joined {
-  
+
 }
