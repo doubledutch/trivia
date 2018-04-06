@@ -26,7 +26,6 @@ export default class Question extends PureComponent {
 
   startTimer(props) {
     const {totalSeconds} = props
-    this.setState({secondsLeft: totalSeconds})
     const start = new Date().valueOf()
     if (this.timer) clearInterval(this.timer)
     this.timer = setInterval(() => {
@@ -40,6 +39,10 @@ export default class Question extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
+    if (this.props.totalSeconds !== nextProps.totalSeconds) {
+      this.setState({secondsLeft: nextProps.totalSeconds})
+    }
+    
     if (nextProps.countDown && (this.props.question !== nextProps.question || this.props.totalSeconds !== nextProps.totalSeconds)) {
       this.startTimer(nextProps)
     }

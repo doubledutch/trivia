@@ -72,7 +72,7 @@ export default class PresentationDriver extends PureComponent {
     const question = questions[questionIndex]
     
     return <div className="presentation-driver">
-      { question && <Question question={question} number={questionIndex+1} secondsLeft={session.secondsPerQuestion} totalSeconds={session.secondsPerQuestion}>
+      { question && <Question question={question} number={questionIndex+1} totalSeconds={session.secondsPerQuestion}>
           <button onClick={this.startNextQuestion} disabled={!canProgress}>Start Question</button>
         </Question>
       }
