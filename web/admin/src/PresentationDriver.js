@@ -52,6 +52,7 @@ export default class PresentationDriver extends PureComponent {
 
     switch (publicSession.state) {
       case 'NOT_STARTED': return this.renderNextQuestion(session, 0)
+      case 'QUESTION_OPEN': return this.renderNextQuestion(session, publicSession.question.index + 1)
       default: return <div className="presentation-driver" />
     }
   }
@@ -59,10 +60,12 @@ export default class PresentationDriver extends PureComponent {
   renderNextQuestion(session, questionIndex) {
     const {questions} = this.props
     const question = questions[questionIndex]
+    
     return <div className="presentation-driver">
-      <Question question={question} number={questionIndex+1} secondsLeft={session.secondsPerQuestion} totalSeconds={session.secondsPerQuestion}>
-        <button onClick={this.startNextQuestion}>Start Question</button>
-      </Question>
+      { question && <Question question={question} number={questionIndex+1} secondsLeft={session.secondsPerQuestion} totalSeconds={session.secondsPerQuestion}>
+          <button onClick={this.startNextQuestion}>Start Question</button>
+        </Question>
+      }
     </div>
   }
 
@@ -79,6 +82,7 @@ export default class PresentationDriver extends PureComponent {
         index,
         text: question.text,
         seconds: session.secondsPerQuestion,
+        totalSeconds: session.secondsPerQuestion,
         options: question.options,
       }
     })

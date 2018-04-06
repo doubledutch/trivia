@@ -17,6 +17,8 @@
 import React, {PureComponent} from 'react'
 import './BigScreen.css'
 
+import Question from './Question'
+
 export default class BigScreen extends PureComponent {
   state = {joined: []}
   componentDidMount() {
@@ -31,20 +33,51 @@ export default class BigScreen extends PureComponent {
   }
 
   render() {
-    const {session, joined} = this.state
+    const {session} = this.state
     if (session === undefined) return <div>Loading...</div>
-    if (!session) return <div>Session not found</div>
+    if (!session) return this.renderNotStarted()
     return (
       <div className="big-screen">
-        { session.state === 'NOT_STARTED' && joined.length
-          ? <div className="box joined">
-              <h1>{joined.length}</h1>
-              <h2>{joined.length > 1 ? 'Have':'Has'} Joined</h2>
-              <div className="attendees-joined"></div>
-            </div>
-          : <div className="box joined"><h1>Waiting for Players</h1></div>
-        }
+        {this.renderState(session)}
       </div>
+    )
+  }
+
+  renderState(session) {
+    switch (session.state) {
+      case 'NOT_STARTED': return this.renderNotStarted()
+      case 'QUESTION_OPEN': return this.renderOpenQuestion(session)
+      default: return null
+    }
+  }
+
+  renderNotStarted() {
+    const {joined} = this.state
+    if (joined.length === 0) {
+      return (
+        <div className="box joined">
+          <h1>Waiting</h1>
+          <h2>for players to join</h2>
+        </div>
+      )
+    }
+
+    return (
+      <div className="box joined">
+        <div className="box-content">
+          <h1>{joined.length}</h1>
+          <h2>{joined.length > 1 ? 'Have':'Has'} Joined</h2>
+          <div className="attendees-joined"></div>
+        </div>
+      </div>
+    )
+  }
+
+  renderOpenQuestion(session) {
+    const {question} = session
+    return (
+      <Question question={question} number={question.index+1} secondsLeft={question.seconds} totalSeconds={question.totalSeconds}>
+      </Question>
     )
   }
 
