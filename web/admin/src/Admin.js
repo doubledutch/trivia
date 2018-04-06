@@ -78,7 +78,7 @@ export default class Admin extends PureComponent {
               <iframe className="big-screen-container" src={this.bigScreenUrl()} title="presentation" />
               <PresentationDriver fbc={this.props.fbc} session={sessions[sessionId]} questions={this.questionsForCurrentSession()} />
               <div className="presentation-overlays">
-                <div>Presentation Screen <button className="launch" onClick={this.launchPresentation} disabled={launchDisabled || !this.bigScreenUrl()}>Launch in new tab</button></div>
+                <div>Presentation Screen <button className="overlay-button" onClick={this.launchPresentation} disabled={launchDisabled || !this.bigScreenUrl()}>Launch in new tab</button></div>
                 <div>Up Next</div>
               </div>
             </div>

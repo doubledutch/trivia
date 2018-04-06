@@ -48,13 +48,13 @@ export default class HomeView extends Component {
     const {sessionId, sessions} = this.state
     // If there is only one session, pick that automatically.
     if (!sessionId && Object.keys(sessions).length === 1) {
-      this.setState({sessionId: Object.keys(sessions)[0]}) 
+      this.setState({sessionId: Object.keys(sessions)[0]})
     }
   }
 
   componentDidMount() {
     this.signin.then(() => {
-      sessionsRef.on('value', data => this.setState({sessions: data.val()}))
+      sessionsRef.on('value', data => this.setState({sessions: data.val() || {}}))
       userRef.on('value', data => this.setState({me: data.val()}))
       mapPushedDataToStateObjects(usersRef, this, 'users')
     })
@@ -85,8 +85,8 @@ export default class HomeView extends Component {
 
     switch (session.state) {
       case 'NOT_STARTED': return this.renderNotStartedSession(session)
-      case 'ACCEPTING_ANSWERS': return this.renderAcceptingAnswers(session)
-      case 'QUESTION_FINISHED': return this.renderQuestionFinished(session)
+      case 'QUESTION_OPEN': return this.renderAcceptingAnswers(session)
+      case 'QUESTION_CLOSED': return this.renderQuestionFinished(session)
       case 'ENDED': return this.renderEndedSession(session)
       default: return null
     }
@@ -108,7 +108,7 @@ export default class HomeView extends Component {
     const currentSessions = Object.keys(sessions)
       .map(id => ({...sessions[id], id}))
       .filter(s => s.state !== 'ENDED' || s.id === me.sessionId)
-    if (currentSessions.length === 0) return <Text style={s.whiteTitle}>No trivia games currently. Try back later!</Text>
+    if (currentSessions.length === 0) return <View style={s.box}><Text>No trivia games currently. Try back later!</Text></View>
     return (
       <View style={s.box}>
         <Text style={s.tealText}>Choose a trivia game</Text>

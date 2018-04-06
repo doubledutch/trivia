@@ -18,13 +18,14 @@ import React, {PureComponent} from 'react'
 
 export default class Question extends PureComponent {
   state = {}
+  
   componentDidMount() {
     this.setState({secondsLeft: this.props.totalSeconds})
-    this.props.countDown && this.startTimer()
+    this.props.countDown && this.startTimer(this.props)
   }
 
-  startTimer() {
-    const {totalSeconds} = this.props
+  startTimer(props) {
+    const {totalSeconds} = props
     this.setState({secondsLeft: totalSeconds})
     const start = new Date().valueOf()
     if (this.timer) clearInterval(this.timer)
@@ -40,7 +41,7 @@ export default class Question extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.countDown && (this.props.question !== nextProps.question || this.props.totalSeconds !== nextProps.totalSeconds)) {
-      this.startTimer()
+      this.startTimer(nextProps)
     }
   }
 
@@ -52,7 +53,7 @@ export default class Question extends PureComponent {
         <div className="box-content">
           <div className="question-title">
             <div>Question {number}</div>
-            <div className={secondsLeft === 0 ? 'time-up' : null}>{durationString(secondsLeft)}</div>
+            <div className={secondsLeft === 0 ? 'time-up' : null}>{secondsLeft != null && durationString(secondsLeft)}</div>
           </div>
         </div>
         <TimerBar ratio={secondsLeft / totalSeconds} />
@@ -69,6 +70,7 @@ export const TimerBar = ({ratio}) => <div className="timer-bar"><div className="
 
 function durationString(seconds) {
   const s = Math.ceil(seconds)
+  const sRem = s % 60
   const m = Math.floor(s / 60)
-  return `${m}:${s < 10 ? '0' : ''}${s}`
+  return `${m}:${sRem < 10 ? '0' : ''}${sRem}`
 }

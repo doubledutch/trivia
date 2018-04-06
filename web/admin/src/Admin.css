@@ -47,7 +47,7 @@ iframe.big-screen-container {
   justify-content: center;
 }
 
-button.launch {
+button.overlay-button {
   height: 1.6em;
   padding: 0 1em;
 }

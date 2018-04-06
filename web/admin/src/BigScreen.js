@@ -35,7 +35,7 @@ export default class BigScreen extends PureComponent {
   render() {
     const {session} = this.state
     if (session === undefined) return <div>Loading...</div>
-    if (!session) return this.renderNotStarted()
+    if (!session) return this.renderNonexistent()
     return (
       <div className="big-screen">
         {this.renderState(session)}
@@ -52,13 +52,17 @@ export default class BigScreen extends PureComponent {
     }
   }
 
+  renderNonexistent = () => <div className="big-screen"><div className="box box-content">This trivia session has not been initialized. Please click 'Initialize' in the Trivia admin panel to allow players to start joining.</div></div>
+
   renderNotStarted() {
     const {joined} = this.state
     if (joined.length === 0) {
       return (
         <div className="box joined">
-          <h1>Waiting</h1>
-          <h2>for players to join</h2>
+          <div className="box-content">
+            <h1>Waiting</h1>
+            <h2>for players to join</h2>
+          </div>
         </div>
       )
     }

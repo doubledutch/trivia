@@ -20,6 +20,9 @@ import './PresentationDriver.css'
 import Question from './Question'
 
 export default class PresentationDriver extends PureComponent {
+  publicSessionRef = () => this.props.fbc.database.public.adminRef('sessions').child(this.props.session.id)
+  publicUsersRef = () => this.props.fbc.database.public.usersRef()
+
   state = {}
 
   componentWillReceiveProps(newProps) {
@@ -53,14 +56,14 @@ export default class PresentationDriver extends PureComponent {
   render() {
     const {session} = this.props
     const {publicSession} = this.state
-    if (!session || !publicSession) return <div className="presentation-driver" />
+    if (!session || !publicSession) return <div className="presentation-driver"><button onClick={this.initializeSession}>Initialize</button></div>
 
     switch (publicSession.state) {
       case 'NOT_STARTED': return this.renderNextQuestion(session, 0, true)
       case 'QUESTION_OPEN': return this.renderNextQuestion(session, publicSession.question.index + 1, false)
       case 'QUESTION_CLOSED': return this.renderNextQuestion(session, publicSession.question.index + 1, true)
 
-      default: return <div className="presentation-driver" />
+      default: return <div className="presentation-driver">{this.renderReset()}</div>
     }
   }
 
@@ -73,15 +76,38 @@ export default class PresentationDriver extends PureComponent {
           <button onClick={this.startNextQuestion} disabled={!canProgress}>Start Question</button>
         </Question>
       }
-      { canProgress && <div className="buttons">
-          <button className="secondary" onClick={this.showLeaderboard}>Display Leaderboard</button>
-          <button className="tertiary" onClick={this.endGame}>End Game</button>
-        </div>
+      { canProgress
+        ? <div className="buttons">
+            <button className="secondary" onClick={this.showLeaderboard}>Display Leaderboard</button>
+            <button className="tertiary" onClick={this.endGame}>End Game</button>
+          </div>
+        : <div className="buttons">
+            <button className="tertiary" onClick={this.endGame}>End Current Question Early</button>
+          </div>
       }
+      { this.renderReset() }
     </div>
   }
 
-  publicSessionRef = () => this.props.fbc.database.public.adminRef('sessions').child(this.props.session.id)
+  renderReset = () => <button className="overlay-button tertiary" onClick={this.resetSession}>Reset trivia session</button>
+
+  resetSession = () => {
+    if (window.confirm('Are you sure you want to destroy the current trivia session? This cannot be undone.')) {
+      // Remove the trivia session
+      this.publicSessionRef().remove()
+
+      // Remove users who were in the removed trivia session.
+      this.publicUsersRef().once('value', data => {
+        const users = data.val() || {}
+        Object.keys(users)
+          .filter(id => users[id].sessionId === this.props.session.id)
+          .forEach(id => this.publicUsersRef().child(id).remove())
+      })
+    }
+  }
+
+  initializeSession = () => this.publicSessionRef().set({state: 'NOT_STARTED'})
+
   startNextQuestion = () => {
     const {session, questions} = this.props
     const {publicSession} = this.state
