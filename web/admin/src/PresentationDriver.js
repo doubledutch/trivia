@@ -59,37 +59,37 @@ export default class PresentationDriver extends PureComponent {
     if (!session || !publicSession) return <div className="presentation-driver"><button onClick={this.initializeSession}>Initialize</button></div>
 
     switch (publicSession.state) {
-      case 'NOT_STARTED': return this.renderNextQuestion(session, 0, true)
-      case 'QUESTION_OPEN': return this.renderNextQuestion(session, publicSession.question.index + 1, false)
-      case 'QUESTION_CLOSED': return this.renderNextQuestion(session, publicSession.question.index + 1, true)
+      case 'NOT_STARTED': return this.renderNextQuestion(session, 0, false)
+      case 'QUESTION_OPEN': return this.renderNextQuestion(session, publicSession.question.index + 1, true)
+      case 'QUESTION_CLOSED': return this.renderNextQuestion(session, publicSession.question.index + 1, false)
 
       default: return <div className="presentation-driver">{this.renderReset()}</div>
     }
   }
 
-  renderNextQuestion(session, questionIndex, canProgress) {
+  renderNextQuestion(session, questionIndex, isQuestionInProgress) {
     const {questions} = this.props
     const question = questions[questionIndex]
     
     return <div className="presentation-driver">
       { question && <Question question={question} number={questionIndex+1} totalSeconds={session.secondsPerQuestion}>
-          <button onClick={this.startNextQuestion} disabled={!canProgress}>Start Question</button>
+          <button onClick={this.startNextQuestion} disabled={isQuestionInProgress}>Start Question</button>
         </Question>
       }
-      { canProgress
+      { isQuestionInProgress
         ? <div className="buttons">
+            <button className="tertiary" onClick={this.endGame}>End Current Question Early</button>
+          </div>
+        : questionIndex > 0 && <div className="buttons">
             <button className="secondary" onClick={this.showLeaderboard}>Display Leaderboard</button>
             <button className="tertiary" onClick={this.endGame}>End Game</button>
-          </div>
-        : <div className="buttons">
-            <button className="tertiary" onClick={this.endGame}>End Current Question Early</button>
           </div>
       }
       { this.renderReset() }
     </div>
   }
 
-  renderReset = () => <button className="overlay-button tertiary" onClick={this.resetSession}>Reset trivia session</button>
+  renderReset = () => <button className="tertiary" onClick={this.resetSession}>Reset trivia session</button>
 
   resetSession = () => {
     if (window.confirm('Are you sure you want to destroy the current trivia session? This cannot be undone.')) {
