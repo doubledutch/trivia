@@ -71,13 +71,15 @@ export default class PresentationDriver extends PureComponent {
     const {session, questions} = this.props
     const {publicSession} = this.state
     const index = publicSession.question ? publicSession.question.index + 1 : 0
+    const question = questions[index]
 
     this.publicSessionRef().update({
       state: 'QUESTION_OPEN',
       question: {
         index,
-        text: questions[index].text,
-        seconds: session.secondsPerQuestion
+        text: question.text,
+        seconds: session.secondsPerQuestion,
+        options: question.options,
       }
     })
   }

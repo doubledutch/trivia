@@ -90,7 +90,7 @@ export default class Admin extends PureComponent {
 
   onSessionChange = e => this.setState({sessionId: e.target.value})
   onSessionNameChange = e => this.sessionsRef().child(this.state.sessionId).update({name: e.target.value})
-  onSecondsChange = e => this.sessionsRef().child(this.state.sessionId).update({secondsPerQuestion: e.target.value})
+  onSecondsChange = e => this.sessionsRef().child(this.state.sessionId).update({secondsPerQuestion: +e.target.value})
   createSession = () => this.sessionsRef().push({name: 'New Session', secondsPerQuestion: 30}).then(ref => this.setState({sessionId: ref.key}))
   deleteSession = () => {
     const {sessionId, sessions} = this.state
