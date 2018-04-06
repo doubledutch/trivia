@@ -78,7 +78,7 @@ export default class BigScreen extends PureComponent {
     return (
       <Question question={question} number={question.index+1} secondsLeft={question.seconds} totalSeconds={question.totalSeconds}>
         { question.options.map((opt,i) => (
-          <Option key={i} text={opt} />
+          <Option key={i} text={opt} guesses={4} totalGuesses={50} />
         ))}
       </Question>
     )
@@ -88,6 +88,18 @@ export default class BigScreen extends PureComponent {
   usersRef = () => this.props.fbc.database.public.usersRef()
 }
 
-const Option = ({text, correct}) => <div className={`option ${correct ? 'correct':''}`}>
-  <div>{text}</div>
+const Option = ({text, correct, guesses, totalGuesses}) => <div className={`option ${correct ? 'correct':''}`}>
+  <div className="option-text-back">
+    <span>{text}</span><span>{guesses!=null && guesses}</span>
+  </div>
+  { guesses != null
+    ? <div className="option-overlay">
+        <div style={{width: `${guesses/totalGuesses*100}%`}}>
+          <div className="option-text-front">
+            <span>{text}</span><span>{guesses!=null && guesses}</span>
+          </div>
+        </div>
+      </div>
+    : null
+  }
 </div>

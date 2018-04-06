@@ -63,13 +63,30 @@
 
 .big-screen .option {
   margin-bottom: 2vh;
+  position: relative;
+  font-size: 1.3em;
+  width: 75vh;
+}
+.big-screen .option-text-back {
   border: 0.5vh solid #9b9b9b;
   height: 10vh;
   border-radius: 5.5vh;
   color: #9b9b9b;
   line-height: 10vh;
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden;
+}
+.big-screen .option-text-front {
+  width: 75vh;
+  display: flex;
+  justify-content: space-between;
+}
+.big-screen .option-text-back span {
   padding: 0 4vh;
-  font-size: 1.3em;
+}
+.big-screen .option-text-front span {
+  padding: 0 4.5vh;
 }
 
 .big-screen .option.correct {
@@ -78,7 +95,21 @@
 }
 
 .big-screen .option-overlay {
-
+  position: absolute;
+  border-radius: 5.5vh;
+  overflow: hidden;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+.big-screen .option-overlay > * {
+  border-radius: 5.5vh;
+  height: 11vh;
+  line-height: 11vh;
+  overflow: hidden;
+  background-color: #9b9b9b;
+  color: #fff;
 }
 
 .attendees-joined {
