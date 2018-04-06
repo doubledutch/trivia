@@ -29,6 +29,11 @@ export default class PresentationDriver extends PureComponent {
     }
   }
 
+  componentDidUpdate() {
+    const {publicSession} = this.state
+    if (!this.timer && publicSession && publicSession.state === 'QUESTION_OPEN') this.startTimer()
+  }
+
   componentDidMount() {
     this.wireHandlers(this.props)
   }
@@ -42,8 +47,8 @@ export default class PresentationDriver extends PureComponent {
 
   unwireHandlers() {
     this.publicSessionRef().off('value', this.publicSessionHandler)
+    if (this.timer) clearInterval(this.timer)
   }
-
 
   render() {
     const {session} = this.props
@@ -52,19 +57,26 @@ export default class PresentationDriver extends PureComponent {
 
     switch (publicSession.state) {
       case 'NOT_STARTED': return this.renderNextQuestion(session, 0)
-      case 'QUESTION_OPEN': return this.renderNextQuestion(session, publicSession.question.index + 1)
+      case 'QUESTION_OPEN': return this.renderNextQuestion(session, publicSession.question.index + 1, false)
+      case 'QUESTION_CLOSED': return this.renderNextQuestion(session, publicSession.question.index + 1, true)
+
       default: return <div className="presentation-driver" />
     }
   }
 
-  renderNextQuestion(session, questionIndex) {
+  renderNextQuestion(session, questionIndex, canProgress) {
     const {questions} = this.props
     const question = questions[questionIndex]
     
     return <div className="presentation-driver">
       { question && <Question question={question} number={questionIndex+1} secondsLeft={session.secondsPerQuestion} totalSeconds={session.secondsPerQuestion}>
-          <button onClick={this.startNextQuestion}>Start Question</button>
+          <button onClick={this.startNextQuestion} disabled={!canProgress}>Start Question</button>
         </Question>
+      }
+      { canProgress && <div className="buttons">
+          <button className="secondary" onClick={this.showLeaderboard}>Display Leaderboard</button>
+          <button className="tertiary" onClick={this.endGame}>End Game</button>
+        </div>
       }
     </div>
   }
@@ -81,10 +93,42 @@ export default class PresentationDriver extends PureComponent {
       question: {
         index,
         text: question.text,
-        seconds: session.secondsPerQuestion,
         totalSeconds: session.secondsPerQuestion,
         options: question.options,
       }
+    }).then(() => {
+      if (this.timer) clearInterval(this.timer)
+      this.startTimer()
     })
+  }
+
+  showLeaderboard = () => this.publicSessionRef().update({state: 'LEADERBOARD'})
+  endGame = () => null // TODO?
+
+  startTimer() {
+    this.questionStartedAt = new Date().valueOf()
+    this.timer = setInterval(() => {
+      const timeLeft = this.state.publicSession.question.totalSeconds - (new Date().valueOf() - this.questionStartedAt)/1000
+      if (timeLeft < 0) {
+        clearInterval(this.timer)
+        this.timer = null
+        const {questions} = this.props
+        const {publicSession} = this.state
+        if (publicSession.state === 'QUESTION_OPEN') {
+          const {question} = publicSession
+          this.publicSessionRef().update({
+            state: 'QUESTION_CLOSED',
+            question: {
+              index: question.index,
+              text: question.text,
+              options: question.options,
+              correctIndex: questions[question.index].correctIndex,
+              guesses: [0,0,0,0], // TODO
+              totalGuesses: 1,    // TODO
+            }
+          })  
+        }
+      }
+    }, 500)
   }
 }

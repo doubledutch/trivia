@@ -77,7 +77,7 @@ export default class BigScreen extends PureComponent {
   renderOpenQuestion(session) {
     const {question} = session
     return (
-      <Question question={question} number={question.index+1} secondsLeft={question.seconds} totalSeconds={question.totalSeconds}>
+      <Question question={question} number={question.index+1} totalSeconds={question.totalSeconds} countDown>
         { question.options.map((opt,i) => (
           <Option key={i} text={opt} />
         ))}
@@ -88,7 +88,7 @@ export default class BigScreen extends PureComponent {
   renderClosedQuestion(session) {
     const {question} = session
     return (
-      <Question question={question} number={question.index+1} secondsLeft={0} totalSeconds={question.totalSeconds}>
+      <Question question={question} number={question.index+1} totalSeconds={0}>
         { question.options.map((opt,i) => (
           <Option key={i} text={opt} guesses={question.guesses[i]} totalGuesses={question.totalGuesses} correct={i===question.correctIndex} />
         ))}

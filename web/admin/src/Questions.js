@@ -22,7 +22,7 @@ export default class Questions extends PureComponent {
                 <div className="question-details">
                   <div className="question-number">{index + 1}</div>
                   <div className="question-fields">
-                    <Text className="question-text underbar" updater={updater} value={item.text} maxLength={250} saveTo={this.saveQuestionText} />
+                    <Text className="question-text underbar" updater={updater} value={item.text} maxLength={150} saveTo={this.saveQuestionText} />
                     <div className="question-main">
                       <RadioGroup updater={updater} value={item.correctIndex} saveTo={this.saveCorrectIndex} render={radioGroup => (
                         <div className="question-options">

@@ -32,13 +32,15 @@
   color: #1aaaa0;
   font-size: 5em;
   padding: 0;
-  margin: 0 0 0.3em 0;
+  margin: 0 0 0.2em 0;
+  text-align: center;
 }
 
 .big-screen .question-title {
   display: flex;
   justify-content: space-between;
   font-size: 1.5em;
+  color: #9b9b9b;
 }
 .big-screen .question-title :last-child {
   color: #2daaa0;
@@ -61,10 +63,10 @@
 }
 .big-screen h2 {
   color: #442564;
-  font-size: 1.7em;
+  font-size: 1.4em;
   text-align: center;
   padding: 0;
-  margin: 0.5em 0 0.8em 0;
+  margin: 0 0 0.8em 0;
 }
 
 .big-screen .option {

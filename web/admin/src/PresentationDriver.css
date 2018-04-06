@@ -63,9 +63,15 @@
 }
 .presentation-driver h2 {
   color: #442564;
-  font-size: 1.5em;
+  font-size: 1.2em;
   text-align: center;
   margin: 1em 0;
+}
+
+.presentation-driver .buttons {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1em;
 }
 
 .presentation-driver button {

@@ -17,8 +17,36 @@
 import React, {PureComponent} from 'react'
 
 export default class Question extends PureComponent {
+  state = {}
+  componentDidMount() {
+    this.setState({secondsLeft: this.props.totalSeconds})
+    this.props.countDown && this.startTimer()
+  }
+
+  startTimer() {
+    const {totalSeconds} = this.props
+    this.setState({secondsLeft: totalSeconds})
+    const start = new Date().valueOf()
+    if (this.timer) clearInterval(this.timer)
+    this.timer = setInterval(() => {
+      const now = new Date().valueOf()
+      const elapsedSeconds = (now - start)/1000
+      if (elapsedSeconds > totalSeconds) {
+        clearInterval(this.timer)
+      }
+      this.setState({secondsLeft: Math.max(0, totalSeconds - elapsedSeconds)})
+    }, 500)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.countDown && (this.props.question !== nextProps.question || this.props.totalSeconds !== nextProps.totalSeconds)) {
+      this.startTimer()
+    }
+  }
+
   render () {
-    const {children, question, number, secondsLeft, totalSeconds} = this.props
+    const {children, question, number, totalSeconds} = this.props
+    const {secondsLeft} = this.state
     return (
       <div className="box">
         <div className="box-content">
