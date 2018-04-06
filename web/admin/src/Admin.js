@@ -61,7 +61,6 @@ export default class Admin extends PureComponent {
               <span>Session Name: </span>
               <input type="text" value={sessions[sessionId].name} onChange={this.onSessionNameChange} />
               <button className="secondary" onClick={this.deleteSession}>Delete Session</button>
-              { <button onClick={this.launchPresentation} disabled={launchDisabled || !this.bigScreenUrl()}>Launch Presentation</button> }
             </label>
             <Questions
               questions={this.questionsForCurrentSession()}
@@ -78,7 +77,10 @@ export default class Admin extends PureComponent {
             <div className="presentation-container">
               <iframe className="big-screen-container" src={this.bigScreenUrl()} title="presentation" />
               <PresentationDriver fbc={this.props.fbc} session={sessions[sessionId]} questions={this.questionsForCurrentSession()} />
-              <div className="presentation-overlays"><div>Presentation Screen</div><div>Up Next</div></div>
+              <div className="presentation-overlays">
+                <div>Presentation Screen <button className="launch" onClick={this.launchPresentation} disabled={launchDisabled || !this.bigScreenUrl()}>Launch in new tab</button></div>
+                <div>Up Next</div>
+              </div>
             </div>
           </div>
         }
