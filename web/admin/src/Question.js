@@ -24,7 +24,7 @@ export default class Question extends PureComponent {
         <div className="box-content">
           <div className="question-title">
             <div>Question {number}</div>
-            <div>{durationString(secondsLeft)}</div>
+            <div className={secondsLeft === 0 ? 'time-up' : null}>{durationString(secondsLeft)}</div>
           </div>
         </div>
         <TimerBar ratio={secondsLeft / totalSeconds} />

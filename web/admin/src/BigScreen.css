@@ -40,6 +40,12 @@
   justify-content: space-between;
   font-size: 1.5em;
 }
+.big-screen .question-title :last-child {
+  color: #2daaa0;
+}
+.big-screen .question-title .time-up {
+  color: #f97a60;
+}
 
 .big-screen .timer-bar {
   height: 1.5vh;
