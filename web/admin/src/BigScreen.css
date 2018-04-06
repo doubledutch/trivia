@@ -35,12 +35,6 @@
   margin: 0 0 0.3em 0;
 }
 
-.big-screen h2 {
-  font-size: 1.4em;
-  padding: 0;
-  margin: 0 0 0.5em 0;
-}
-
 .big-screen .question-title {
   display: flex;
   justify-content: space-between;
@@ -61,11 +55,31 @@
 }
 .big-screen h2 {
   color: #442564;
-  font-size: 2em;
+  font-size: 1.7em;
   text-align: center;
-  margin: 1em 0;
+  padding: 0;
+  margin: 0.5em 0 0.8em 0;
 }
 
+.big-screen .option {
+  margin-bottom: 2vh;
+  border: 0.5vh solid #9b9b9b;
+  height: 10vh;
+  border-radius: 5.5vh;
+  color: #9b9b9b;
+  line-height: 10vh;
+  padding: 0 4vh;
+  font-size: 1.3em;
+}
+
+.big-screen .option.correct {
+  border-color: #2daaa0;
+  color: #2daaa0;
+}
+
+.big-screen .option-overlay {
+
+}
 
 .attendees-joined {
 

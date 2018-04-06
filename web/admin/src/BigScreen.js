@@ -77,6 +77,9 @@ export default class BigScreen extends PureComponent {
     const {question} = session
     return (
       <Question question={question} number={question.index+1} secondsLeft={question.seconds} totalSeconds={question.totalSeconds}>
+        { question.options.map((opt,i) => (
+          <Option key={i} text={opt} />
+        ))}
       </Question>
     )
   }
@@ -84,3 +87,7 @@ export default class BigScreen extends PureComponent {
   sessionRef = () => this.props.fbc.database.public.adminRef('sessions').child(this.props.sessionId)
   usersRef = () => this.props.fbc.database.public.usersRef()
 }
+
+const Option = ({text, correct}) => <div className={`option ${correct ? 'correct':''}`}>
+  <div>{text}</div>
+</div>
