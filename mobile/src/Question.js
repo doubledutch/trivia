@@ -20,7 +20,7 @@ import { TouchableOpacity, Text, View, StyleSheet } from 'react-native'
 import colors from './colors'
 
 export default class Question extends PureComponent {
-  state = {}
+  state = {selectedIndex: null}
   
   componentDidMount() {
     this.setState({secondsLeft: this.props.totalSeconds})
@@ -57,7 +57,7 @@ export default class Question extends PureComponent {
 
   render() {
     const {question, totalSeconds} = this.props
-    const {secondsLeft} = this.state
+    const {secondsLeft, selectedIndex} = this.state
 
     const percentLeft = `${(secondsLeft / totalSeconds) * 100}%`
     return (
@@ -70,6 +70,14 @@ export default class Question extends PureComponent {
           <View style={[s.timerBarRemaining, {width: percentLeft}]} />
         </View>
         <View style={s.boxContent}>
+          <Text style={s.questionText}>{question.text}</Text>
+          <View style={s.options}>
+            { question.options.map((opt, i) => (
+              <TouchableOpacity key={i} style={[s.option, selectedIndex === i ? s.selectedOption : null]}>
+                <Text style={[s.optionText, selectedIndex === i ? s.selectedOptionText : null]}>{opt}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>        
       </View>
     )
@@ -114,5 +122,35 @@ const s = StyleSheet.create({
     position: 'absolute',
     right: 0,
     height: '100%',
+  },
+  questionText: {
+    color: colors.purple,
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginVertical: 20,
+  },
+  options: {
+    
+  },
+  option: {
+    borderRadius: 20,
+    height: 40,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    borderColor: colors.gray,
+    borderWidth: 2,
+    paddingHorizontal: 15,
+    marginVertical: 10,
+  },
+  selectedOption: {
+
+  },
+  optionText: {
+    color: colors.gray,
+  },
+  selectedOptionText: {
+
   },
 })
