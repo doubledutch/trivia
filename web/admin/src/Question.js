@@ -39,7 +39,7 @@ export default class Question extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.totalSeconds !== nextProps.totalSeconds || this.props.countDown && !nextProps.countDown) {
+    if (this.props.totalSeconds !== nextProps.totalSeconds || (this.props.countDown && !nextProps.countDown)) {
       this.setState({secondsLeft: nextProps.totalSeconds})
       if (this.timer) clearInterval(this.timer)
     }
@@ -64,7 +64,7 @@ export default class Question extends PureComponent {
             <div className={secondsLeft === 0 ? 'time-up' : null}>{secondsLeft != null && durationString(secondsLeft)}</div>
           </div>
         </div>
-        <TimerBar ratio={secondsLeft / totalSeconds} />
+        <TimerBar ratio={totalSeconds ? secondsLeft / totalSeconds : 0} />
         <div className="box-content">
           <h2>{question.text}</h2>
           {children}
