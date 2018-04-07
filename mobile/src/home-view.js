@@ -37,7 +37,7 @@ const usersRef = fbc.database.public.usersRef()
 const numJoinedToShow = 5
 
 export default class HomeView extends PureComponent {
-  state = {sessions: {}, users: {}}
+  state = {sessions: {}, users: {}, answers: {}}
   constructor() {
     super()
     this.signin = fbc.signin()
@@ -58,6 +58,7 @@ export default class HomeView extends PureComponent {
     this.signin.then(() => {
       sessionsRef.on('value', data => this.setState({sessions: data.val() || {}}))
       userRef.on('value', data => this.setState({me: data.val()}))
+      this.answersRef().on('value', data => this.setState({answers: data.val() || {}}))
       mapPushedDataToStateObjects(usersRef, this, 'users')
     })
   }
@@ -74,7 +75,7 @@ export default class HomeView extends PureComponent {
           { me === undefined
             ? null
             : session
-              ? this.renderSession(session, meJoined)
+              ? this.renderSession(session, sessionId, meJoined)
               : this.renderSessions(sessions, me)
           }
         </ScrollView>
@@ -82,12 +83,12 @@ export default class HomeView extends PureComponent {
     )
   }
 
-  renderSession = (session, meJoined) => {
+  renderSession = (session, sessionId, meJoined) => {
     if (!meJoined) return this.renderNotJoined(session)
 
     switch (session.state) {
       case 'NOT_STARTED': return this.renderNotStartedSession(session)
-      case 'QUESTION_OPEN': return this.renderAcceptingAnswers(session)
+      case 'QUESTION_OPEN': return this.renderAcceptingAnswers(session, sessionId)
       case 'QUESTION_CLOSED': return this.renderQuestionFinished(session)
       case 'ENDED': return this.renderEndedSession(session)
       default: return null
@@ -139,8 +140,14 @@ export default class HomeView extends PureComponent {
     )
   }
   
-  renderAcceptingAnswers = session => {
-    return <Question question={session.question} totalSeconds={session.question.totalSeconds} countDown />
+  renderAcceptingAnswers = (session, sessionId) => {
+    return <Question
+      question={session.question}
+      totalSeconds={session.question.totalSeconds}
+      countDown
+      selectedIndex={this.state.answers[sessionId]}
+      onOptionSelected={this.selectOption}
+    />
   }
   
   renderQuestionFinished = session => {
@@ -157,8 +164,17 @@ export default class HomeView extends PureComponent {
     )
   }
 
+  answersRef = () => fbc.database.private.adminableUserRef('answers')
+
   join = () => userRef.set({...client.currentUser, sessionId: this.state.sessionId})
   selectSession = session => () => this.setState({sessionId: session.id})
+
+  selectOption = i => {
+    const {sessions, sessionId} = this.state
+    const session = sessions[sessionId]
+    const {question} = session
+    this.answersRef().update({[sessionId]: i})
+  }
 }
 
 const s = StyleSheet.create({

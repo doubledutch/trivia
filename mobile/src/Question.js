@@ -56,8 +56,8 @@ export default class Question extends PureComponent {
   }
 
   render() {
-    const {question, totalSeconds} = this.props
-    const {secondsLeft, selectedIndex} = this.state
+    const {question, selectedIndex, totalSeconds} = this.props
+    const {secondsLeft} = this.state
 
     const percentLeft = `${(secondsLeft / totalSeconds) * 100}%`
     return (
@@ -71,9 +71,12 @@ export default class Question extends PureComponent {
         </View>
         <View style={s.boxContent}>
           <Text style={s.questionText}>{question.text}</Text>
-          <View style={s.options}>
+          <View>
             { question.options.map((opt, i) => (
-              <TouchableOpacity key={i} style={[s.option, selectedIndex === i ? s.selectedOption : null]}>
+              <TouchableOpacity
+                key={i}
+                style={[s.option, selectedIndex === i ? s.selectedOption : null]}
+                onPress={this.selectOption(i)}>
                 <Text style={[s.optionText, selectedIndex === i ? s.selectedOptionText : null]}>{opt}</Text>
               </TouchableOpacity>
             ))}
@@ -82,6 +85,8 @@ export default class Question extends PureComponent {
       </View>
     )
   }
+
+  selectOption = i => () => this.props.onOptionSelected(i)
 }
 
 function durationString(seconds) {
@@ -97,7 +102,6 @@ const s = StyleSheet.create({
     borderRadius: 10,
   },
   boxContent: {
-    alignItems: 'center',
     paddingVertical: 15,
     paddingHorizontal: 20,
   },
@@ -130,12 +134,9 @@ const s = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 20,
   },
-  options: {
-    
-  },
   option: {
-    borderRadius: 20,
-    height: 40,
+    borderRadius: 25,
+    height: 50,
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -145,12 +146,14 @@ const s = StyleSheet.create({
     marginVertical: 10,
   },
   selectedOption: {
-
+    backgroundColor: colors.purple,
+    borderColor: colors.purple,
   },
   optionText: {
     color: colors.gray,
+    fontSize: 18,
   },
   selectedOptionText: {
-
+    color: '#fff',
   },
 })
