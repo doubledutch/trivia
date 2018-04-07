@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { Image, ImageBackground, TouchableOpacity, Text, View, ScrollView, StyleSheet } from 'react-native'
 
 // rn-client must be imported before FirebaseConnector
@@ -23,6 +23,8 @@ import FirebaseConnector from '@doubledutch/firebase-connector'
 import {mapPerUserPushedDataToStateObjects} from './firebaseHelpers'
 import {background, trophy} from './images'
 import {Button} from './components'
+import Question from './Question'
+import colors from './colors'
 import { mapPushedDataToStateObjects } from './firebaseHelpers';
 
 const fbc = FirebaseConnector(client, 'trivia')
@@ -34,7 +36,7 @@ const usersRef = fbc.database.public.usersRef()
 
 const numJoinedToShow = 5
 
-export default class HomeView extends Component {
+export default class HomeView extends PureComponent {
   state = {sessions: {}, users: {}}
   constructor() {
     super()
@@ -138,10 +140,7 @@ export default class HomeView extends Component {
   }
   
   renderAcceptingAnswers = session => {
-    return (
-      <View style={s.box}>
-      </View>
-    )
+    return <Question question={session.question} totalSeconds={session.question.totalSeconds} countDown />
   }
   
   renderQuestionFinished = session => {
@@ -162,9 +161,6 @@ export default class HomeView extends Component {
   selectSession = session => () => this.setState({sessionId: session.id})
 }
 
-const orange = '#f97d64'
-const purple = '#684f82'
-const teal = '#2da99f'
 const s = StyleSheet.create({
   container: {
     flex: 1,
@@ -174,9 +170,9 @@ const s = StyleSheet.create({
     padding: 20,
   },
   box: {
-    alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.8)',
     borderRadius: 10,
+    alignItems: 'center',
     paddingVertical: 15,
     paddingHorizontal: 20,
   },
@@ -191,7 +187,7 @@ const s = StyleSheet.create({
     color: '#fff',
   },
   tealText: {
-    color: teal,
+    color: colors.teal,
     fontSize: 20,
   },
   joinSessionName: {
@@ -207,17 +203,17 @@ const s = StyleSheet.create({
     marginVertical: 30,
   },
   youAreIn: {
-    color: orange,
+    color: colors.orange,
     fontSize: 16,
   },
   joinCount: {
-    color: teal,
+    color: colors.teal,
     fontSize: 100,
     fontWeight: 'bold',
     marginVertical: 10,
   },
   haveJoined: {
-    color: purple,
+    color: colors.purple,
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 20,
@@ -232,10 +228,10 @@ const s = StyleSheet.create({
     marginLeft: 10,
     fontSize: 16,
     fontWeight: 'bold',
-    color: purple,
+    color: colors.purple,
   },
   hasJoined: {
     fontSize: 16,
-    color: purple,    
+    color: colors.purple,    
   },
 })

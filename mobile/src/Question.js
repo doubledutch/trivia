@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import React, {PureComponent} from 'react'
+import React, { PureComponent } from 'react'
+import { TouchableOpacity, Text, View, StyleSheet } from 'react-native'
+
+import colors from './colors'
 
 export default class Question extends PureComponent {
   state = {}
@@ -39,9 +42,8 @@ export default class Question extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.totalSeconds !== nextProps.totalSeconds || this.props.countDown && !nextProps.countDown) {
+    if (this.props.totalSeconds !== nextProps.totalSeconds) {
       this.setState({secondsLeft: nextProps.totalSeconds})
-      if (this.timer) clearInterval(this.timer)
     }
     
     if (nextProps.countDown && (this.props.question !== nextProps.question || this.props.totalSeconds !== nextProps.totalSeconds)) {
@@ -53,28 +55,26 @@ export default class Question extends PureComponent {
     if (this.timer) clearInterval(this.timer)
   }
 
-  render () {
-    const {children, question, number, totalSeconds} = this.props
+  render() {
+    const {question, totalSeconds} = this.props
     const {secondsLeft} = this.state
+
+    const percentLeft = `${(secondsLeft / totalSeconds) * 100}%`
     return (
-      <div className="box">
-        <div className="box-content">
-          <div className="question-title">
-            <div>Question {number}</div>
-            <div className={secondsLeft === 0 ? 'time-up' : null}>{secondsLeft != null && durationString(secondsLeft)}</div>
-          </div>
-        </div>
-        <TimerBar ratio={secondsLeft / totalSeconds} />
-        <div className="box-content">
-          <h2>{question.text}</h2>
-          {children}
-        </div>
-      </div>
+      <View style={s.box}>
+        <View style={[s.boxContent, s.questionTop]}>
+          <Text style={s.questionNumber}>Question {question.index + 1}</Text>
+          <Text style={s.timeRemaining}>{durationString(secondsLeft)}</Text>
+        </View>
+        <View style={s.timerBar}>
+          <View style={[s.timerBarRemaining, {width: percentLeft}]} />
+        </View>
+        <View style={s.boxContent}>
+        </View>        
+      </View>
     )
   }
 }
-
-export const TimerBar = ({ratio}) => <div className="timer-bar"><div className="timer-bar-remaining" style={{width: (ratio*100) + '%'}} /></div>
 
 function durationString(seconds) {
   const s = Math.ceil(seconds)
@@ -82,3 +82,37 @@ function durationString(seconds) {
   const m = Math.floor(s / 60)
   return `${m}:${sRem < 10 ? '0' : ''}${sRem}`
 }
+
+const s = StyleSheet.create({
+  box: {
+    backgroundColor: 'rgba(255,255,255,0.8)',
+    borderRadius: 10,
+  },
+  boxContent: {
+    alignItems: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+  },
+  questionTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  questionNumber: {
+    fontSize: 18,
+    color: colors.gray,
+  },
+  timeRemaining: {
+    fontSize: 18,
+    color: colors.teal,
+  },
+  timerBar: {
+    backgroundColor: colors.lightGray,
+    height: 5,
+  },
+  timerBarRemaining: {
+    backgroundColor: colors.teal,
+    position: 'absolute',
+    right: 0,
+    height: '100%',
+  },
+})

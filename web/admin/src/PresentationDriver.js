@@ -78,7 +78,7 @@ export default class PresentationDriver extends PureComponent {
       }
       { isQuestionInProgress
         ? <div className="buttons">
-            <button className="tertiary" onClick={this.endGame}>End Current Question Early</button>
+            <button className="tertiary" onClick={this.endQuestion}>End Current Question Early</button>
           </div>
         : questionIndex > 0 && <div className="buttons">
             <button className="secondary" onClick={this.showLeaderboard}>Display Leaderboard</button>
@@ -93,6 +93,8 @@ export default class PresentationDriver extends PureComponent {
 
   resetSession = () => {
     if (window.confirm('Are you sure you want to destroy the current trivia session? This cannot be undone.')) {
+      if (this.timer) clearInterval(this.timer)
+      
       // Remove the trivia session
       this.publicSessionRef().remove()
 
@@ -131,6 +133,27 @@ export default class PresentationDriver extends PureComponent {
   showLeaderboard = () => this.publicSessionRef().update({state: 'LEADERBOARD'})
   endGame = () => null // TODO?
 
+  endQuestion = () => {
+    if (this.timer) clearInterval(this.timer)
+
+    const {questions} = this.props
+    const {publicSession} = this.state
+    if (publicSession.state === 'QUESTION_OPEN') {
+      const {question} = publicSession
+      this.publicSessionRef().update({
+        state: 'QUESTION_CLOSED',
+        question: {
+          index: question.index,
+          text: question.text,
+          options: question.options,
+          correctIndex: questions[question.index].correctIndex,
+          guesses: [0,0,0,0], // TODO
+          totalGuesses: 1,    // TODO
+        }
+      })  
+    }
+  }
+
   startTimer() {
     this.questionStartedAt = new Date().valueOf()
     this.timer = setInterval(() => {
@@ -138,22 +161,7 @@ export default class PresentationDriver extends PureComponent {
       if (timeLeft < 0) {
         clearInterval(this.timer)
         this.timer = null
-        const {questions} = this.props
-        const {publicSession} = this.state
-        if (publicSession.state === 'QUESTION_OPEN') {
-          const {question} = publicSession
-          this.publicSessionRef().update({
-            state: 'QUESTION_CLOSED',
-            question: {
-              index: question.index,
-              text: question.text,
-              options: question.options,
-              correctIndex: questions[question.index].correctIndex,
-              guesses: [0,0,0,0], // TODO
-              totalGuesses: 1,    // TODO
-            }
-          })  
-        }
+        this.endQuestion()
       }
     }, 500)
   }
