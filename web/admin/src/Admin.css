@@ -25,6 +25,7 @@
   height: 400px;
   display: flex;
   position: relative;
+  margin-top: 10px;
 }
 
 iframe.big-screen-container {

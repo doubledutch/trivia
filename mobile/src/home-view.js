@@ -175,8 +175,15 @@ export default class HomeView extends PureComponent {
   }
 
   renderEndedSession = session => {
+    const leaderboard = session.leaderboard || []
+    const myPlace = this.myPlace(leaderboard)
     return (
-      <View style={s.box}>
+      <View>
+        { myPlace && <View style={[s.box, s.myPlace]}>
+          <Text style={s.myPlaceTitle}>You placed {ordinal(myPlace)}{myPlace < 10 ? '!':''}</Text>
+        </View> }
+        <Text style={s.leaderboardHeader}>Leaderboard</Text>
+        <Leaderboard leaderboard={leaderboard} />
       </View>
     )
   }

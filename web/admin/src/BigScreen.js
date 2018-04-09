@@ -52,7 +52,9 @@ export default class BigScreen extends PureComponent {
       case 'NOT_STARTED': return this.renderNotStarted()
       case 'QUESTION_OPEN': return this.renderOpenQuestion(session)
       case 'QUESTION_CLOSED': return this.renderClosedQuestion(session)
-      case 'LEADERBOARD': return this.renderLeaderboard(session)
+      case 'LEADERBOARD':
+      case 'ENDED':
+        return this.renderLeaderboard(session)
       default: return null
     }
   }

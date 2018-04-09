@@ -63,12 +63,12 @@ export default class PresentationDriver extends PureComponent {
       case 'NOT_STARTED': return this.renderNextQuestion(session, 0, false)
       case 'QUESTION_OPEN': return this.renderNextQuestion(session, publicSession.question.index + 1, true)
       case 'QUESTION_CLOSED': return this.renderNextQuestion(session, publicSession.question.index + 1, false)
-
+      case 'LEADERBOARD': return this.renderNextQuestion(session, publicSession.question.index + 1, false, true)
       default: return <div className="presentation-driver">{this.renderReset()}</div>
     }
   }
 
-  renderNextQuestion(session, questionIndex, isQuestionInProgress) {
+  renderNextQuestion(session, questionIndex, isQuestionInProgress, hideLeaderboardButton) {
     const {questions} = this.props
     const question = questions[questionIndex]
     
@@ -82,7 +82,7 @@ export default class PresentationDriver extends PureComponent {
             <button className="tertiary" onClick={this.endQuestion}>End Current Question Early</button>
           </div>
         : questionIndex > 0 && <div className="buttons">
-            <button className="secondary" onClick={this.showLeaderboard}>Display Leaderboard</button>
+            {!hideLeaderboardButton && <button className="secondary" onClick={this.showLeaderboard}>Display Leaderboard</button>}
             <button className="tertiary" onClick={this.endGame}>End Game</button>
           </div>
       }
@@ -132,7 +132,7 @@ export default class PresentationDriver extends PureComponent {
   }
 
   showLeaderboard = () => this.publicSessionRef().update({state: 'LEADERBOARD'})
-  endGame = () => null // TODO?
+  endGame = () => this.publicSessionRef().update({state: 'ENDED'})
 
   endQuestion = () => {
     if (this.timer) clearInterval(this.timer)
@@ -198,7 +198,7 @@ export default class PresentationDriver extends PureComponent {
         playerScore.place = place
         prevScore = playerScore.score
       })
-    return leaderboard.concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard)
+    return leaderboard
   }
   
   startTimer() {
