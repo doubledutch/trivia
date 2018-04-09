@@ -165,6 +165,7 @@ export default class PresentationDriver extends PureComponent {
         this.publicSessionRef().update({
           state: 'QUESTION_CLOSED',
           scores,
+          leaderboard: this.getLeaderboard(scores),
           question: {
             index: question.index,
             text: question.text,
@@ -181,6 +182,25 @@ export default class PresentationDriver extends PureComponent {
     }
   }
 
+  getLeaderboard(scores) {
+    if (!scores) return []
+    const {users} = this.props
+    let prevScore = Number.MAX_SAFE_INTEGER
+    let place = 0
+    const leaderboard = Object.keys(scores)
+      .map(userId => ({score: scores[userId], user: users[userId]}))
+      .filter(x => x.user)
+      .sort((a,b) => b.score - a.score) // Sort by descending score
+    leaderboard.forEach(playerScore => {
+        if (playerScore.score < prevScore) {
+          place++
+        }
+        playerScore.place = place
+        prevScore = playerScore.score
+      })
+    return leaderboard
+  }
+  
   startTimer() {
     this.questionStartedAt = new Date().valueOf()
     this.timer = setInterval(() => {

@@ -25,16 +25,19 @@ import {openTab} from './utils'
 export default class Admin extends PureComponent {
   state = {
     sessions: {},
-    questionsBySession: {}
+    questionsBySession: {},
+    users: {},
   }
 
   sessionsRef = () => this.props.fbc.database.private.adminRef('sessions')
   questionsRef = () => this.props.fbc.database.private.adminRef('questions')
+  publicUsersRef = () => this.props.fbc.database.public.usersRef()
 
   componentDidMount() {
     const {fbc} = this.props
     mapPushedDataToStateObjects(this.sessionsRef(), this, 'sessions')
     mapPushedDataToObjectOfStateObjects(this.questionsRef(), this, 'questionsBySession', (key, value) => value.sessionId)
+    mapPushedDataToStateObjects(this.publicUsersRef(), this, 'users')
     fbc.getLongLivedAdminToken().then(longLivedToken => this.setState({longLivedToken}))
   }
 
@@ -46,7 +49,7 @@ export default class Admin extends PureComponent {
   }
 
   render() {
-    const {launchDisabled, sessionId, sessions} = this.state
+    const {launchDisabled, sessionId, sessions, users} = this.state
     return (
       <div className="Admin">
         <div className="row">
@@ -76,7 +79,7 @@ export default class Admin extends PureComponent {
             />
             <div className="presentation-container">
               <iframe className="big-screen-container" src={this.bigScreenUrl()} title="presentation" />
-              <PresentationDriver fbc={this.props.fbc} session={sessions[sessionId]} questions={this.questionsForCurrentSession()} />
+              <PresentationDriver fbc={this.props.fbc} session={sessions[sessionId]} questions={this.questionsForCurrentSession()} users={users} />
               <div className="presentation-overlays">
                 <div>Presentation Screen <button className="overlay-button" onClick={this.launchPresentation} disabled={launchDisabled || !this.bigScreenUrl()}>Launch in new tab</button></div>
                 <div>Up Next</div>

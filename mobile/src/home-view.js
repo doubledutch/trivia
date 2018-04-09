@@ -23,6 +23,7 @@ import FirebaseConnector from '@doubledutch/firebase-connector'
 import {mapPerUserPushedDataToStateObjects} from './firebaseHelpers'
 import {background, trophy} from './images'
 import {Button} from './components'
+import Leaderboard from './Leaderboard'
 import Question from './Question'
 import colors from './colors'
 import { mapPushedDataToStateObjects } from './firebaseHelpers';
@@ -90,6 +91,7 @@ export default class HomeView extends PureComponent {
       case 'NOT_STARTED': return this.renderNotStartedSession(session)
       case 'QUESTION_OPEN': return this.renderAcceptingAnswers(session, sessionId)
       case 'QUESTION_CLOSED': return this.renderQuestionFinished(session, sessionId)
+      case 'LEADERBOARD': return this.renderLeaderboard(session)
       case 'ENDED': return this.renderEndedSession(session)
       default: return null
     }
@@ -157,7 +159,20 @@ export default class HomeView extends PureComponent {
       selectedIndex={this.state.answers[sessionId]}
     />
   }
-  
+
+  renderLeaderboard = session => {
+    const myPlace = this.myPlace(session.leaderboard)
+    return (
+      <View>
+        { myPlace && <View style={[s.box, s.myPlace]}>
+          <Text style={s.myPlaceTitle}>You are in {ordinal(myPlace)} place{myPlace < 10 ? '!':''}</Text>
+        </View> }
+        <Text style={s.leaderboardHeader}>Leaderboard</Text>
+        <Leaderboard leaderboard={session.leaderboard} />
+      </View>
+    )
+  }
+
   renderEndedSession = session => {
     return (
       <View style={s.box}>
@@ -176,6 +191,17 @@ export default class HomeView extends PureComponent {
     const {question} = session
     this.answersRef().update({[sessionId]: i})
   }
+  myPlace = leaderboard => (leaderboard.find(x => x.user.id === client.currentUser.id) || {}).place
+}
+
+function ordinal(x) {
+  let ord
+  if (x >= 4 && x <= 20) ord = 'th'
+  else if (x%10 === 1) ord = 'st'
+  else if (x%10 === 2) ord = 'nd'
+  else if (x%10 === 3) ord = 'rd'
+  else ord = 'th'
+  return `${x}${ord}`
 }
 
 const s = StyleSheet.create({
@@ -218,6 +244,21 @@ const s = StyleSheet.create({
     width: 200,
     height: 159,
     marginVertical: 30,
+  },
+  myPlace: {
+    marginBottom: 30,
+    backgroundColor: '#fff',
+  },
+  leaderboardHeader: {
+    color: '#fff',
+    marginBottom: 5,
+    backgroundColor: 'transparent',
+    fontSize: 16,
+  },
+  myPlaceTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.purple,
   },
   youAreIn: {
     color: colors.orange,
