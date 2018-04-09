@@ -30,6 +30,9 @@ export default class BigScreen extends PureComponent {
         this.setState(state => ({joined: [...state.joined, {...user, id: data.key}]}))
       }
     })
+    const removeJoinedUser = data => this.setState(state => ({joined: state.joined.filter(u => u.id !== data.key)}))
+    this.usersRef().on('child_changed', data => data.val().sessionId !== sessionId && removeJoinedUser(data))
+    this.usersRef().on('child_removed', removeJoinedUser)
   }
 
   render() {

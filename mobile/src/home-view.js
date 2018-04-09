@@ -89,7 +89,7 @@ export default class HomeView extends PureComponent {
     switch (session.state) {
       case 'NOT_STARTED': return this.renderNotStartedSession(session)
       case 'QUESTION_OPEN': return this.renderAcceptingAnswers(session, sessionId)
-      case 'QUESTION_CLOSED': return this.renderQuestionFinished(session)
+      case 'QUESTION_CLOSED': return this.renderQuestionFinished(session, sessionId)
       case 'ENDED': return this.renderEndedSession(session)
       default: return null
     }
@@ -150,11 +150,12 @@ export default class HomeView extends PureComponent {
     />
   }
   
-  renderQuestionFinished = session => {
-    return (
-      <View style={s.box}>
-      </View>
-    )
+  renderQuestionFinished = (session, sessionId) => {
+    return <Question
+      question={session.question}
+      totalSeconds={0}
+      selectedIndex={this.state.answers[sessionId]}
+    />
   }
   
   renderEndedSession = session => {
@@ -164,7 +165,7 @@ export default class HomeView extends PureComponent {
     )
   }
 
-  answersRef = () => fbc.database.private.adminableUserRef('answers')
+  answersRef = () => fbc.database.private.adminableUserRef()
 
   join = () => userRef.set({...client.currentUser, sessionId: this.state.sessionId})
   selectSession = session => () => this.setState({sessionId: session.id})

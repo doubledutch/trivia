@@ -47,6 +47,7 @@ export default class Question extends PureComponent {
     }
     
     if (nextProps.countDown && (this.props.question !== nextProps.question || this.props.totalSeconds !== nextProps.totalSeconds)) {
+      this.lastSelected = null
       this.startTimer(nextProps)
     }
   }
@@ -74,10 +75,15 @@ export default class Question extends PureComponent {
           <View>
             { question.options.map((opt, i) => (
               <TouchableOpacity
-                key={i}
-                style={[s.option, selectedIndex === i ? s.selectedOption : null]}
+                disabled={!this.props.onOptionSelected}
+                key={`${question.index}-${i}-${opt}-${question.correctIndex}`}
+                style={[
+                  s.option,
+                  (selectedIndex === i || this.lastSelected === i) ? s.selectedOption : null,
+                  question.correctIndex != null && question.correctIndex !== i ? s.incorrectOption : null
+                ]}
                 onPress={this.selectOption(i)}>
-                <Text style={[s.optionText, selectedIndex === i ? s.selectedOptionText : null]}>{opt}</Text>
+                <Text style={[s.optionText, (selectedIndex === i || this.lastSelected === i) ? s.selectedOptionText : null]}>{opt}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -86,7 +92,10 @@ export default class Question extends PureComponent {
     )
   }
 
-  selectOption = i => () => this.props.onOptionSelected(i)
+  selectOption = i => () => {
+    this.lastSelected = i // Track last selected index even after the recorded responses are cleared (as long as the question remains unchanged)
+    this.props.onOptionSelected(i)
+  }
 }
 
 function durationString(seconds) {
@@ -155,5 +164,8 @@ const s = StyleSheet.create({
   },
   selectedOptionText: {
     color: '#fff',
+  },
+  incorrectOption: {
+    opacity: 0.2,
   },
 })

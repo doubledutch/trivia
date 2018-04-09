@@ -22,6 +22,7 @@ import Question from './Question'
 export default class PresentationDriver extends PureComponent {
   publicSessionRef = () => this.props.fbc.database.public.adminRef('sessions').child(this.props.session.id)
   publicUsersRef = () => this.props.fbc.database.public.usersRef()
+  privateUsersRef = () => this.props.fbc.database.private.adminableUsersRef()
 
   state = {}
 
@@ -94,7 +95,7 @@ export default class PresentationDriver extends PureComponent {
   resetSession = () => {
     if (window.confirm('Are you sure you want to destroy the current trivia session? This cannot be undone.')) {
       if (this.timer) clearInterval(this.timer)
-      
+
       // Remove the trivia session
       this.publicSessionRef().remove()
 
@@ -136,21 +137,47 @@ export default class PresentationDriver extends PureComponent {
   endQuestion = () => {
     if (this.timer) clearInterval(this.timer)
 
-    const {questions} = this.props
+    const {questions, session} = this.props
     const {publicSession} = this.state
     if (publicSession.state === 'QUESTION_OPEN') {
       const {question} = publicSession
-      this.publicSessionRef().update({
-        state: 'QUESTION_CLOSED',
-        question: {
-          index: question.index,
-          text: question.text,
-          options: question.options,
-          correctIndex: questions[question.index].correctIndex,
-          guesses: [0,0,0,0], // TODO
-          totalGuesses: 1,    // TODO
-        }
-      })  
+
+      // Score responses
+      this.privateUsersRef().once('value', data => {
+        const answersPerUser = data.val() || {}
+        const answers = Object.keys(answersPerUser)
+          .filter(id => answersPerUser[id][session.id] != null)
+          .map(id => ({id, answer: answersPerUser[id][session.id]}))
+        const guesses = answers.reduce((counts, answer) => {
+          counts[answer.answer]++
+          return counts
+        }, [0,0,0,0])
+
+        // Score
+        const correctIndex = questions[question.index].correctIndex
+        const scores = answers.reduce((scores, answer) => {
+          if (!scores[answer.id]) scores[answer.id] = 0
+          if (answer.answer === correctIndex) scores[answer.id]++
+          return scores
+        }, publicSession.scores || {})
+
+        // Close the question and show responses
+        this.publicSessionRef().update({
+          state: 'QUESTION_CLOSED',
+          scores,
+          question: {
+            index: question.index,
+            text: question.text,
+            options: question.options,
+            correctIndex,
+            guesses,
+            totalGuesses: guesses[0] + guesses[1] + guesses[2] + guesses[3],
+          }
+        })
+
+        // Remove all player responses now that scoring is complete.
+        answers.forEach(a => this.privateUsersRef().child(a.id).child(session.id).remove())
+      })
     }
   }
 
