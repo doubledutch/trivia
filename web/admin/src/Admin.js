@@ -65,24 +65,32 @@ export default class Admin extends PureComponent {
               <input type="text" value={sessions[sessionId].name} onChange={this.onSessionNameChange} />
               <button className="secondary" onClick={this.deleteSession}>Delete Session</button>
             </label>
-            <Questions
-              questions={this.questionsForCurrentSession()}
-              questionsRef={this.questionsRef()}
-              renderFooter={() => (
-                <footer>
-                  <div><label>Time per question: <input type="number" value={sessions[sessionId].secondsPerQuestion} onChange={this.onSecondsChange} /> seconds</label></div>
-                  <div>
-                    <button onClick={this.addQuestion}>Add New Question</button>
+            <div className="session">
+              <Questions
+                questions={this.questionsForCurrentSession()}
+                questionsRef={this.questionsRef()}
+                renderFooter={() => (
+                  <footer>
+                    <div><label>Time per question: <input type="number" value={sessions[sessionId].secondsPerQuestion} onChange={this.onSecondsChange} /> seconds</label></div>
+                    <div>
+                      <button onClick={this.addQuestion}>Add New Question</button>
+                    </div>
+                  </footer>
+                )}
+              />
+              <div className="presentation-container">
+                <div className="presentation-side">
+                  <iframe className="big-screen-container" src={this.bigScreenUrl()} title="presentation" />
+                  <div className="presentation-overlays">
+                    <div>Presentation Screen <button className="overlay-button" onClick={this.launchPresentation} disabled={launchDisabled || !this.bigScreenUrl()}>Launch in new tab</button></div>
                   </div>
-                </footer>
-              )}
-            />
-            <div className="presentation-container">
-              <iframe className="big-screen-container" src={this.bigScreenUrl()} title="presentation" />
-              <PresentationDriver fbc={this.props.fbc} session={sessions[sessionId]} questions={this.questionsForCurrentSession()} users={users} />
-              <div className="presentation-overlays">
-                <div>Presentation Screen <button className="overlay-button" onClick={this.launchPresentation} disabled={launchDisabled || !this.bigScreenUrl()}>Launch in new tab</button></div>
-                <div>Up Next</div>
+                </div>
+                <div className="presentation-side">
+                  <PresentationDriver fbc={this.props.fbc} session={sessions[sessionId]} questions={this.questionsForCurrentSession()} users={users} />
+                  <div className="presentation-overlays">
+                    <div>Up Next</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

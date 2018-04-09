@@ -15,7 +15,8 @@
  */
 
 .presentation-driver {
-  flex: 1;
+  height: 100%;
+  width: 100%;
   background-color: #eaeaea;
   display: flex;
   flex-direction: column;
