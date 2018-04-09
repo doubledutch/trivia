@@ -198,7 +198,7 @@ export default class PresentationDriver extends PureComponent {
         playerScore.place = place
         prevScore = playerScore.score
       })
-    return leaderboard
+    return leaderboard.concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard).concat(leaderboard)
   }
   
   startTimer() {

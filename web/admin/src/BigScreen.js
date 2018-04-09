@@ -17,6 +17,7 @@
 import React, {PureComponent} from 'react'
 import './BigScreen.css'
 
+import Avatar from './components/Avatar'
 import Question from './Question'
 
 export default class BigScreen extends PureComponent {
@@ -51,6 +52,7 @@ export default class BigScreen extends PureComponent {
       case 'NOT_STARTED': return this.renderNotStarted()
       case 'QUESTION_OPEN': return this.renderOpenQuestion(session)
       case 'QUESTION_CLOSED': return this.renderClosedQuestion(session)
+      case 'LEADERBOARD': return this.renderLeaderboard(session)
       default: return null
     }
   }
@@ -100,6 +102,27 @@ export default class BigScreen extends PureComponent {
           <Option key={i} text={opt} guesses={question.guesses[i]} totalGuesses={question.totalGuesses} correct={i===question.correctIndex} />
         ))}
       </Question>
+    )
+  }
+
+  renderLeaderboard(session) {
+    const {leaderboard} = session
+    const customStyle = p => p.place===1 ? {
+      transform: 'scale(1.5)',
+      margin: '7vh auto',
+    } : null
+    return (
+      <div className="leaderboard">
+        <h1>Leaderboard</h1>
+        { leaderboard && leaderboard.map((p,i) => (
+          <div key={i} className="leaderboard-tile box" style={customStyle(p)}>
+            <div className="leaderboard-place">{p.place}</div>
+            <Avatar user={p.user} size={5} units="vh" />
+            <div className="leaderboard-name">{p.user.firstName} {p.user.lastName}</div>
+            <div className="leaderboard-points">{p.score} {p.score === 1 ? 'pt':'pts'}</div>
+          </div>
+        ))}
+      </div>
     )
   }
 

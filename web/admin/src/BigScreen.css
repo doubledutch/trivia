@@ -123,6 +123,44 @@
   background-color: #2daaa0;
 }
 
-.attendees-joined {
+/* .attendees-joined {
 
+} */
+
+.leaderboard {
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  overflow: hidden;
+  color: #f97d64;
+}
+.leaderboard h1 {
+  color: #fff;
+  font-size: 1.3em;
+  margin: 0.7em;
+  font-weight: normal;
+}
+.big-screen .leaderboard-tile.box {
+  display: flex;
+  margin-bottom: 1vh;
+  width: 40%;
+  flex-direction: row;
+  padding: 2vh;
+  margin: 1vh auto;
+}
+.leaderboard-place {
+  min-width: 2vh;
+}
+.leaderboard-tile .avatar, .leaderboard-title .avatar-initials {
+  margin: 0 2vh;
+}
+.leaderboard-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #684f82;
+}
+.leaderboard-points {
+  margin-left: 1vh;
 }

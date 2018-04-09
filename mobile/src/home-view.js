@@ -161,14 +161,15 @@ export default class HomeView extends PureComponent {
   }
 
   renderLeaderboard = session => {
-    const myPlace = this.myPlace(session.leaderboard)
+    const leaderboard = session.leaderboard || []
+    const myPlace = this.myPlace(leaderboard)
     return (
       <View>
         { myPlace && <View style={[s.box, s.myPlace]}>
           <Text style={s.myPlaceTitle}>You are in {ordinal(myPlace)} place{myPlace < 10 ? '!':''}</Text>
         </View> }
         <Text style={s.leaderboardHeader}>Leaderboard</Text>
-        <Leaderboard leaderboard={session.leaderboard} />
+        <Leaderboard leaderboard={leaderboard} />
       </View>
     )
   }

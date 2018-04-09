@@ -51,9 +51,10 @@ const s = StyleSheet.create({
     color: colors.orange,
     fontSize: 16,
     fontWeight: 'bold',
+    minWidth: 22,
   },
   avatar: {
-    marginHorizontal: 13,
+    marginHorizontal: 11,
   },
   name: {
     flex: 1,
