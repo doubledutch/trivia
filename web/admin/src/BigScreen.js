@@ -20,6 +20,7 @@ import './BigScreen.css'
 import Avatar from './components/Avatar'
 import Question from './Question'
 
+const numJoinedToShow = 7
 export default class BigScreen extends PureComponent {
   state = {joined: []}
   componentDidMount() {
@@ -79,7 +80,14 @@ export default class BigScreen extends PureComponent {
         <div className="box-content">
           <h1>{joined.length}</h1>
           <h2>{joined.length > 1 ? 'Have':'Has'} Joined</h2>
-          <div className="attendees-joined"></div>
+          <div className="attendees-joined">
+            { joined.slice(Math.max(0,joined.length-numJoinedToShow)).map((u,i) => (
+              <div key={u.id}>
+                <Avatar user={u} size={7} units="vh" />
+                <span>{u.firstName} {u.lastName}</span>&nbsp;has joined
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     )

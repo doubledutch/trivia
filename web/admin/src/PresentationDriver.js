@@ -109,7 +109,7 @@ export default class PresentationDriver extends PureComponent {
     }
   }
 
-  initializeSession = () => this.publicSessionRef().set({state: 'NOT_STARTED'})
+  initializeSession = () => this.publicSessionRef().set({state: 'NOT_STARTED', name: this.props.session.name})
 
   startNextQuestion = () => {
     const {session, questions} = this.props

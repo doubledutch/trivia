@@ -123,9 +123,20 @@
   background-color: #2daaa0;
 }
 
-/* .attendees-joined {
-
-} */
+.attendees-joined > * {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2vh;
+}
+.attendees-joined > :first-child {
+  opacity: 0.5;
+}
+.attendees-joined span {
+  font-weight: bold;
+}
+.attendees-joined .avatar {
+  margin-right: 3vh;
+}
 
 .leaderboard {
   height: 100%;
