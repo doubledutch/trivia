@@ -20,7 +20,7 @@ import './PresentationDriver.css'
 import Question from './Question'
 
 export default class PresentationDriver extends PureComponent {
-  publicSessionRef = () => this.props.fbc.database.public.adminRef('sessions').child(this.props.session.id)
+  publicSessionRef = props => (props || this.props).fbc.database.public.adminRef('sessions').child((props || this.props).session.id)
   publicUsersRef = () => this.props.fbc.database.public.usersRef()
   privateUsersRef = () => this.props.fbc.database.private.adminableUsersRef()
 
@@ -45,8 +45,8 @@ export default class PresentationDriver extends PureComponent {
     this.unwireHandlers()
   }
 
-  wireHandlers() {
-    this.publicSessionHandler = this.publicSessionRef().on('value', data => this.setState({publicSession: data.val()}))
+  wireHandlers(props) {
+    this.publicSessionHandler = this.publicSessionRef(props).on('value', data => this.setState({publicSession: data.val()}))
   }
 
   unwireHandlers() {
