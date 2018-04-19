@@ -9,7 +9,7 @@
     "android": "node node_modules/dd-rn-packager/react-native/local-cli/cli.js run-android"
   },
   "dependencies": {
-    "@doubledutch/firebase-connector": "^3.3.1",
+    "@doubledutch/firebase-connector": "^3.4.3",
     "@doubledutch/rn-client": "^3.1.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "react": "~16.0.0-alpha.12",

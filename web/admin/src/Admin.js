@@ -17,7 +17,7 @@
 import React, { PureComponent } from 'react'
 import './Admin.css'
 
-import {mapPushedDataToStateObjects, mapPushedDataToObjectOfStateObjects} from './firebaseHelpers'
+import {mapPushedDataToStateObjects, mapPushedDataToObjectOfStateObjects} from '@doubledutch/firebase-connector'
 import Questions from './Questions'
 import PresentationDriver from './PresentationDriver'
 import {openTab} from './utils'
