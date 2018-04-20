@@ -31,6 +31,7 @@ export default class Admin extends PureComponent {
 
   sessionsRef = () => this.props.fbc.database.private.adminRef('sessions')
   questionsRef = () => this.props.fbc.database.private.adminRef('questions')
+  backgroundUrlRef = () => this.props.fbc.database.public.adminRef('backgroundUrl')
   publicUsersRef = () => this.props.fbc.database.public.usersRef()
 
   componentDidMount() {
@@ -38,6 +39,7 @@ export default class Admin extends PureComponent {
     mapPushedDataToStateObjects(this.sessionsRef(), this, 'sessions')
     mapPushedDataToObjectOfStateObjects(this.questionsRef(), this, 'questionsBySession', (key, value) => value.sessionId)
     mapPushedDataToStateObjects(this.publicUsersRef(), this, 'users')
+    this.backgroundUrlRef().on('value', data => this.setState({backgroundUrl: data.val()}))
     fbc.getLongLivedAdminToken().then(longLivedToken => this.setState({longLivedToken}))
   }
 
@@ -49,7 +51,7 @@ export default class Admin extends PureComponent {
   }
 
   render() {
-    const {launchDisabled, sessionId, sessions, users} = this.state
+    const {backgroundUrl, launchDisabled, sessionId, sessions, users} = this.state
     return (
       <div className="Admin">
         <div className="row">
@@ -61,7 +63,7 @@ export default class Admin extends PureComponent {
         </div>
         { sessionId && <div>
             <label className="row">
-              <span>Session Name: </span>
+              <span>Session Name:&nbsp;</span>
               <input type="text" value={sessions[sessionId].name} onChange={this.onSessionNameChange} />
               <button className="secondary" onClick={this.deleteSession}>Delete Session</button>
             </label>
@@ -95,6 +97,9 @@ export default class Admin extends PureComponent {
             </div>
           </div>
         }
+        <div>
+          <input type="text" value={backgroundUrl} onChange={this.onBackgroundUrlChange} placeholder="Custom background image URL. Suggested at least 700px high and wide." className="background-url" />
+        </div>
       </div>
     )
   }
@@ -103,6 +108,7 @@ export default class Admin extends PureComponent {
 
   onSessionChange = e => this.setState({sessionId: e.target.value})
   onSessionNameChange = e => this.sessionsRef().child(this.state.sessionId).update({name: e.target.value})
+  onBackgroundUrlChange = e => this.backgroundUrlRef().set(e.target.value)
   onSecondsChange = e => this.sessionsRef().child(this.state.sessionId).update({secondsPerQuestion: +e.target.value})
   createSession = () => this.sessionsRef().push({name: 'New Session', secondsPerQuestion: 30}).then(ref => this.setState({sessionId: ref.key}))
   deleteSession = () => {

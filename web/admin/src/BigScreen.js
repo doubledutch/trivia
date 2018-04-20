@@ -25,6 +25,7 @@ export default class BigScreen extends PureComponent {
   state = {joined: []}
   componentDidMount() {
     const {sessionId} = this.props
+    this.backgroundUrlRef().on('value', data => this.setState({backgroundUrl: data.val()}))
     this.sessionRef().on('value', data => this.setState({session: data.val()}))
     this.usersRef().on('child_added', data => {
       const user = data.val()
@@ -38,11 +39,11 @@ export default class BigScreen extends PureComponent {
   }
 
   render() {
-    const {session} = this.state
+    const {backgroundUrl, session} = this.state
     if (session === undefined) return <div>Loading...</div>
     if (!session) return this.renderNonexistent()
     return (
-      <div className="big-screen">
+      <div className="big-screen" style={backgroundUrl ? {backgroundImage: `url(${backgroundUrl})`} : null}>
         {this.renderState(session)}
       </div>
     )
@@ -137,6 +138,7 @@ export default class BigScreen extends PureComponent {
   }
 
   sessionRef = () => this.props.fbc.database.public.adminRef('sessions').child(this.props.sessionId)
+  backgroundUrlRef = () => this.props.fbc.database.public.adminRef('backgroundUrl')
   usersRef = () => this.props.fbc.database.public.usersRef()
 }
 

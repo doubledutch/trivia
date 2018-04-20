@@ -20,13 +20,19 @@
 
 .container.questions {
   width: 800px;
-  height: 700px;
+  height: 800px;
   margin: 0 10px 10px 0;
 }
 
 .session {
   display: flex;
   flex-wrap: wrap;
+}
+
+.background-url {
+  width: 800px;
+  margin-top: 10px;
+  box-sizing: border-box;
 }
 
 .presentation-container {

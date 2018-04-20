@@ -20,13 +20,12 @@ import { Image, ImageBackground, TouchableOpacity, Text, View, ScrollView, Style
 // rn-client must be imported before FirebaseConnector
 import client, { Avatar, TitleBar } from '@doubledutch/rn-client'
 import FirebaseConnector from '@doubledutch/firebase-connector'
-import {mapPerUserPushedDataToStateObjects} from './firebaseHelpers'
+import {mapPerUserPushedDataToStateObjects, mapPushedDataToStateObjects} from '@doubledutch/firebase-connector'
 import {background, trophy} from './images'
 import {Button} from './components'
 import Leaderboard from './Leaderboard'
 import Question from './Question'
 import colors from './colors'
-import { mapPushedDataToStateObjects } from './firebaseHelpers';
 
 const fbc = FirebaseConnector(client, 'trivia')
 
@@ -34,6 +33,7 @@ fbc.initializeAppWithSimpleBackend()
 const sessionsRef = fbc.database.public.adminRef('sessions')
 const userRef = fbc.database.public.userRef()
 const usersRef = fbc.database.public.usersRef()
+const backgroundUrlRef = fbc.database.public.adminRef('backgroundUrl')
 
 const numJoinedToShow = 5
 
@@ -57,6 +57,7 @@ export default class HomeView extends PureComponent {
 
   componentDidMount() {
     this.signin.then(() => {
+      backgroundUrlRef.on('value', data => this.setState({backgroundUrl: data.val()}))
       sessionsRef.on('value', data => this.setState({sessions: data.val() || {}}))
       userRef.on('value', data => this.setState({me: data.val()}))
       this.answersRef().on('value', data => this.setState({answers: data.val() || {}}))
@@ -65,12 +66,12 @@ export default class HomeView extends PureComponent {
   }
 
   render() {
-    const {sessionId, sessions, me} = this.state
+    const {backgroundUrl, sessionId, sessions, me} = this.state
     const session = sessions[sessionId]
     const meJoined = (me && me.sessionId === sessionId) ? me : null
 
     return (
-      <ImageBackground style={s.container} source={background}>
+      <ImageBackground style={s.container} source={backgroundUrl ? {uri: backgroundUrl} : background}>
         <TitleBar title="Trivia" client={client} signin={this.signin} />
         <ScrollView style={s.scroll}>
           { me === undefined
