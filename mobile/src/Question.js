@@ -74,7 +74,7 @@ export default class Question extends PureComponent {
           <Text style={s.questionText}>{question.text}</Text>
           <View>
             { question.options.map((opt, i) => (
-              <TouchableOpacity
+              !!opt && <TouchableOpacity
                 disabled={!this.props.onOptionSelected}
                 key={`${question.index}-${i}-${opt}-${question.correctIndex}`}
                 style={[
