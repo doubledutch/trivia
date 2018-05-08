@@ -51,7 +51,7 @@ export default class PresentationDriver extends PureComponent {
 
   unwireHandlers() {
     this.publicSessionRef().off('value', this.publicSessionHandler)
-    if (this.timer) clearInterval(this.timer)
+    this.clearTimer()
   }
 
   render() {
@@ -92,9 +92,15 @@ export default class PresentationDriver extends PureComponent {
 
   renderReset = () => <button className="tertiary" onClick={this.resetSession}>Reset trivia session</button>
 
+  clearTimer = () => {
+    if (this.timer) {
+      clearInterval(this.timer)
+      this.timer = null
+    }
+  }
   resetSession = () => {
     if (window.confirm('Are you sure you want to destroy the current trivia session? This cannot be undone.')) {
-      if (this.timer) clearInterval(this.timer)
+      this.clearTimer()
 
       // Remove the trivia session
       this.publicSessionRef().remove()
@@ -116,6 +122,7 @@ export default class PresentationDriver extends PureComponent {
     const {publicSession} = this.state
     const index = publicSession.question ? publicSession.question.index + 1 : 0
     const question = questions[index]
+    this.clearTimer()
 
     this.publicSessionRef().update({
       state: 'QUESTION_OPEN',
@@ -126,7 +133,6 @@ export default class PresentationDriver extends PureComponent {
         options: question.options,
       }
     }).then(() => {
-      if (this.timer) clearInterval(this.timer)
       this.startTimer()
     })
   }
@@ -135,7 +141,8 @@ export default class PresentationDriver extends PureComponent {
   endGame = () => this.publicSessionRef().update({state: 'ENDED'})
 
   endQuestion = () => {
-    if (this.timer) clearInterval(this.timer)
+    if (!this.timer) return // Ensure we only end the question once.
+    this.clearTimer()
 
     const {questions, session} = this.props
     const {publicSession} = this.state
@@ -156,8 +163,12 @@ export default class PresentationDriver extends PureComponent {
         // Score
         const correctIndex = questions[question.index].correctIndex
         const scores = answers.reduce((scores, answer) => {
-          if (!scores[answer.id]) scores[answer.id] = 0
-          if (answer.answer === correctIndex) scores[answer.id]++
+          if (!scores[answer.id]) {
+            scores[answer.id] = 0
+          }
+          if (answer.answer === correctIndex) {
+            scores[answer.id] = scores[answer.id] + 1
+          }
           return scores
         }, publicSession.scores || {})
 
@@ -203,11 +214,10 @@ export default class PresentationDriver extends PureComponent {
   
   startTimer() {
     this.questionStartedAt = new Date().valueOf()
+    this.clearTimer()
     this.timer = setInterval(() => {
       const timeLeft = this.state.publicSession.question.totalSeconds - (new Date().valueOf() - this.questionStartedAt)/1000
       if (timeLeft < 0) {
-        clearInterval(this.timer)
-        this.timer = null
         this.endQuestion()
       }
     }, 500)
