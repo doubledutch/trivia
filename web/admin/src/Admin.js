@@ -27,18 +27,21 @@ export default class Admin extends PureComponent {
     sessions: {},
     questionsBySession: {},
     users: {},
+    publicSessions: {}
   }
 
   sessionsRef = () => this.props.fbc.database.private.adminRef('sessions')
   questionsRef = () => this.props.fbc.database.private.adminRef('questions')
   backgroundUrlRef = () => this.props.fbc.database.public.adminRef('backgroundUrl')
   publicUsersRef = () => this.props.fbc.database.public.usersRef()
+  publicSessionRef = () => this.props.fbc.database.public.adminRef('sessions')
 
   componentDidMount() {
     const {fbc} = this.props
     mapPushedDataToStateObjects(this.sessionsRef(), this, 'sessions')
     mapPushedDataToObjectOfStateObjects(this.questionsRef(), this, 'questionsBySession', (key, value) => value.sessionId)
     mapPushedDataToStateObjects(this.publicUsersRef(), this, 'users')
+    mapPushedDataToStateObjects(this.publicSessionRef(), this, "publicSessions")
     this.backgroundUrlRef().on('value', data => this.setState({backgroundUrl: data.val()}))
     fbc.getLongLivedAdminToken().then(longLivedToken => this.setState({longLivedToken}))
   }
@@ -52,8 +55,10 @@ export default class Admin extends PureComponent {
 
   render() {
     const {backgroundUrl, launchDisabled, sessionId, sessions, users} = this.state
+    console.log(this.state.publicSessions)
     return (
       <div className="Admin">
+        <p className='bigBoxTitle'>Trivia Admin</p>
         <div className="row">
           <select value={sessionId} onChange={this.onSessionChange}>
             <option value="">-- Select a session --</option>
@@ -75,7 +80,7 @@ export default class Admin extends PureComponent {
                   <footer>
                     <div><label>Time per question: <input type="number" value={sessions[sessionId].secondsPerQuestion} onChange={this.onSecondsChange} /> seconds</label></div>
                     <div>
-                      <button onClick={this.addQuestion}>Add New Question</button>
+                      <button onClick={() => this.addQuestion(this.state.sessionId)}>Add New Question</button>
                     </div>
                   </footer>
                 )}
@@ -110,17 +115,22 @@ export default class Admin extends PureComponent {
   onSessionNameChange = e => this.sessionsRef().child(this.state.sessionId).update({name: e.target.value})
   onBackgroundUrlChange = e => this.backgroundUrlRef().set(e.target.value)
   onSecondsChange = e => this.sessionsRef().child(this.state.sessionId).update({secondsPerQuestion: +e.target.value})
-  createSession = () => this.sessionsRef().push({name: 'New Session', secondsPerQuestion: 30}).then(ref => this.setState({sessionId: ref.key}))
+  createSession = () => this.sessionsRef().push({name: 'New Session', secondsPerQuestion: 30}).then(ref => {
+    this.setState({sessionId: ref.key})
+    this.addQuestion(ref.key)
+  })
   deleteSession = () => {
     const {sessionId, sessions} = this.state
+    const publicSessions = Object.values(this.state.publicSessions)
+    const publicSession = publicSessions.find(item => item.name === sessions[sessionId].name)
     if (window.confirm(`Are you sure you want to delete session '${sessions[sessionId].name}'?`)) {
       this.setState({sessionId: ''})
       this.sessionsRef().child(sessionId).remove()
+      if (publicSession) this.publicSessionRef().child(publicSession.id).remove()
     }
   }
 
-  addQuestion = () => {
-    const {sessionId} = this.state
+  addQuestion = (sessionId) => {
     this.questionsRef().push({sessionId, order: this.questionsForCurrentSession().length, text: '', options: ['','','',''], correctIndex: 0})
   }
 

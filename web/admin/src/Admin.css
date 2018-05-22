@@ -24,6 +24,15 @@
   margin: 0 10px 10px 0;
 }
 
+.bigBoxTitle{
+  font-size: 18px;
+  display: flex;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  font-family: 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: #393939;
+}
+
 .session {
   display: flex;
   flex-wrap: wrap;
