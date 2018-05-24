@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 
+ :root {
+  font: 400 14px -apple-system, BlinkMacSystemFont, 'Fira Sans', 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: #4A4A4A;
+}
+
+html, body, input, button, select, form{
+  font: inherit;
+}
+
 .Admin {
   padding: 10px;  
 }
@@ -29,8 +38,7 @@
   display: flex;
   margin-left: 10px;
   margin-bottom: 10px;
-  font-family: 'Open Sans', 'Helvetica Neue', sans-serif;
-  color: #393939;
+  color: #4A4A4A;
 }
 
 .session {
@@ -91,4 +99,5 @@ iframe.big-screen-container {
 button.overlay-button {
   height: 1.6em;
   padding: 0 1em;
+  color: white;
 }

@@ -119,14 +119,13 @@ export default class Admin extends PureComponent {
     this.setState({sessionId: ref.key})
     this.addQuestion(ref.key)
   })
+  
   deleteSession = () => {
     const {sessionId, sessions} = this.state
-    const publicSessions = Object.values(this.state.publicSessions)
-    const publicSession = publicSessions.find(item => item.name === sessions[sessionId].name)
     if (window.confirm(`Are you sure you want to delete session '${sessions[sessionId].name}'?`)) {
       this.setState({sessionId: ''})
       this.sessionsRef().child(sessionId).remove()
-      if (publicSession) this.publicSessionRef().child(publicSession.id).remove()
+      this.publicSessionRef().child(sessionId).remove()
     }
   }
 
