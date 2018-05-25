@@ -22,14 +22,14 @@ export default class Questions extends PureComponent {
                 <div className="question-details">
                   <div className="question-number">{index + 1}</div>
                   <div className="question-fields">
-                    <Text className="question-text underbar" updater={updater} value={item.text} maxLength={150} saveTo={this.saveQuestionText} />
+                    <Text className="question-text underbar" placeholder="Question Text" updater={updater} value={item.text} maxLength={250} saveTo={this.saveQuestionText} />
                     <div className="question-main">
                       <RadioGroup updater={updater} value={item.correctIndex} saveTo={this.saveCorrectIndex} render={radioGroup => (
                         <div className="question-options">
                           <div className="question-option"><div>&nbsp;</div><div>Correct answer</div></div>
                           { [0,1,2,3].map(i => (
                             <div className="question-option" key={i}>
-                              <Text className="underbar" updater={updater} value={item.options[i]} maxLength={30} placeholder={`Option ${letters[i]}`} saveTo={this.saveOption(i)} />
+                              <Text className="underbar" updater={updater} value={item.options[i]} maxLength={30} placeholder="Add an answer" saveTo={this.saveOption(i)} />
                               <div><Radio group={radioGroup} value={i} /></div>
                             </div>
                           ))}
@@ -71,7 +71,11 @@ export default class Questions extends PureComponent {
 
   sortedQuestions = () => this.props.questions.sort((a,b) => a.order - b.order)
 
-  deleteQuestion = q => () => this.props.questionsRef.child(q.id).remove()
+  deleteQuestion = q => () => {
+    if (window.confirm("Are you sure you want to delete the question")) {
+      this.props.questionsRef.child(q.id).remove()
+    }
+  }
 }
 
 const letters = ['A','B','C','D']
