@@ -52,9 +52,13 @@ export default class Questions extends PureComponent {
     )
   }
 
-  saveQuestion = (q, updater) => this.props.questionsRef.child(q.id).update(updater.build({options: []}))
-  saveQuestionText = (obj, val) => obj.text = val
-  saveOption = i => (obj, val) => obj.options[i] = val
+  saveQuestion = (q, updater) => {
+    this.props.questionsRef.child(q.id).update(updater.build({options: []}))
+    this.props.resetHelpText()
+    console.log("test")
+  }
+  saveQuestionText = (obj, val) => obj.text = val.trim()
+  saveOption = i => (obj, val) => obj.options[i] = val.trim()
   saveCorrectIndex = (obj, val) => obj.correctIndex = +val
 
   moveQuestion = (sourceIndex, destinationIndex) => {

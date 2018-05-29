@@ -27,7 +27,8 @@ export default class Admin extends PureComponent {
     sessions: {},
     questionsBySession: {},
     users: {},
-    publicSessions: {}
+    publicSessions: {},
+    helpText: "Add New Question"
   }
 
   sessionsRef = () => this.props.fbc.database.private.adminRef('sessions')
@@ -55,9 +56,8 @@ export default class Admin extends PureComponent {
 
   render() {
     const {backgroundUrl, launchDisabled, sessionId, sessions, users} = this.state
-    console.log(this.state.publicSessions)
     return (
-      <div className="Admin">
+      <div className="Admin">       
         <p className='bigBoxTitle'>Trivia Admin</p>
         <div className="row">
           <select value={sessionId} onChange={this.onSessionChange}>
@@ -69,34 +69,35 @@ export default class Admin extends PureComponent {
         { sessionId && <div>
             <label className="row">
               <span>Session Name:&nbsp;</span>
-              <input type="text" value={sessions[sessionId].name} onChange={this.onSessionNameChange} />
+              <input type="text" value={sessions[sessionId].name} maxLength={50} onChange={this.onSessionNameChange} />
               <button className="secondary" onClick={this.deleteSession}>Delete Session</button>
             </label>
             <div className="session">
               <Questions
                 questions={this.questionsForCurrentSession()}
                 questionsRef={this.questionsRef()}
+                resetHelpText={this.resetHelpText}
                 renderFooter={() => (
                   <footer>
                     <div><label>Time per question: <input type="number" value={sessions[sessionId].secondsPerQuestion} onChange={this.onSecondsChange} /> seconds</label></div>
                     <div>
-                      <button onClick={() => this.addQuestion(this.state.sessionId)}>Add New Question</button>
+                      <button onClick={() => this.addQuestion(this.state.sessionId)}>{this.state.helpText}</button>
                     </div>
                   </footer>
                 )}
               />
-              <div className="presentation-container">
-                <div className="presentation-side">
-                  <iframe className="big-screen-container" src={this.bigScreenUrl()} title="presentation" />
-                  <div className="presentation-overlays">
-                    <div>Presentation Screen <button className="overlay-button" onClick={this.launchPresentation} disabled={launchDisabled || !this.bigScreenUrl()}>Launch in new tab</button></div>
-                  </div>
+            </div>
+            <div className="presentation-container">
+              <div className="presentation-side">
+                <iframe className="big-screen-container" src={this.bigScreenUrl()} title="presentation" />
+                <div className="presentation-overlays">
+                  <div>Presentation Screen <button className="overlay-button" onClick={this.launchPresentation} disabled={launchDisabled || !this.bigScreenUrl()}>Launch Presentation</button></div>
                 </div>
-                <div className="presentation-side">
-                  <PresentationDriver fbc={this.props.fbc} session={sessions[sessionId]} questions={this.questionsForCurrentSession()} users={users} />
-                  <div className="presentation-overlays">
-                    <div>Up Next</div>
-                  </div>
+              </div>
+              <div className="presentation-side">
+                <PresentationDriver fbc={this.props.fbc} session={sessions[sessionId]} questions={this.questionsForCurrentSession()} users={users} />
+                <div className="presentation-overlays">
+                  <div>Up Next</div>
                 </div>
               </div>
             </div>
@@ -130,7 +131,17 @@ export default class Admin extends PureComponent {
   }
 
   addQuestion = (sessionId) => {
-    this.questionsRef().push({sessionId, order: this.questionsForCurrentSession().length, text: '', options: ['','','',''], correctIndex: 0})
+    const questions = this.questionsForCurrentSession()
+    if (questions.length) {
+      const checkQ = questions[questions.length-1]
+      if (checkQ.text && checkQ.options[0]) this.questionsRef().push({sessionId, order: this.questionsForCurrentSession().length, text: '', options: ['','','',''], correctIndex: 0})
+      else this.setState({helpText: "Complete Last Question"})
+    }
+    else this.questionsRef().push({sessionId, order: this.questionsForCurrentSession().length, text: '', options: ['','','',''], correctIndex: 0})
+  }
+
+  resetHelpText = () => {
+    this.setState({helpText: "Add New Question"})
   }
 
   launchPresentation = () => {
