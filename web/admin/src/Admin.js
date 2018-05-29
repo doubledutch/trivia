@@ -28,7 +28,8 @@ export default class Admin extends PureComponent {
     questionsBySession: {},
     users: {},
     publicSessions: {},
-    helpText: "Add New Question"
+    helpText: "Add New Question",
+    currentIndex: 0
   }
 
   sessionsRef = () => this.props.fbc.database.private.adminRef('sessions')
@@ -55,10 +56,12 @@ export default class Admin extends PureComponent {
   }
 
   render() {
+
     const {backgroundUrl, launchDisabled, sessionId, sessions, users} = this.state
     return (
       <div className="Admin">       
-        <p className='bigBoxTitle'>Trivia Admin</p>
+        <p className='boxTitle'>Trivia Challenge</p>
+        <p className='bigBoxTitle'>Trivia Questions</p>
         <div className="row">
           <select value={sessionId} onChange={this.onSessionChange}>
             <option value="">-- Select a session --</option>
@@ -70,6 +73,7 @@ export default class Admin extends PureComponent {
             <label className="row">
               <span>Session Name:&nbsp;</span>
               <input type="text" value={sessions[sessionId].name} maxLength={50} onChange={this.onSessionNameChange} />
+              {sessions[sessionId].isDisplayable ? null : <p>Please Rename Session</p>}
               <button className="secondary" onClick={this.deleteSession}>Delete Session</button>
             </label>
             <div className="session">
@@ -77,9 +81,10 @@ export default class Admin extends PureComponent {
                 questions={this.questionsForCurrentSession()}
                 questionsRef={this.questionsRef()}
                 resetHelpText={this.resetHelpText}
+                currentIndex={this.state.currentIndex}
                 renderFooter={() => (
                   <footer>
-                    <div><label>Time per question: <input type="number" value={sessions[sessionId].secondsPerQuestion} onChange={this.onSecondsChange} /> seconds</label></div>
+                    <div><label>Time per question: <input type="number" max="60" value={sessions[sessionId].secondsPerQuestion} onChange={this.onSecondsChange} /> seconds</label></div>
                     <div>
                       <button onClick={() => this.addQuestion(this.state.sessionId)}>{this.state.helpText}</button>
                     </div>
@@ -95,7 +100,7 @@ export default class Admin extends PureComponent {
                 </div>
               </div>
               <div className="presentation-side">
-                <PresentationDriver fbc={this.props.fbc} session={sessions[sessionId]} questions={this.questionsForCurrentSession()} users={users} />
+                <PresentationDriver fbc={this.props.fbc} session={sessions[sessionId]} saveCurrentIndex={this.saveCurrentIndex} questions={this.questionsForCurrentSession()} users={users} />
                 <div className="presentation-overlays">
                   <div>Up Next</div>
                 </div>
@@ -110,13 +115,33 @@ export default class Admin extends PureComponent {
     )
   }
 
+  saveCurrentIndex = (currentIndex) => {
+    this.setState({currentIndex})
+  }
+
   questionsForCurrentSession = () => Object.values(this.state.questionsBySession[this.state.sessionId] || {}).sort((a,b) => a.order - b.order)
 
   onSessionChange = e => this.setState({sessionId: e.target.value})
-  onSessionNameChange = e => this.sessionsRef().child(this.state.sessionId).update({name: e.target.value})
+
+  onSessionNameChange = e => {
+    const currentTitle = e.target.value.trim()
+    const dup = Object.values(this.state.sessions).find(i => i.name.toLowerCase() === currentTitle.toLowerCase())
+    if (currentTitle.length && !dup) {
+      this.publicSessionRef().child(this.state.sessionId).update({name: e.target.value, isDisplayable: true})
+      this.sessionsRef().child(this.state.sessionId).update({name: e.target.value, isDisplayable: true})
+    }
+    else {
+      this.publicSessionRef().child(this.state.sessionId).update({name: e.target.value, isDisplayable: false})
+      this.sessionsRef().child(this.state.sessionId).update({name: e.target.value, isDisplayable: false})
+    }
+  }
   onBackgroundUrlChange = e => this.backgroundUrlRef().set(e.target.value)
-  onSecondsChange = e => this.sessionsRef().child(this.state.sessionId).update({secondsPerQuestion: +e.target.value})
-  createSession = () => this.sessionsRef().push({name: 'New Session', secondsPerQuestion: 30}).then(ref => {
+  onSecondsChange = e => {
+    var seconds = e.target.value
+    if (e.target.value > 60) seconds = 60
+    this.sessionsRef().child(this.state.sessionId).update({secondsPerQuestion: +seconds})
+  }
+  createSession = () => this.sessionsRef().push({name: '', secondsPerQuestion: 30, isDisplayable: false}).then(ref => {
     this.setState({sessionId: ref.key})
     this.addQuestion(ref.key)
   })
