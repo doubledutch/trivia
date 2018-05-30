@@ -71,7 +71,7 @@ export default class Admin extends PureComponent {
             <label className="row">
               <span>Session Name:&nbsp;</span>
               <input type="text" value={sessions[sessionId].name} maxLength={50} onChange={this.onSessionNameChange} />
-              {this.returnIsDisplayable(sessionId) ? null : <p>Please Rename Session</p>}
+              {this.isDisplayable(sessionId) ? null : <p>Please Rename Session</p>}
               <button className="secondary" onClick={this.deleteSession}>Delete Session</button>
             </label>
             <div className="session">
@@ -112,11 +112,10 @@ export default class Admin extends PureComponent {
     )
   }
 
-  returnIsDisplayable = (sessionId) => {
-    var isDisplayable = false
+  isDisplayable = (sessionId) => {
     const currentSession = this.state.sessions[sessionId]
     const dup = Object.values(this.state.sessions).find(i => i.name.toLowerCase() === currentSession.name.toLowerCase() && currentSession.id !== i.id)
-    if (currentSession.name.length && !dup) { isDisplayable = true } 
+    const isDisplayable = currentTitle.length > 0 && !dup
     return isDisplayable
   }
 
@@ -174,9 +173,9 @@ export default class Admin extends PureComponent {
         return "Add New Question"
       }
       else return "Complete Last Question"
+    }
+    else return "Add New Question"
   }
-  else return "Add New Question"
-}
 
   launchPresentation = () => {
     this.setState({launchDisabled: true})
