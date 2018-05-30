@@ -28,7 +28,6 @@ export default class Admin extends PureComponent {
     questionsBySession: {},
     users: {},
     publicSessions: {},
-    helpText: "Add New Question",
     currentIndex: 0
   }
 
@@ -56,7 +55,6 @@ export default class Admin extends PureComponent {
   }
 
   render() {
-
     const {backgroundUrl, launchDisabled, sessionId, sessions, users} = this.state
     return (
       <div className="Admin">       
@@ -73,20 +71,19 @@ export default class Admin extends PureComponent {
             <label className="row">
               <span>Session Name:&nbsp;</span>
               <input type="text" value={sessions[sessionId].name} maxLength={50} onChange={this.onSessionNameChange} />
-              {sessions[sessionId].isDisplayable ? null : <p>Please Rename Session</p>}
+              {this.returnIsDisplayable(sessionId) ? null : <p>Please Rename Session</p>}
               <button className="secondary" onClick={this.deleteSession}>Delete Session</button>
             </label>
             <div className="session">
               <Questions
                 questions={this.questionsForCurrentSession()}
                 questionsRef={this.questionsRef()}
-                resetHelpText={this.resetHelpText}
                 currentIndex={this.state.currentIndex}
                 renderFooter={() => (
                   <footer>
                     <div><label>Time per question: <input type="number" max="60" value={sessions[sessionId].secondsPerQuestion} onChange={this.onSecondsChange} /> seconds</label></div>
                     <div>
-                      <button onClick={() => this.addQuestion(this.state.sessionId)}>{this.state.helpText}</button>
+                      <button onClick={() => this.addQuestion(this.state.sessionId)}>{this.returnHelpText()}</button>
                     </div>
                   </footer>
                 )}
@@ -115,6 +112,14 @@ export default class Admin extends PureComponent {
     )
   }
 
+  returnIsDisplayable = (sessionId) => {
+    var isDisplayable = false
+    const currentSession = this.state.sessions[sessionId]
+    const dup = Object.values(this.state.sessions).find(i => i.name.toLowerCase() === currentSession.name.toLowerCase() && currentSession.id !== i.id)
+    if (currentSession.name.length && !dup) { isDisplayable = true } 
+    return isDisplayable
+  }
+
   saveCurrentIndex = (currentIndex) => {
     this.setState({currentIndex})
   }
@@ -125,23 +130,17 @@ export default class Admin extends PureComponent {
 
   onSessionNameChange = e => {
     const currentTitle = e.target.value.trim()
-    const dup = Object.values(this.state.sessions).find(i => i.name.toLowerCase() === currentTitle.toLowerCase())
-    if (currentTitle.length && !dup) {
-      this.publicSessionRef().child(this.state.sessionId).update({name: e.target.value, isDisplayable: true})
-      this.sessionsRef().child(this.state.sessionId).update({name: e.target.value, isDisplayable: true})
-    }
-    else {
-      this.publicSessionRef().child(this.state.sessionId).update({name: e.target.value, isDisplayable: false})
-      this.sessionsRef().child(this.state.sessionId).update({name: e.target.value, isDisplayable: false})
-    }
+    this.publicSessionRef().child(this.state.sessionId).update({name: e.target.value})
+    this.sessionsRef().child(this.state.sessionId).update({name: e.target.value})
   }
+
   onBackgroundUrlChange = e => this.backgroundUrlRef().set(e.target.value)
+
   onSecondsChange = e => {
     var seconds = e.target.value
-    if (e.target.value > 60) seconds = 60
     this.sessionsRef().child(this.state.sessionId).update({secondsPerQuestion: +seconds})
   }
-  createSession = () => this.sessionsRef().push({name: '', secondsPerQuestion: 30, isDisplayable: false}).then(ref => {
+  createSession = () => this.sessionsRef().push({name: '', secondsPerQuestion: 30}).then(ref => {
     this.setState({sessionId: ref.key})
     this.addQuestion(ref.key)
   })
@@ -159,15 +158,25 @@ export default class Admin extends PureComponent {
     const questions = this.questionsForCurrentSession()
     if (questions.length) {
       const checkQ = questions[questions.length-1]
-      if (checkQ.text && checkQ.options[0]) this.questionsRef().push({sessionId, order: this.questionsForCurrentSession().length, text: '', options: ['','','',''], correctIndex: 0})
-      else this.setState({helpText: "Complete Last Question"})
+      if (checkQ.text && checkQ.options[0]) {
+        this.questionsRef().push({sessionId, order: this.questionsForCurrentSession().length, text: '', options: ['','','',''], correctIndex: 0})
+      }
+      else return
     }
-    else this.questionsRef().push({sessionId, order: this.questionsForCurrentSession().length, text: '', options: ['','','',''], correctIndex: 0})
+    else { this.questionsRef().push({sessionId, order: this.questionsForCurrentSession().length, text: '', options: ['','','',''], correctIndex: 0}) }
   }
 
-  resetHelpText = () => {
-    this.setState({helpText: "Add New Question"})
+  returnHelpText = () => {
+    const questions = this.questionsForCurrentSession()
+    if (questions.length) {
+      const checkQ = questions[questions.length-1]
+      if (checkQ.text && checkQ.options[0]) {
+        return "Add New Question"
+      }
+      else return "Complete Last Question"
   }
+  else return "Add New Question"
+}
 
   launchPresentation = () => {
     this.setState({launchDisabled: true})
