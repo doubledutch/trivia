@@ -115,7 +115,7 @@ export default class Admin extends PureComponent {
   isDisplayable = (sessionId) => {
     const currentSession = this.state.sessions[sessionId]
     const dup = Object.values(this.state.sessions).find(i => i.name.toLowerCase() === currentSession.name.toLowerCase() && currentSession.id !== i.id)
-    const isDisplayable = currentTitle.length > 0 && !dup
+    const isDisplayable = currentSession.name.length > 0 && !dup
     return isDisplayable
   }
 
