@@ -129,7 +129,7 @@ export default class Admin extends PureComponent {
 
   onSessionNameChange = e => {
     const currentTitle = e.target.value.trim()
-    const isPublicSession = Object.keys(this.state.publicSessions).find(item => item === this.state.sessionId)
+    const isPublicSession = this.state.publicSessions[this.state.sessionId]
     this.sessionsRef().child(this.state.sessionId).update({name: e.target.value})
     if (isPublicSession) this.publicSessionRef().child(this.state.sessionId).update({name: e.target.value})
   }
