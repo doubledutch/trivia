@@ -38,7 +38,7 @@ export default class Questions extends PureComponent {
                       <div className="question-buttons">
                         { updater.state.hasPendingChanges && <button onClick={() => this.saveQuestion(item, updater)}>Save Question</button> }
                         { updater.state.hasPendingChanges && <button className="secondary" onClick={() => updater.cancel()}>Cancel Changes</button> }
-                        <button className="tertiary" onClick={this.deleteQuestion(item)}>Delete Question</button>
+                        <button className="tertiary" disabled={this.props.currentIndex >= index} onClick={this.deleteQuestion(item)}>Delete Question</button>
                       </div>
                     </div>
                   </div>
@@ -53,8 +53,8 @@ export default class Questions extends PureComponent {
   }
 
   saveQuestion = (q, updater) => this.props.questionsRef.child(q.id).update(updater.build({options: []}))
-  saveQuestionText = (obj, val) => obj.text = val
-  saveOption = i => (obj, val) => obj.options[i] = val
+  saveQuestionText = (obj, val) => obj.text = val.trim()
+  saveOption = i => (obj, val) => obj.options[i] = val.trim()
   saveCorrectIndex = (obj, val) => obj.correctIndex = +val
 
   moveQuestion = (sourceIndex, destinationIndex) => {

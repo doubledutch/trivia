@@ -33,8 +33,16 @@ html, body, input, button, select, form{
   margin: 0 10px 10px 0;
 }
 
-.bigBoxTitle{
+.boxTitle{
   font-size: 18px;
+  display: flex;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  color: #4A4A4A;
+}
+
+.bigBoxTitle{
+  font-size: 16px;
   display: flex;
   margin-left: 10px;
   margin-bottom: 10px;
@@ -60,13 +68,13 @@ html, body, input, button, select, form{
   display: flex;
   position: relative;
 }
-@media screen and (min-width: 1230px) {
+/* @media screen and (min-width: 1230px) {
   .presentation-container {
     width: 400px;
     height: 800px;
     flex-direction: column;
   }
-}
+} */
 
 .presentation-side {
   width: 400px;

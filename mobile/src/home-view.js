@@ -113,7 +113,8 @@ export default class HomeView extends PureComponent {
   renderSessions = (sessions, me) => {
     const currentSessions = Object.keys(sessions)
       .map(id => ({...sessions[id], id}))
-      .filter(s => s.state !== 'ENDED' || (me && s.id === me.sessionId))
+      .filter(s => this.isDisplayable(s, sessions) && s.state !== 'ENDED' || (me && s.id === me.sessionIds))
+      
     if (currentSessions.length === 0) return <View style={s.box}><Text>No trivia games currently. Try back later!</Text></View>
     return (
       <View style={s.box}>
@@ -123,6 +124,13 @@ export default class HomeView extends PureComponent {
         ))}
       </View>
     )
+  }
+
+  isDisplayable = (s, sessions) => {
+    const currentTitle = s.name
+    const dup = Object.values(sessions).find(i => i.name.toLowerCase() === currentTitle.toLowerCase())
+    const isDisplayable = currentTitle.length > 0 && !dup
+    return isDisplayable
   }
   
   renderNotStartedSession = session => {
