@@ -70,7 +70,7 @@ export default class Admin extends PureComponent {
         { sessionId && <div>
             <label className="row">
               <span>Session Name:&nbsp;</span>
-              <input type="text" value={sessions[sessionId].name} maxLength={50} onChange={this.onSessionNameChange} />
+              <input type="text" value={sessions[sessionId].name} maxLength={50} onChange={this.onSessionNameChange} className={this.isDisplayable(sessionId) ? "": "errorInputState" }/>
               {this.isDisplayable(sessionId) ? null : <p>Please Rename Session</p>}
               <button className="secondary" onClick={this.deleteSession}>Delete Session</button>
             </label>
