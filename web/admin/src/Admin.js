@@ -16,7 +16,6 @@
 
 import React, { PureComponent } from 'react'
 import './Admin.css'
-
 import {mapPushedDataToStateObjects, mapPushedDataToObjectOfStateObjects} from '@doubledutch/firebase-connector'
 import Questions from './Questions'
 import PresentationDriver from './PresentationDriver'
@@ -70,7 +69,7 @@ export default class Admin extends PureComponent {
         { sessionId && <div>
             <label className="row">
               <span>Session Name:&nbsp;</span>
-              <input type="text" value={sessions[sessionId].name} maxLength={50} onChange={this.onSessionNameChange} className={this.isDisplayable(sessionId) ? "": "errorInputState" }/>
+              <input class="dd-bordered" type="text" value={sessions[sessionId].name} maxLength={50} onChange={this.onSessionNameChange} className={this.isDisplayable(sessionId) ? "": "errorInputState" }/>
               {this.isDisplayable(sessionId) ? null : <p>Please Rename Session</p>}
               <button className="secondary" onClick={this.deleteSession}>Delete Session</button>
             </label>
@@ -81,7 +80,7 @@ export default class Admin extends PureComponent {
                 currentIndex={this.state.currentIndex}
                 renderFooter={() => (
                   <footer>
-                    <div><label>Time per question: <input type="number" max="60" value={sessions[sessionId].secondsPerQuestion} onChange={this.onSecondsChange} /> seconds</label></div>
+                    <div><label>Time per question: <input type="number" min="0" value={sessions[sessionId].secondsPerQuestion} onChange={this.onSecondsChange} /> seconds</label></div>
                     <div>
                       <button onClick={() => this.addQuestion(this.state.sessionId)}>{this.returnHelpText()}</button>
                     </div>
