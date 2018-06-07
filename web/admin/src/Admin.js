@@ -16,6 +16,7 @@
 
 import React, { PureComponent } from 'react'
 import './Admin.css'
+
 import {mapPushedDataToStateObjects, mapPushedDataToObjectOfStateObjects} from '@doubledutch/firebase-connector'
 import Questions from './Questions'
 import PresentationDriver from './PresentationDriver'
@@ -64,12 +65,12 @@ export default class Admin extends PureComponent {
             <option value="">-- Select a session --</option>
             { Object.values(sessions).map(s => <option key={s.id} value={s.id}>{s.name}</option>) }
           </select>
-          <button onClick={this.createSession}>Create new session</button>
+          <button className="dd-bordered secondary" onClick={this.createSession}>Create new session</button>
         </div>
         { sessionId && <div>
             <label className="row">
               <span>Session Name:&nbsp;</span>
-              <input class="dd-bordered" type="text" value={sessions[sessionId].name} maxLength={50} onChange={this.onSessionNameChange} className={this.isDisplayable(sessionId) ? "": "errorInputState" }/>
+              <input className="dd-bordered" type="text" value={sessions[sessionId].name} maxLength={50} onChange={this.onSessionNameChange} className={this.isDisplayable(sessionId) ? "": "errorInputState" }/>
               {this.isDisplayable(sessionId) ? null : <p>Please Rename Session</p>}
               <button className="secondary" onClick={this.deleteSession}>Delete Session</button>
             </label>
