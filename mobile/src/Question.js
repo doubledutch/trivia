@@ -44,6 +44,9 @@ export default class Question extends PureComponent {
   componentWillReceiveProps(nextProps) {
     if (this.props.totalSeconds !== nextProps.totalSeconds) {
       this.setState({secondsLeft: nextProps.totalSeconds})
+      if (nextProps.totalSeconds === 0) { 
+        if (this.timer) clearInterval(this.timer)
+      }
     }
     
     if (nextProps.countDown && (this.props.question !== nextProps.question || this.props.totalSeconds !== nextProps.totalSeconds)) {
