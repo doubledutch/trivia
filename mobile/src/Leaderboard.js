@@ -26,27 +26,16 @@ export default class Leaderboard extends PureComponent {
     return (
       <View>
         { leaderboard.map((p,i) => (
-          i === 0 ? this.renderFirstPosition(p, i) : <View key={i} style={s.tile}>
-            <Text style={s.place}>{p.place}</Text>
-            <Avatar user={p.user} size={35} style={s.avatar} />
-            <Text style={s.name} numberOfLines={1}>{p.user.firstName} {p.user.lastName}</Text>
-            <Text style={s.points}>{p.score} {p.score === 1 ? 'pt':'pts'}</Text>
+          <View key={i} style={s.tile}>
+            <Text style={i === 0 ? s.place2: s.place}>{p.place}</Text>
+            <Avatar user={p.user} size={i === 0 ? 45 : 35} style={s.avatar} />
+            <Text style={i === 0 ? s.name2 : s.name} numberOfLines={1}>{p.user.firstName} {p.user.lastName}</Text>
+            <Text style={i === 0 ? s.points2 : s.points}>{p.score} {p.score === 1 ? 'pt':'pts'}</Text>
           </View>
         ))}
       </View>
     )
   }
-}
-
-renderFirstPosition = (p, i) => {
-  return (
-    <View key={i} style={s.tile}>
-      <Text style={s.place}>{p.place}</Text>
-      <Avatar user={p.user} size={45} style={s.avatar} />
-      <Text style={s.name} numberOfLines={1}>{p.user.firstName} {p.user.lastName}</Text>
-      <Text style={s.points}>{p.score} {p.score === 1 ? 'pt':'pts'}</Text>
-    </View>
-  )
 }
 const s = StyleSheet.create({
   tile: {
@@ -86,9 +75,11 @@ const s = StyleSheet.create({
     flex: 1,
     color: colors.purple,
     fontSize: 20,
+    fontWeight: "bold"
   },
   points2: {
     color: colors.orange,
     fontSize: 18,
+    fontWeight: "bold"
   }
 })

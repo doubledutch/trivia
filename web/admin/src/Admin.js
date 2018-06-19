@@ -79,6 +79,8 @@ export default class Admin extends PureComponent {
                 questions={this.questionsForCurrentSession()}
                 questionsRef={this.questionsRef()}
                 currentIndex={this.state.currentIndex}
+                sessionId = {sessionId}
+                publicSessions={this.state.publicSessions}
                 renderFooter={() => (
                   <footer>
                     <div><label>Time per question: <input type="number" min="0" value={sessions[sessionId].secondsPerQuestion} onChange={this.onSecondsChange} /> seconds</label></div>

@@ -6,6 +6,8 @@ import './Questions.css'
 
 export default class Questions extends PureComponent {
   render() {
+    console.log(this.props.publicSessions)
+  const isActive = this.props.publicSessions[this.props.sessionId] ? (this.props.publicSessions[this.props.sessionId].state !== "NOT_STARTED") : false
     return (
       <Reorderable className="questions"
         droppableId="questions"
@@ -38,7 +40,7 @@ export default class Questions extends PureComponent {
                       <div className="question-buttons">
                         { updater.state.hasPendingChanges && <button onClick={() => this.saveQuestion(item, updater)}>Save Question</button> }
                         { updater.state.hasPendingChanges && <button className="secondary" onClick={() => updater.cancel()}>Cancel Changes</button> }
-                        <button className="tertiary" disabled={this.props.currentIndex >= index} onClick={this.deleteQuestion(item)}>Delete Question</button>
+                        <button className="tertiary" disabled={this.props.currentIndex >= index && isActive}  onClick={this.deleteQuestion(item)}>Delete Question</button>
                       </div>
                     </div>
                   </div>
