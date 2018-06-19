@@ -61,7 +61,7 @@ export default class BigScreen extends PureComponent {
     }
   }
 
-  renderNonexistent = () => <div className="big-screen"><div className="box box-content">This trivia session has not been initialized. Please click 'Initialize' in the Trivia admin panel to allow players to start joining.</div></div>
+  renderNonexistent = () => <div style={this.state.backgroundUrl ? {backgroundImage: `url(${this.state.backgroundUrl})`} : null} className="big-screen"><div className="box box-content">This trivia session has not been initialized. Please click 'Initialize' in the Trivia admin panel to allow players to start joining.</div></div>
 
   renderNotStarted() {
     const {joined} = this.state

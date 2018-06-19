@@ -65,12 +65,12 @@ export default class Admin extends PureComponent {
             <option value="">-- Select a session --</option>
             { Object.values(sessions).map(s => <option key={s.id} value={s.id}>{s.name}</option>) }
           </select>
-          <button onClick={this.createSession}>Create new session</button>
+          <button className="dd-bordered secondary" onClick={this.createSession}>Create new session</button>
         </div>
         { sessionId && <div>
             <label className="row">
               <span>Session Name:&nbsp;</span>
-              <input type="text" value={sessions[sessionId].name} maxLength={50} onChange={this.onSessionNameChange} />
+              <input className="dd-bordered" type="text" value={sessions[sessionId].name} maxLength={50} onChange={this.onSessionNameChange} className={this.isDisplayable(sessionId) ? "": "errorInputState" }/>
               {this.isDisplayable(sessionId) ? null : <p>Please Rename Session</p>}
               <button className="secondary" onClick={this.deleteSession}>Delete Session</button>
             </label>
@@ -79,9 +79,11 @@ export default class Admin extends PureComponent {
                 questions={this.questionsForCurrentSession()}
                 questionsRef={this.questionsRef()}
                 currentIndex={this.state.currentIndex}
+                sessionId = {sessionId}
+                publicSessions={this.state.publicSessions}
                 renderFooter={() => (
                   <footer>
-                    <div><label>Time per question: <input type="number" max="60" value={sessions[sessionId].secondsPerQuestion} onChange={this.onSecondsChange} /> seconds</label></div>
+                    <div><label>Time per question: <input type="number" min="0" value={sessions[sessionId].secondsPerQuestion} onChange={this.onSecondsChange} /> seconds</label></div>
                     <div>
                       <button onClick={() => this.addQuestion(this.state.sessionId)}>{this.returnHelpText()}</button>
                     </div>
