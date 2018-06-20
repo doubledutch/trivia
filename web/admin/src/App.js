@@ -16,7 +16,6 @@
 
 import React, { PureComponent } from 'react'
 import './base.css'
-
 import client from '@doubledutch/admin-client'
 import FirebaseConnector from '@doubledutch/firebase-connector'
 import Admin from './Admin'

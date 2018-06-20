@@ -142,7 +142,8 @@
   height: 100%;
   width: 100%;
   align-items: center;
-  overflow: hidden;
+  overflow-y: hidden;
+  overflow-x: auto;
   color: #f97d64;
 }
 .leaderboard h1 {

@@ -71,6 +71,8 @@ export default class PresentationDriver extends PureComponent {
   renderNextQuestion(session, questionIndex, isQuestionInProgress, hideLeaderboardButton) {
     const {questions} = this.props
     const question = questions[questionIndex]
+
+
     
     return <div className="presentation-driver">
       { question && <Question question={question} number={questionIndex+1} totalSeconds={session.secondsPerQuestion}>
@@ -122,7 +124,8 @@ export default class PresentationDriver extends PureComponent {
     const {publicSession} = this.state
     const index = publicSession.question ? publicSession.question.index + 1 : 0
     const question = questions[index]
-    this.clearTimer()
+    this.props.saveCurrentIndex(index)
+    if (this.timer) clearInterval(this.timer)
 
     this.publicSessionRef().update({
       state: 'QUESTION_OPEN',

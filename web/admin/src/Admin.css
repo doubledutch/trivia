@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 
+ :root {
+  font: 400 14px -apple-system, BlinkMacSystemFont, 'Fira Sans', 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: #4A4A4A;
+}
+
+html, body, input, button, select, form{
+  font: inherit;
+}
+
 .Admin {
   padding: 10px;  
 }
@@ -22,6 +31,22 @@
   width: 800px;
   height: 800px;
   margin: 0 10px 10px 0;
+}
+
+.boxTitle{
+  font-size: 18px;
+  display: flex;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  color: #4A4A4A;
+}
+
+.bigBoxTitle{
+  font-size: 16px;
+  display: flex;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  color: #4A4A4A;
 }
 
 .session {
@@ -43,13 +68,13 @@
   display: flex;
   position: relative;
 }
-@media screen and (min-width: 1230px) {
+/* @media screen and (min-width: 1230px) {
   .presentation-container {
     width: 400px;
     height: 800px;
     flex-direction: column;
   }
-}
+} */
 
 .presentation-side {
   width: 400px;
@@ -82,4 +107,5 @@ iframe.big-screen-container {
 button.overlay-button {
   height: 1.6em;
   padding: 0 1em;
+  color: white;
 }
