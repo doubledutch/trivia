@@ -80,11 +80,18 @@ export default class Question extends PureComponent {
                 key={`${question.index}-${i}-${opt}-${question.correctIndex}`}
                 style={[
                   s.option,
-                  (selectedIndex === i || this.lastSelected === i) ? s.selectedOption : null,
-                  question.correctIndex != null && question.correctIndex !== i ? s.incorrectOption : null
+                  question.correctIndex == null 
+                    ? selectedIndex === i         // Correct answer not revealed yet...
+                        ? s.selectedOption          // ...and this is the answer currently selected
+                        : null                      // ...and this is not the answer currently selected
+                    : question.correctIndex === i // Correct answer has been revealed...
+                        ? s.correctOption         // ...and this answer is the correct answer
+                        : question.correctIndex !== i && this.lastSelected === i
+                            ? s.incorrectOption   // ...and this is not the correct answer, but was chosen by the player.
+                            : null                // ...and this is not the correct answer, and was not chosen by the player.
                 ]}
                 onPress={this.selectOption(i)}>
-                <Text style={[s.optionText, (selectedIndex === i || this.lastSelected === i) ? s.selectedOptionText : null]}>{opt}</Text>
+                <Text style={[s.optionText, (selectedIndex === i || this.lastSelected === i || question.correctIndex === i) ? s.highlightedOptionText : null]}>{opt}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -163,10 +170,15 @@ const s = StyleSheet.create({
     color: colors.gray,
     fontSize: 18,
   },
-  selectedOptionText: {
+  highlightedOptionText: {
     color: '#fff',
   },
+  correctOption: {
+    backgroundColor: colors.teal,
+    borderColor: colors.teal,
+  },
   incorrectOption: {
-    opacity: 0.2,
+    backgroundColor: colors.orange,
+    borderColor: colors.orange,
   },
 })
