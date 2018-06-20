@@ -212,7 +212,7 @@ export default class PresentationDriver extends PureComponent {
         playerScore.place = place
         prevScore = playerScore.score
       })
-    return session.leaderboardMax != null ? leaderboard.filter(p => p.place <= session.leaderboardMax) : leaderboard
+    return session.leaderboardMax ? leaderboard.filter(p => p.place <= session.leaderboardMax) : leaderboard
   }
   
   startTimer() {
