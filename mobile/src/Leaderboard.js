@@ -22,7 +22,7 @@ import colors from './colors'
 
 export default class Leaderboard extends PureComponent {
   render() {
-    const {leaderboard, currentUserId} = this.props
+    const {leaderboard} = this.props
     return (
       <View>
         { leaderboard.map((p,i) => (
