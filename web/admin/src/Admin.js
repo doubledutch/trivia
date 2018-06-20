@@ -70,7 +70,7 @@ export default class Admin extends PureComponent {
         { sessionId && <div>
             <label className="row">
               <span>Session Name:&nbsp;</span>
-              <input className="dd-bordered" type="text" value={sessions[sessionId].name} maxLength={50} onChange={this.onSessionNameChange} className={this.isDisplayable(sessionId) ? "": "errorInputState" }/>
+              <input className={`dd-bordered${this.isDisplayable(sessionId) ? '': ' errorInputState'}`} type="text" value={sessions[sessionId].name} maxLength={50} onChange={this.onSessionNameChange} />
               {this.isDisplayable(sessionId) ? null : <p>Please Rename Session</p>}
               <button className="secondary" onClick={this.deleteSession}>Delete Session</button>
             </label>
@@ -130,10 +130,10 @@ export default class Admin extends PureComponent {
   onSessionChange = e => this.setState({sessionId: e.target.value})
 
   onSessionNameChange = e => {
-    const currentTitle = e.target.value.trim()
+    const name = e.target.value.trim()
     const isPublicSession = this.state.publicSessions[this.state.sessionId]
-    this.sessionsRef().child(this.state.sessionId).update({name: e.target.value})
-    if (isPublicSession) this.publicSessionRef().child(this.state.sessionId).update({name: e.target.value})
+    this.sessionsRef().child(this.state.sessionId).update({name})
+    if (isPublicSession) this.publicSessionRef().child(this.state.sessionId).update({name})
   }
 
   onBackgroundUrlChange = e => this.backgroundUrlRef().set(e.target.value)

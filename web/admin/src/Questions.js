@@ -78,5 +78,3 @@ export default class Questions extends PureComponent {
     }
   }
 }
-
-const letters = ['A','B','C','D']
