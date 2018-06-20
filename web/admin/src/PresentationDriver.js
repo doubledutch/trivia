@@ -198,7 +198,7 @@ export default class PresentationDriver extends PureComponent {
 
   getLeaderboard(scores) {
     if (!scores) return []
-    const {users} = this.props
+    const {users, session} = this.props
     let prevScore = Number.MAX_SAFE_INTEGER
     let place = 0
     const leaderboard = Object.keys(scores)
@@ -212,7 +212,7 @@ export default class PresentationDriver extends PureComponent {
         playerScore.place = place
         prevScore = playerScore.score
       })
-    return leaderboard
+    return session.leaderboardMax != null ? leaderboard.filter(p => p.place <= session.leaderboardMax) : leaderboard
   }
   
   startTimer() {

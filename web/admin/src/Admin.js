@@ -84,6 +84,7 @@ export default class Admin extends PureComponent {
                 renderFooter={() => (
                   <footer>
                     <div><label>Time per question: <input type="number" min="0" value={sessions[sessionId].secondsPerQuestion} onChange={this.onSecondsChange} /> seconds</label></div>
+                    <div><label>Leaderboard up to <input type="number" min="1" max="1000" value={sessions[sessionId].leaderboardMax || 1000} onChange={this.onLeaderboardMaxChange} /> {th(sessions[sessionId].leaderboardMax)} place</label></div>
                     <div>
                       <button onClick={() => this.addQuestion(this.state.sessionId)}>{this.returnHelpText()}</button>
                     </div>
@@ -139,8 +140,12 @@ export default class Admin extends PureComponent {
   onBackgroundUrlChange = e => this.backgroundUrlRef().set(e.target.value)
 
   onSecondsChange = e => {
-    var seconds = e.target.value
+    const seconds = e.target.value
     this.sessionsRef().child(this.state.sessionId).update({secondsPerQuestion: +seconds})
+  }
+  onLeaderboardMaxChange = e => {
+    const leaderboardMax = e.target.value
+    this.sessionsRef().child(this.state.sessionId).update({leaderboardMax: +leaderboardMax || 1000})
   }
   createSession = () => this.sessionsRef().push({name: '', secondsPerQuestion: 30}).then(ref => {
     this.setState({sessionId: ref.key})
@@ -187,4 +192,14 @@ export default class Admin extends PureComponent {
   }
 
   bigScreenUrl = () => this.state.longLivedToken ? `?page=bigScreen&sessionId=${encodeURIComponent(this.state.sessionId)}&token=${encodeURIComponent(this.state.longLivedToken)}` : null
+}
+
+const th = num => {
+  if (!num || (num > 3 && num < 21)) return 'th'
+  switch (num % 10) {
+    case 1: return 'st'
+    case 2: return 'nd'
+    case 3: return 'rd'
+    default: return 'th'
+  }
 }
