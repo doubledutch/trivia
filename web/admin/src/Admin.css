@@ -109,3 +109,7 @@ button.overlay-button {
   padding: 0 1em;
   color: white;
 }
+
+.bordered-error {
+  background-color: #dc5154;
+}
