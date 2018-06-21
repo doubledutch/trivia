@@ -28,7 +28,8 @@ export default class Admin extends PureComponent {
     questionsBySession: {},
     users: {},
     publicSessions: {},
-    currentIndex: 0
+    currentIndex: 0,
+    isFocus: false
   }
 
   sessionsRef = () => this.props.fbc.database.private.adminRef('sessions')
@@ -70,8 +71,7 @@ export default class Admin extends PureComponent {
         { sessionId && <div>
             <label className="row">
               <span>Session Name:&nbsp;</span>
-              <input className={`dd-bordered${this.isDisplayable(sessionId) ? '': ' errorInputState'}`} type="text" value={sessions[sessionId].name} maxLength={50} onChange={this.onSessionNameChange} />
-              {this.isDisplayable(sessionId) ? null : <p>Please Rename Session</p>}
+              <input className={this.isDisplayable(sessionId) ? '': 'bordered-error'} type="text" onFocus={this.saveFocus} onBlur={this.saveFocus} value={sessions[sessionId].name} maxLength={50} onChange={this.onSessionNameChange} ref="nameInput"/>
               <button className="secondary" onClick={this.deleteSession}>Delete Session</button>
             </label>
             <div className="session">
@@ -116,10 +116,18 @@ export default class Admin extends PureComponent {
   }
 
   isDisplayable = (sessionId) => {
-    const currentSession = this.state.sessions[sessionId]
-    const dup = Object.values(this.state.sessions).find(i => i.name.toLowerCase() === currentSession.name.toLowerCase() && currentSession.id !== i.id)
-    const isDisplayable = currentSession.name.length > 0 && !dup
-    return isDisplayable
+    if (this.state.isFocus) return true
+    else {
+      const currentSession = this.state.sessions[sessionId]
+      const dup = Object.values(this.state.sessions).find(i => i.name.toLowerCase() === currentSession.name.toLowerCase() && currentSession.id !== i.id)
+      const isDisplayable = currentSession.name.length > 0 && !dup
+      return isDisplayable
+    }
+  }
+
+  saveFocus = () => {
+    const currentFocus = this.state.isFocus
+    this.setState({isFocus: !currentFocus})
   }
 
   saveCurrentIndex = (currentIndex) => {
