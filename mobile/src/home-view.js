@@ -113,7 +113,7 @@ export default class HomeView extends PureComponent {
   renderSessions = (sessions, me) => {
     const currentSessions = Object.keys(sessions)
       .map(id => ({...sessions[id], id}))
-      .filter(s => s.name.length && s.state !== 'ENDED' || (me && s.id === me.sessionIds))
+      .filter(s => s.name.trim().length && s.state !== 'ENDED' || (me && s.id === me.sessionIds))
       
     if (currentSessions.length === 0) return <View style={s.box}><Text>No trivia games currently. Try back later!</Text></View>
     return (
