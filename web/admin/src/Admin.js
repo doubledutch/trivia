@@ -29,7 +29,8 @@ export default class Admin extends PureComponent {
     users: {},
     publicSessions: {},
     currentIndex: 0,
-    isFocus: false
+    isFocus: false,
+    isNew: false
   }
 
   sessionsRef = () => this.props.fbc.database.private.adminRef('sessions')
@@ -71,7 +72,7 @@ export default class Admin extends PureComponent {
         { sessionId && <div>
             <label className="row">
               <span>Session Name:&nbsp;</span>
-              <input className={this.isDisplayable(sessionId) ? '': 'bordered-error'} type="text" onFocus={this.saveFocus} onBlur={this.saveFocus} value={sessions[sessionId].name} maxLength={50} onChange={this.onSessionNameChange} ref="nameInput"/>
+              <input className={this.isDisplayable(sessionId) ? '': 'bordered-error'} type="text" onFocus={this.saveFocus} onBlur={this.saveBlur} value={sessions[sessionId].name} maxLength={50} onChange={this.onSessionNameChange} ref="nameInput"/>
               <button className="secondary" onClick={this.deleteSession}>Delete Session</button>
             </label>
             <div className="session">
@@ -117,17 +118,21 @@ export default class Admin extends PureComponent {
 
   isDisplayable = (sessionId) => {
     if (this.state.isFocus) return true
+    if (this.state.isNew) return true
     else {
       const currentSession = this.state.sessions[sessionId]
-      const dup = Object.values(this.state.sessions).find(i => i.name.toLowerCase() === currentSession.name.toLowerCase() && currentSession.id !== i.id)
-      const isDisplayable = currentSession.name.length > 0 && !dup
+      const dup = Object.values(this.state.sessions).find(i => i.name.trim().toLowerCase() === currentSession.name.trim().toLowerCase() && currentSession.id !== i.id)
+      const isDisplayable = currentSession.name.trim().length > 0 && !dup
       return isDisplayable
     }
   }
 
   saveFocus = () => {
-    const currentFocus = this.state.isFocus
-    this.setState({isFocus: !currentFocus})
+    this.setState({isFocus: true})
+  }
+
+  saveBlur = () => {
+    this.setState({isFocus: false, isNew: false})
   }
 
   saveCurrentIndex = (currentIndex) => {
@@ -139,7 +144,7 @@ export default class Admin extends PureComponent {
   onSessionChange = e => this.setState({sessionId: e.target.value})
 
   onSessionNameChange = e => {
-    const name = e.target.value.trim()
+    const name = e.target.value
     const isPublicSession = this.state.publicSessions[this.state.sessionId]
     this.sessionsRef().child(this.state.sessionId).update({name})
     if (isPublicSession) this.publicSessionRef().child(this.state.sessionId).update({name})
@@ -156,6 +161,7 @@ export default class Admin extends PureComponent {
     this.sessionsRef().child(this.state.sessionId).update({leaderboardMax: +leaderboardMax || 1000})
   }
   createSession = () => this.sessionsRef().push({name: '', secondsPerQuestion: 30}).then(ref => {
+    this.setState({isNew: true})
     this.setState({sessionId: ref.key})
     this.addQuestion(ref.key)
   })
