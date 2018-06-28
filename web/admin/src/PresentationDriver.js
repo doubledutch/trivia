@@ -205,13 +205,13 @@ export default class PresentationDriver extends PureComponent {
       .map(userId => ({score: scores[userId], user: users[userId]}))
       .filter(x => x.user)
       .sort((a,b) => b.score - a.score) // Sort by descending score
-    leaderboard.forEach(playerScore => {
-        if (playerScore.score < prevScore) {
-          place++
-        }
-        playerScore.place = place
-        prevScore = playerScore.score
-      })
+    leaderboard.forEach((playerScore, index) => {
+      if (playerScore.score < prevScore) {
+        place = index + 1
+      }
+      playerScore.place = place
+      prevScore = playerScore.score
+    })
     return session.leaderboardMax ? leaderboard.filter(p => p.place <= session.leaderboardMax) : leaderboard
   }
   
