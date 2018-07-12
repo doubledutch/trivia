@@ -87,7 +87,7 @@ export default class Admin extends PureComponent {
                     <div><label>Time per question: <input type="number" min="0" value={sessions[sessionId].secondsPerQuestion} onChange={this.onSecondsChange} /> seconds</label></div>
                     <div><label>Leaderboard up to <input type="number" min="1" max="1000" value={sessions[sessionId].leaderboardMax || 1000} onChange={this.onLeaderboardMaxChange} /> {th(sessions[sessionId].leaderboardMax)} place</label></div>
                     <div>
-                      <button onClick={() => this.addQuestion(this.state.sessionId)} disabled={this.returnHelpText() ==="Complete Last Question"}>{this.returnHelpText()}</button>
+                      <button onClick={() => this.addQuestion(this.state.sessionId)} disabled={this.isButtonDisabled()}>{this.returnHelpText()}</button>
                     </div>
                   </footer>
                 )}
@@ -197,6 +197,18 @@ export default class Admin extends PureComponent {
       else return "Complete Last Question"
     }
     else return "Add New Question"
+  }
+
+  isButtonDisabled = () => {
+    const questions = this.questionsForCurrentSession()
+    if (questions.length) {
+      const checkQ = questions[questions.length-1]
+      if (checkQ.text && checkQ.options[0]) {
+        return false
+      }
+      else return true
+    }
+    else return false
   }
 
   launchPresentation = () => {
