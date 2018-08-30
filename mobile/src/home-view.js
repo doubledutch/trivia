@@ -20,7 +20,7 @@ import { Image, ImageBackground, TouchableOpacity, Text, View, ScrollView, Style
 // rn-client must be imported before FirebaseConnector
 import client, { Avatar, TitleBar } from '@doubledutch/rn-client'
 import FirebaseConnector from '@doubledutch/firebase-connector'
-import {mapPerUserPushedDataToStateObjects, mapPushedDataToStateObjects} from '@doubledutch/firebase-connector'
+import {mapPushedDataToStateObjects} from '@doubledutch/firebase-connector'
 import {background, trophy} from './images'
 import {Button} from './components'
 import Leaderboard from './Leaderboard'
