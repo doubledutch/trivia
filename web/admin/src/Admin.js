@@ -29,6 +29,7 @@ export default class Admin extends PureComponent {
     users: {},
     publicSessions: {},
     currentIndex: 0,
+    backgroundUrl: '',
     isFocus: false,
     isNew: false
   }
