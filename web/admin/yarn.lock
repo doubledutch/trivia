@@ -16,9 +16,9 @@
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-"@doubledutch/admin-client@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@doubledutch/admin-client/-/admin-client-2.0.0.tgz#731542eb89e5eb15474014fb59cb6df477a7af37"
+"@doubledutch/admin-client@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@doubledutch/admin-client/-/admin-client-2.0.1.tgz#6cf3f1e79aca21031a8f46a0b37e782b21781d23"
   dependencies:
     babel-runtime "^6.26.0"
 
