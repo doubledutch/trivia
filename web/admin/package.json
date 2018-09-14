@@ -11,7 +11,7 @@
     "qs": "^6.5.1",
     "react": "^16.5.1",
     "react-beautiful-dnd": "^6.0.1",
-    "react-dom": "^16.0.0",
+    "react-dom": "^16.5.1",
     "react-scripts": "1.0.14"
   },
   "scripts": {
