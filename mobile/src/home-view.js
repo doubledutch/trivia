@@ -19,8 +19,7 @@ import { Image, ImageBackground, Text, View, ScrollView, StyleSheet } from 'reac
 
 // rn-client must be imported before FirebaseConnector
 import client, { Avatar, TitleBar } from '@doubledutch/rn-client'
-import {provideFirebaseConnectorToReactComponent} from '@doubledutch/firebase-connector'
-import {mapPushedDataToStateObjects} from '@doubledutch/firebase-connector'
+import {mapPushedDataToStateObjects, provideFirebaseConnectorToReactComponent} from '@doubledutch/firebase-connector'
 import {background, trophy} from './images'
 import {Button} from './components'
 import Leaderboard from './Leaderboard'
