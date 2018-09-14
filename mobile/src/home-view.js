@@ -15,11 +15,11 @@
  */
 
 import React, { PureComponent } from 'react'
-import { Image, ImageBackground, TouchableOpacity, Text, View, ScrollView, StyleSheet } from 'react-native'
+import { Image, ImageBackground, Text, View, ScrollView, StyleSheet } from 'react-native'
 
 // rn-client must be imported before FirebaseConnector
 import client, { Avatar, TitleBar } from '@doubledutch/rn-client'
-import FirebaseConnector from '@doubledutch/firebase-connector'
+import {provideFirebaseConnectorToReactComponent} from '@doubledutch/firebase-connector'
 import {mapPushedDataToStateObjects} from '@doubledutch/firebase-connector'
 import {background, trophy} from './images'
 import {Button} from './components'
@@ -27,24 +27,26 @@ import Leaderboard from './Leaderboard'
 import Question from './Question'
 import colors from './colors'
 
-const fbc = FirebaseConnector(client, 'trivia')
-
-fbc.initializeAppWithSimpleBackend()
-const sessionsRef = fbc.database.public.adminRef('sessions')
-const userRef = fbc.database.public.userRef()
-const usersRef = fbc.database.public.usersRef()
-const backgroundUrlRef = fbc.database.public.adminRef('backgroundUrl')
-
 const numJoinedToShow = 5
 
-export default class HomeView extends PureComponent {
+class HomeView extends PureComponent {
   state = {sessions: {}, users: {}, answers: {}}
-  constructor() {
-    super()
+
+  constructor(props) {
+    super(props)
+    const {fbc} = props
+
+    client.getCurrentUser().then(currentUser => this.setState({currentUser}))
+
     this.signin = fbc.signin()
       .then(user => this.user = user)
 
     this.signin.catch(err => console.error(err))
+
+    sessionsRef = fbc.database.public.adminRef('sessions')
+    userRef = fbc.database.public.userRef()
+    usersRef = fbc.database.public.usersRef()
+    backgroundUrlRef = fbc.database.public.adminRef('backgroundUrl')
   }
 
   componentDidUpdate() {
@@ -66,7 +68,8 @@ export default class HomeView extends PureComponent {
   }
 
   render() {
-    const {backgroundUrl, sessionId, sessions, me} = this.state
+    const {backgroundUrl, currentUser, sessionId, sessions, me} = this.state
+    if (!currentUser) return null
     const session = sessions[sessionId]
     const meJoined = (me && me.sessionId === sessionId) ? me : null
 
@@ -190,9 +193,9 @@ export default class HomeView extends PureComponent {
     )
   }
 
-  answersRef = () => fbc.database.private.adminableUserRef()
+  answersRef = () => this.props.fbc.database.private.adminableUserRef()
 
-  join = () => userRef.set({...client.currentUser, sessionId: this.state.sessionId})
+  join = () => userRef.set({...this.state.currentUser, sessionId: this.state.sessionId})
   selectSession = session => () => this.setState({sessionId: session.id})
 
   selectOption = i => {
@@ -201,7 +204,7 @@ export default class HomeView extends PureComponent {
     const {question} = session
     this.answersRef().update({[sessionId]: i})
   }
-  myPlace = leaderboard => (leaderboard.find(x => x.user.id === client.currentUser.id) || {}).place
+  myPlace = leaderboard => (leaderboard.find(x => x.user.id === this.state.currentUser.id) || {}).place
 }
 
 function ordinal(x) {
@@ -303,3 +306,5 @@ const s = StyleSheet.create({
     color: colors.purple,    
   },
 })
+
+export default provideFirebaseConnectorToReactComponent(client, 'trivia', (props, fbc) => <HomeView {...props} fbc={fbc} />, PureComponent)

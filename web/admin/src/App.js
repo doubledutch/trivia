@@ -17,27 +17,26 @@
 import React, { PureComponent } from 'react'
 import './base.css'
 import client from '@doubledutch/admin-client'
-import FirebaseConnector from '@doubledutch/firebase-connector'
+import {provideFirebaseConnectorToReactComponent} from '@doubledutch/firebase-connector'
 import Admin from './Admin'
 import BigScreen from './BigScreen'
 import {parseQueryString} from './utils'
-const fbc = FirebaseConnector(client, 'trivia')
 
-fbc.initializeAppWithSimpleBackend()
+const { token } = parseQueryString()
+if (token) client.longLivedToken = token
 
-export default class App extends PureComponent {
-  constructor() {
-    super()
+class App extends PureComponent {
+  constructor(props) {
+    super(props)
     this.state = {}
-    const { token } = parseQueryString()
-    if (token) client.longLivedToken = token
   }
 
   componentDidMount() {
-    fbc.signinAdmin().then(() => this.setState({isSignedIn: true}))
+    this.props.fbc.signinAdmin().then(() => this.setState({isSignedIn: true}))
   }
 
   render() {
+    const {fbc} = this.props
     if (!this.state.isSignedIn) return <div>Loading...</div>
     const qs = parseQueryString()
 
@@ -49,3 +48,5 @@ export default class App extends PureComponent {
     }
   }
 }
+
+export default provideFirebaseConnectorToReactComponent(client, 'trivia', (props, fbc) => <App {...props} fbc={fbc} />, PureComponent)
