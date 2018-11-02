@@ -20,33 +20,31 @@ import './PresentationDriver.css'
 import Question from './Question'
 
 export default class PresentationDriver extends PureComponent {
-  publicSessionRef = props => (props || this.props).fbc.database.public.adminRef('sessions').child((props || this.props).session.id)
+  publicSessionRef = () => this.props.fbc.database.public.adminRef('sessions').child(this.props.session.id)
   publicUsersRef = () => this.props.fbc.database.public.usersRef()
   privateUsersRef = () => this.props.fbc.database.private.adminableUsersRef()
 
   state = {}
 
-  componentWillReceiveProps(newProps) {
-    if (this.props.session.id !== newProps.session.id) {
+  componentDidUpdate(prevProps) {
+    if (prevProps.session.id !== this.props.session.id) {
       this.unwireHandlers()
-      this.wireHandlers(newProps)
+      this.wireHandlers()
+
+      const {publicSession} = this.state
+      if (!this.timer && publicSession && publicSession.state === 'QUESTION_OPEN') this.startTimer()
     }
   }
 
-  componentDidUpdate() {
-    const {publicSession} = this.state
-    if (!this.timer && publicSession && publicSession.state === 'QUESTION_OPEN') this.startTimer()
-  }
-
   componentDidMount() {
-    this.wireHandlers(this.props)
+    this.wireHandlers()
   }
   componentWillUnmount() {
     this.unwireHandlers()
   }
 
-  wireHandlers(props) {
-    this.publicSessionHandler = this.publicSessionRef(props).on('value', data => this.setState({publicSession: data.val()}))
+  wireHandlers() {
+    this.publicSessionHandler = this.publicSessionRef().on('value', data => this.setState({publicSession: data.val()}))
   }
 
   unwireHandlers() {
@@ -71,8 +69,6 @@ export default class PresentationDriver extends PureComponent {
   renderNextQuestion(session, questionIndex, isQuestionInProgress, hideLeaderboardButton) {
     const {questions} = this.props
     const question = questions[questionIndex]
-
-
     
     return <div className="presentation-driver">
       { question && <Question question={question} number={questionIndex+1} totalSeconds={session.secondsPerQuestion}>
@@ -219,7 +215,9 @@ export default class PresentationDriver extends PureComponent {
     this.questionStartedAt = new Date().valueOf()
     this.clearTimer()
     this.timer = setInterval(() => {
-      const timeLeft = this.state.publicSession.question.totalSeconds - (new Date().valueOf() - this.questionStartedAt)/1000
+      const {publicSession} = this.state
+      if (!publicSession || !publicSession.question) return
+      const timeLeft = publicSession.question.totalSeconds - (new Date().valueOf() - this.questionStartedAt)/1000
       if (timeLeft < 0) {
         this.endQuestion()
       }
