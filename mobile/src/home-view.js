@@ -35,11 +35,7 @@ class HomeView extends PureComponent {
     super(props)
     const {fbc} = props
 
-    client.getCurrentUser().then(currentUser => this.setState({currentUser}))
-
     this.signin = fbc.signin()
-      .then(user => this.user = user)
-
     this.signin.catch(err => console.error(err))
 
     sessionsRef = fbc.database.public.adminRef('sessions')
@@ -57,12 +53,15 @@ class HomeView extends PureComponent {
   }
 
   componentDidMount() {
-    this.signin.then(() => {
-      backgroundUrlRef.on('value', data => this.setState({backgroundUrl: data.val()}))
-      sessionsRef.on('value', data => this.setState({sessions: data.val() || {}}))
-      userRef.on('value', data => this.setState({me: data.val()}))
-      this.answersRef().on('value', data => this.setState({answers: data.val() || {}}))
-      mapPushedDataToStateObjects(usersRef, this, 'users')
+    client.getCurrentUser().then(currentUser => {
+      this.setState({currentUser})
+      this.signin.then(() => {
+        backgroundUrlRef.on('value', data => this.setState({backgroundUrl: data.val()}))
+        sessionsRef.on('value', data => this.setState({sessions: data.val() || {}}))
+        userRef.on('value', data => this.setState({me: data.val()}))
+        this.answersRef().on('value', data => this.setState({answers: data.val() || {}}))
+        mapPushedDataToStateObjects(usersRef, this, 'users')
+      })
     })
   }
 
