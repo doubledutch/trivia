@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,20 +17,24 @@
 import React, { PureComponent } from 'react'
 import { Text, View, StyleSheet } from 'react-native'
 
-import {Avatar} from '@doubledutch/rn-client'
+import { Avatar } from '@doubledutch/rn-client'
 import colors from './colors'
 
 export default class Leaderboard extends PureComponent {
   render() {
-    const {leaderboard} = this.props
+    const { leaderboard } = this.props
     return (
       <View>
-        { leaderboard.map((p,i) => (
+        {leaderboard.map((p, i) => (
           <View key={i} style={s.tile}>
-            <Text style={i === 0 ? s.place2: s.place}>{p.place}</Text>
+            <Text style={i === 0 ? s.place2 : s.place}>{p.place}</Text>
             <Avatar user={p.user} size={i === 0 ? 45 : 35} style={s.avatar} />
-            <Text style={i === 0 ? s.name2 : s.name} numberOfLines={1}>{p.user.firstName} {p.user.lastName}</Text>
-            <Text style={i === 0 ? s.points2 : s.points}>{p.score} {p.score === 1 ? 'pt':'pts'}</Text>
+            <Text style={i === 0 ? s.name2 : s.name} numberOfLines={1}>
+              {p.user.firstName} {p.user.lastName}
+            </Text>
+            <Text style={i === 0 ? s.points2 : s.points}>
+              {p.score} {p.score === 1 ? 'pt' : 'pts'}
+            </Text>
           </View>
         ))}
       </View>
@@ -75,11 +79,11 @@ const s = StyleSheet.create({
     flex: 1,
     color: colors.purple,
     fontSize: 20,
-    fontWeight: "bold"
+    fontWeight: 'bold',
   },
   points2: {
     color: colors.orange,
     fontSize: 18,
-    fontWeight: "bold"
-  }
+    fontWeight: 'bold',
+  },
 })

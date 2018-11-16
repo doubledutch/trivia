@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,34 +20,38 @@ import { TouchableOpacity, Text, View, StyleSheet } from 'react-native'
 import colors from './colors'
 
 export default class Question extends PureComponent {
-  state = {selectedIndex: null}
-  
+  state = { selectedIndex: null }
+
   componentDidMount() {
-    this.setState({secondsLeft: this.props.totalSeconds})
+    this.setState({ secondsLeft: this.props.totalSeconds })
     this.props.countDown && this.startTimer(this.props)
   }
 
   startTimer(props) {
-    const {totalSeconds} = props
+    const { totalSeconds } = props
     const start = new Date().valueOf()
     if (this.timer) clearInterval(this.timer)
     this.timer = setInterval(() => {
       const now = new Date().valueOf()
-      const elapsedSeconds = (now - start)/1000
+      const elapsedSeconds = (now - start) / 1000
       if (elapsedSeconds > totalSeconds) {
         clearInterval(this.timer)
       }
-      this.setState({secondsLeft: Math.max(0, totalSeconds - elapsedSeconds)})
+      this.setState({ secondsLeft: Math.max(0, totalSeconds - elapsedSeconds) })
     }, 500)
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.totalSeconds !== nextProps.totalSeconds) {
-      this.setState({secondsLeft: nextProps.totalSeconds})
+      this.setState({ secondsLeft: nextProps.totalSeconds })
       if (this.timer) clearInterval(this.timer)
     }
-    
-    if (nextProps.countDown && (this.props.question !== nextProps.question || this.props.totalSeconds !== nextProps.totalSeconds)) {
+
+    if (
+      nextProps.countDown &&
+      (this.props.question !== nextProps.question ||
+        this.props.totalSeconds !== nextProps.totalSeconds)
+    ) {
       this.lastSelected = null
       this.startTimer(nextProps)
     }
@@ -58,8 +62,8 @@ export default class Question extends PureComponent {
   }
 
   render() {
-    const {question, selectedIndex, totalSeconds} = this.props
-    const {secondsLeft} = this.state
+    const { question, selectedIndex, totalSeconds } = this.props
+    const { secondsLeft } = this.state
 
     const percentLeft = `${(secondsLeft / totalSeconds) * 100}%`
     return (
@@ -69,33 +73,48 @@ export default class Question extends PureComponent {
           <Text style={s.timeRemaining}>{durationString(secondsLeft)}</Text>
         </View>
         <View style={s.timerBar}>
-          <View style={[s.timerBarRemaining, {width: percentLeft}]} />
+          <View style={[s.timerBarRemaining, { width: percentLeft }]} />
         </View>
         <View style={s.boxContent}>
           <Text style={s.questionText}>{question.text}</Text>
           <View>
-            { question.options.map((opt, i) => (
-              !!opt && <TouchableOpacity
-                disabled={!this.props.onOptionSelected}
-                key={`${question.index}-${i}-${opt}-${question.correctIndex}`}
-                style={[
-                  s.option,
-                  question.correctIndex == null 
-                    ? selectedIndex === i         // Correct answer not revealed yet...
-                        ? s.selectedOption          // ...and this is the answer currently selected
-                        : null                      // ...and this is not the answer currently selected
-                    : question.correctIndex === i // Correct answer has been revealed...
-                        ? s.correctOption         // ...and this answer is the correct answer
+            {question.options.map(
+              (opt, i) =>
+                !!opt && (
+                  <TouchableOpacity
+                    disabled={!this.props.onOptionSelected}
+                    key={`${question.index}-${i}-${opt}-${question.correctIndex}`}
+                    style={[
+                      s.option,
+                      question.correctIndex == null
+                        ? selectedIndex === i // Correct answer not revealed yet...
+                          ? s.selectedOption // ...and this is the answer currently selected
+                          : null // ...and this is not the answer currently selected
+                        : question.correctIndex === i // Correct answer has been revealed...
+                        ? s.correctOption // ...and this answer is the correct answer
                         : question.correctIndex !== i && this.lastSelected === i
-                            ? s.incorrectOption   // ...and this is not the correct answer, but was chosen by the player.
-                            : null                // ...and this is not the correct answer, and was not chosen by the player.
-                ]}
-                onPress={this.selectOption(i)}>
-                <Text style={[s.optionText, (selectedIndex === i || this.lastSelected === i || question.correctIndex === i) ? s.highlightedOptionText : null]}>{opt}</Text>
-              </TouchableOpacity>
-            ))}
+                        ? s.incorrectOption // ...and this is not the correct answer, but was chosen by the player.
+                        : null, // ...and this is not the correct answer, and was not chosen by the player.
+                    ]}
+                    onPress={this.selectOption(i)}
+                  >
+                    <Text
+                      style={[
+                        s.optionText,
+                        selectedIndex === i ||
+                        this.lastSelected === i ||
+                        question.correctIndex === i
+                          ? s.highlightedOptionText
+                          : null,
+                      ]}
+                    >
+                      {opt}
+                    </Text>
+                  </TouchableOpacity>
+                ),
+            )}
           </View>
-        </View>        
+        </View>
       </View>
     )
   }

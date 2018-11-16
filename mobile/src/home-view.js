@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,9 +19,12 @@ import { Image, ImageBackground, Text, View, ScrollView, StyleSheet } from 'reac
 
 // rn-client must be imported before FirebaseConnector
 import client, { Avatar, TitleBar } from '@doubledutch/rn-client'
-import {mapPushedDataToStateObjects, provideFirebaseConnectorToReactComponent} from '@doubledutch/firebase-connector'
-import {background, trophy} from './images'
-import {Button} from './components'
+import {
+  mapPushedDataToStateObjects,
+  provideFirebaseConnectorToReactComponent,
+} from '@doubledutch/firebase-connector'
+import { background, trophy } from './images'
+import { Button } from './components'
 import Leaderboard from './Leaderboard'
 import Question from './Question'
 import colors from './colors'
@@ -29,11 +32,11 @@ import colors from './colors'
 const numJoinedToShow = 5
 
 class HomeView extends PureComponent {
-  state = {sessions: {}, users: {}, answers: {}}
+  state = { sessions: {}, users: {}, answers: {} }
 
   constructor(props) {
     super(props)
-    const {fbc} = props
+    const { fbc } = props
 
     this.signin = fbc.signin()
     this.signin.catch(err => console.error(err))
@@ -45,42 +48,44 @@ class HomeView extends PureComponent {
   }
 
   componentDidUpdate() {
-    const {sessionId, sessions} = this.state
+    const { sessionId, sessions } = this.state
     // If there is only one session, pick that automatically.
     if (!sessionId && Object.keys(sessions).length === 1) {
-      this.setState({sessionId: Object.keys(sessions)[0]})
+      this.setState({ sessionId: Object.keys(sessions)[0] })
     }
   }
 
   componentDidMount() {
     client.getCurrentUser().then(currentUser => {
-      this.setState({currentUser})
+      this.setState({ currentUser })
       this.signin.then(() => {
-        backgroundUrlRef.on('value', data => this.setState({backgroundUrl: data.val()}))
-        sessionsRef.on('value', data => this.setState({sessions: data.val() || {}}))
-        userRef.on('value', data => this.setState({me: data.val()}))
-        this.answersRef().on('value', data => this.setState({answers: data.val() || {}}))
+        backgroundUrlRef.on('value', data => this.setState({ backgroundUrl: data.val() }))
+        sessionsRef.on('value', data => this.setState({ sessions: data.val() || {} }))
+        userRef.on('value', data => this.setState({ me: data.val() }))
+        this.answersRef().on('value', data => this.setState({ answers: data.val() || {} }))
         mapPushedDataToStateObjects(usersRef, this, 'users')
       })
     })
   }
 
   render() {
-    const {backgroundUrl, currentUser, sessionId, sessions, me} = this.state
+    const { backgroundUrl, currentUser, sessionId, sessions, me } = this.state
     if (!currentUser) return null
     const session = sessions[sessionId]
-    const meJoined = (me && me.sessionId === sessionId) ? me : null
+    const meJoined = me && me.sessionId === sessionId ? me : null
 
     return (
-      <ImageBackground style={s.container} source={backgroundUrl ? {uri: backgroundUrl} : background}>
+      <ImageBackground
+        style={s.container}
+        source={backgroundUrl ? { uri: backgroundUrl } : background}
+      >
         <TitleBar title="Trivia" client={client} signin={this.signin} />
         <ScrollView style={s.scroll}>
-          { me === undefined
+          {me === undefined
             ? null
             : session
-              ? this.renderSession(session, sessionId, meJoined)
-              : this.renderSessions(sessions, me)
-          }
+            ? this.renderSession(session, sessionId, meJoined)
+            : this.renderSessions(sessions, me)}
         </ScrollView>
       </ImageBackground>
     )
@@ -90,17 +95,22 @@ class HomeView extends PureComponent {
     if (!meJoined) return this.renderNotJoined(session)
 
     switch (session.state) {
-      case 'NOT_STARTED': return this.renderNotStartedSession(session)
-      case 'QUESTION_OPEN': return this.renderAcceptingAnswers(session, sessionId)
-      case 'QUESTION_CLOSED': return this.renderQuestionFinished(session, sessionId)
-      case 'LEADERBOARD': return this.renderLeaderboard(session)
-      case 'ENDED': return this.renderEndedSession(session)
-      default: return null
+      case 'NOT_STARTED':
+        return this.renderNotStartedSession(session)
+      case 'QUESTION_OPEN':
+        return this.renderAcceptingAnswers(session, sessionId)
+      case 'QUESTION_CLOSED':
+        return this.renderQuestionFinished(session, sessionId)
+      case 'LEADERBOARD':
+        return this.renderLeaderboard(session)
+      case 'ENDED':
+        return this.renderEndedSession(session)
+      default:
+        return null
     }
   }
 
-  renderNotJoined = session => {
-    return (
+  renderNotJoined = session => (
       <View style={s.notJoined}>
         <Text style={s.whiteTitle}>TRIVIA</Text>
         <Image source={trophy} style={s.trophy} />
@@ -109,44 +119,52 @@ class HomeView extends PureComponent {
         <Button title="Let's Play!" onPress={this.join} />
       </View>
     )
-  }
 
   renderSessions = (sessions, me) => {
     const currentSessions = Object.keys(sessions)
-      .map(id => ({...sessions[id], id}))
-      .filter(s => s.name.trim().length && s.state !== 'ENDED' || (me && s.id === me.sessionIds))
-      
-    if (currentSessions.length === 0) return <View style={s.box}><Text>No trivia games currently. Try back later!</Text></View>
+      .map(id => ({ ...sessions[id], id }))
+      .filter(s => (s.name.trim().length && s.state !== 'ENDED') || (me && s.id === me.sessionIds))
+
+    if (currentSessions.length === 0)
+      return (
+        <View style={s.box}>
+          <Text>No trivia games currently. Try back later!</Text>
+        </View>
+      )
     return (
       <View style={s.box}>
         <Text style={s.tealText}>Choose a trivia game</Text>
-        { currentSessions.map(s => (
+        {currentSessions.map(s => (
           <Button key={s.id} title={s.name} onPress={this.selectSession(s)} />
         ))}
       </View>
     )
   }
-  
+
   renderNotStartedSession = session => {
-    const {users, sessionId} = this.state
+    const { users, sessionId } = this.state
     const joined = Object.values(users).filter(u => u.sessionId === sessionId)
     return (
       <View style={s.box}>
         <Text style={s.youAreIn}>You are in!</Text>
         <Text style={s.joinCount}>{joined.length - 1}</Text>
-        <Text style={s.haveJoined}>{joined.length === 2 ? 'Other Has Joined':'Others Have Joined'}</Text>
-        { joined.slice(Math.max(0,joined.length-numJoinedToShow)).map((u,i) => (
-          <View key={u.id} style={[s.joinedUser, i===0 ? {opacity:0.5} : null]}>
+        <Text style={s.haveJoined}>
+          {joined.length === 2 ? 'Other Has Joined' : 'Others Have Joined'}
+        </Text>
+        {joined.slice(Math.max(0, joined.length - numJoinedToShow)).map((u, i) => (
+          <View key={u.id} style={[s.joinedUser, i === 0 ? { opacity: 0.5 } : null]}>
             <Avatar user={u} size={30} />
-            <Text style={s.joinedUserName}>{u.firstName} {u.lastName}</Text><Text style={s.hasJoined}> has joined</Text>
+            <Text style={s.joinedUserName}>
+              {u.firstName} {u.lastName}
+            </Text>
+            <Text style={s.hasJoined}> has joined</Text>
           </View>
         ))}
       </View>
     )
   }
-  
-  renderAcceptingAnswers = (session, sessionId) => {
-    return <Question
+
+  renderAcceptingAnswers = (session, sessionId) => <Question
       question={session.question}
       totalSeconds={session.question.totalSeconds}
       countDown
@@ -154,23 +172,25 @@ class HomeView extends PureComponent {
       onOptionSelected={this.selectOption}
     />
   }
-  
-  renderQuestionFinished = (session, sessionId) => {
-    return <Question
+
+  renderQuestionFinished = (session, sessionId) => <Question
       question={session.question}
       totalSeconds={0}
       selectedIndex={this.state.answers[sessionId]}
     />
-  }
 
   renderLeaderboard = session => {
     const leaderboard = session.leaderboard || []
     const myPlace = this.myPlace(leaderboard)
     return (
       <View>
-        { myPlace && <View style={[s.box, s.myPlace]}>
-          <Text style={s.myPlaceTitle}>You are in {ordinal(myPlace)} place{myPlace < 10 ? '!':''}</Text>
-        </View> }
+        {myPlace && (
+          <View style={[s.box, s.myPlace]}>
+            <Text style={s.myPlaceTitle}>
+              You are in {ordinal(myPlace)} place{myPlace < 10 ? '!' : ''}
+            </Text>
+          </View>
+        )}
         <Text style={s.leaderboardHeader}>Leaderboard</Text>
         <Leaderboard leaderboard={leaderboard} />
       </View>
@@ -182,9 +202,14 @@ class HomeView extends PureComponent {
     const myPlace = this.myPlace(leaderboard)
     return (
       <View>
-        { myPlace && <View style={[s.box, s.myPlace]}>
-          <Text style={s.myPlaceTitle}>You placed {ordinal(myPlace)}{myPlace < 10 ? '!':''}</Text>
-        </View> }
+        {myPlace && (
+          <View style={[s.box, s.myPlace]}>
+            <Text style={s.myPlaceTitle}>
+              You placed {ordinal(myPlace)}
+              {myPlace < 10 ? '!' : ''}
+            </Text>
+          </View>
+        )}
         <Text style={s.leaderboardHeader}>Leaderboard</Text>
         <Leaderboard leaderboard={leaderboard} />
       </View>
@@ -193,24 +218,27 @@ class HomeView extends PureComponent {
 
   answersRef = () => this.props.fbc.database.private.adminableUserRef()
 
-  join = () => userRef.set({...this.state.currentUser, sessionId: this.state.sessionId})
-  selectSession = session => () => this.setState({sessionId: session.id})
+  join = () => userRef.set({ ...this.state.currentUser, sessionId: this.state.sessionId })
+
+  selectSession = session => () => this.setState({ sessionId: session.id })
 
   selectOption = i => {
-    const {sessions, sessionId} = this.state
+    const { sessions, sessionId } = this.state
     const session = sessions[sessionId]
-    const {question} = session
-    this.answersRef().update({[sessionId]: i})
+    const { question } = session
+    this.answersRef().update({ [sessionId]: i })
   }
-  myPlace = leaderboard => (leaderboard.find(x => x.user.id === this.state.currentUser.id) || {}).place
+
+  myPlace = leaderboard =>
+    (leaderboard.find(x => x.user.id === this.state.currentUser.id) || {}).place
 }
 
 function ordinal(x) {
   let ord
   if (x >= 4 && x <= 20) ord = 'th'
-  else if (x%10 === 1) ord = 'st'
-  else if (x%10 === 2) ord = 'nd'
-  else if (x%10 === 3) ord = 'rd'
+  else if (x % 10 === 1) ord = 'st'
+  else if (x % 10 === 2) ord = 'nd'
+  else if (x % 10 === 3) ord = 'rd'
   else ord = 'th'
   return `${x}${ord}`
 }
@@ -301,8 +329,13 @@ const s = StyleSheet.create({
   },
   hasJoined: {
     fontSize: 16,
-    color: colors.purple,    
+    color: colors.purple,
   },
 })
 
-export default provideFirebaseConnectorToReactComponent(client, 'trivia', (props, fbc) => <HomeView {...props} fbc={fbc} />, PureComponent)
+export default provideFirebaseConnectorToReactComponent(
+  client,
+  'trivia',
+  (props, fbc) => <HomeView {...props} fbc={fbc} />,
+  PureComponent,
+)
