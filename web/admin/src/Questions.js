@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react'
+import { translate as t } from '@doubledutch/admin-client'
 import Reorderable, { renderLeftDragHandle } from './components/Reorderable'
 import { GroupUpdater, Radio, RadioGroup, Text } from './components/stateEditors'
 
@@ -44,7 +45,7 @@ export default class Questions extends PureComponent {
                           <div className="question-options">
                             <div className="question-option">
                               <div>&nbsp;</div>
-                              <div>Correct answer</div>
+                              <div>{t('correct')}</div>
                             </div>
                             {[0, 1, 2, 3].map(i => (
                               <div className="question-option" key={i}>
@@ -67,12 +68,12 @@ export default class Questions extends PureComponent {
                       <div className="question-buttons">
                         {updater.state.hasPendingChanges && (
                           <button onClick={() => this.saveQuestion(item, updater)}>
-                            Save Question
+                            {t('saveQ')}
                           </button>
                         )}
                         {updater.state.hasPendingChanges && (
                           <button className="secondary" onClick={() => updater.cancel()}>
-                            Cancel Changes
+                            {t('cancelChanges')}
                           </button>
                         )}
                         <button
@@ -80,7 +81,7 @@ export default class Questions extends PureComponent {
                           disabled={this.props.currentIndex >= index && isActive}
                           onClick={this.deleteQuestion(item)}
                         >
-                          Delete Question
+                          {t('deleteQ')}
                         </button>
                       </div>
                     </div>
@@ -119,7 +120,7 @@ export default class Questions extends PureComponent {
   sortedQuestions = () => this.props.questions.sort((a, b) => a.order - b.order)
 
   deleteQuestion = q => () => {
-    if (window.confirm('Are you sure you want to delete the question')) {
+    if (window.confirm(t('confirmDeleteQ'))) {
       this.props.questionsRef.child(q.id).remove()
     }
   }

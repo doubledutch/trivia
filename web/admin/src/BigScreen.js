@@ -16,7 +16,7 @@
 
 import React, { PureComponent } from 'react'
 import './BigScreen.css'
-
+import { translate as t } from '@doubledutch/admin-client'
 import Avatar from './components/Avatar'
 import Question from './Question'
 
@@ -80,10 +80,7 @@ export default class BigScreen extends PureComponent {
       }
       className="big-screen"
     >
-      <div className="box box-content">
-        This trivia session has not been initialized. Please click 'Initialize' in the Trivia admin
-        panel to allow players to start joining.
-      </div>
+      <div className="box box-content">{t('initialize')}</div>
     </div>
   )
 
@@ -93,8 +90,8 @@ export default class BigScreen extends PureComponent {
       return (
         <div className="box joined">
           <div className="box-content">
-            <h1>Waiting</h1>
-            <h2>for players to join</h2>
+            <h1>{t('waiting')}</h1>
+            <h2>{t('toJoin')}</h2>
           </div>
         </div>
       )
@@ -112,7 +109,7 @@ export default class BigScreen extends PureComponent {
                 <span>
                   {u.firstName} {u.lastName}
                 </span>
-                &nbsp;has joined
+                &nbsp;{t('hasJoined')}
               </div>
             ))}
           </div>
@@ -166,7 +163,7 @@ export default class BigScreen extends PureComponent {
         : null
     return (
       <div className="leaderboard">
-        <h1>Leaderboard</h1>
+        <h1>{t('leaderboard')}</h1>
         {leaderboard &&
           leaderboard.map((p, i) => (
             <div key={i} className="leaderboard-tile box" style={customStyle(p)}>

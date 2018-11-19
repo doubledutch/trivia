@@ -15,6 +15,7 @@
  */
 
 import React, { PureComponent } from 'react'
+import { translate as t } from '@doubledutch/admin-client'
 import './PresentationDriver.css'
 
 import Question from './Question'
@@ -64,7 +65,7 @@ export default class PresentationDriver extends PureComponent {
     if (!session || !publicSession)
       return (
         <div className="presentation-driver">
-          <button onClick={this.initializeSession}>Initialize</button>
+          <button onClick={this.initializeSession}>{t('init')}</button>
         </div>
       )
 
@@ -95,14 +96,14 @@ export default class PresentationDriver extends PureComponent {
             totalSeconds={session.secondsPerQuestion}
           >
             <button onClick={this.startNextQuestion} disabled={isQuestionInProgress}>
-              Start Question
+              {t('start')}
             </button>
           </Question>
         )}
         {isQuestionInProgress ? (
           <div className="buttons">
             <button className="tertiary" onClick={this.endQuestion}>
-              End Current Question Early
+              {t('endEarly')}
             </button>
           </div>
         ) : (
@@ -110,11 +111,11 @@ export default class PresentationDriver extends PureComponent {
             <div className="buttons">
               {!hideLeaderboardButton && (
                 <button className="secondary" onClick={this.showLeaderboard}>
-                  Display Leaderboard
+                  {t('display')}
                 </button>
               )}
               <button className="tertiary" onClick={this.endGame}>
-                End Game
+                {t('end')}
               </button>
             </div>
           )
@@ -126,7 +127,7 @@ export default class PresentationDriver extends PureComponent {
 
   renderReset = () => (
     <button className="tertiary" onClick={this.resetSession}>
-      Reset trivia session
+      {t('reset')}
     </button>
   )
 
@@ -138,11 +139,7 @@ export default class PresentationDriver extends PureComponent {
   }
 
   resetSession = () => {
-    if (
-      window.confirm(
-        'Are you sure you want to destroy the current trivia session? This cannot be undone.',
-      )
-    ) {
+    if (window.confirm(t('confirmReset'))) {
       this.clearTimer()
 
       // Remove the trivia session

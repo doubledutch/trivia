@@ -18,16 +18,19 @@ import React, { PureComponent } from 'react'
 import { Image, ImageBackground, Text, View, ScrollView, StyleSheet } from 'react-native'
 
 // rn-client must be imported before FirebaseConnector
-import client, { Avatar, TitleBar } from '@doubledutch/rn-client'
+import client, { Avatar, TitleBar, translate as t, useStrings } from '@doubledutch/rn-client'
 import {
   mapPushedDataToStateObjects,
   provideFirebaseConnectorToReactComponent,
 } from '@doubledutch/firebase-connector'
+import i18n from './i18n'
 import { background, trophy } from './images'
 import { Button } from './components'
 import Leaderboard from './Leaderboard'
 import Question from './Question'
 import colors from './colors'
+
+useStrings(i18n)
 
 const numJoinedToShow = 5
 
@@ -79,7 +82,7 @@ class HomeView extends PureComponent {
         style={s.container}
         source={backgroundUrl ? { uri: backgroundUrl } : background}
       >
-        <TitleBar title="Trivia" client={client} signin={this.signin} />
+        <TitleBar title={t('trivia')} client={client} signin={this.signin} />
         <ScrollView style={s.scroll}>
           {me === undefined
             ? null
@@ -111,14 +114,14 @@ class HomeView extends PureComponent {
   }
 
   renderNotJoined = session => (
-      <View style={s.notJoined}>
-        <Text style={s.whiteTitle}>TRIVIA</Text>
-        <Image source={trophy} style={s.trophy} />
-        <Text style={s.whiteTitle}>CHALLENGE</Text>
-        <Text style={s.joinSessionName}>{session.name}</Text>
-        <Button title="Let's Play!" onPress={this.join} />
-      </View>
-    )
+    <View style={s.notJoined}>
+      <Text style={s.whiteTitle}>{t('triviaCap')}</Text>
+      <Image source={trophy} style={s.trophy} />
+      <Text style={s.whiteTitle}>{t('challengeCap')}</Text>
+      <Text style={s.joinSessionName}>{session.name}</Text>
+      <Button title="Let's Play!" onPress={this.join} />
+    </View>
+  )
 
   renderSessions = (sessions, me) => {
     const currentSessions = Object.keys(sessions)
@@ -128,12 +131,12 @@ class HomeView extends PureComponent {
     if (currentSessions.length === 0)
       return (
         <View style={s.box}>
-          <Text>No trivia games currently. Try back later!</Text>
+          <Text>{t('noGames')}</Text>
         </View>
       )
     return (
       <View style={s.box}>
-        <Text style={s.tealText}>Choose a trivia game</Text>
+        <Text style={s.tealText}>{t('choose')}</Text>
         {currentSessions.map(s => (
           <Button key={s.id} title={s.name} onPress={this.selectSession(s)} />
         ))}
@@ -146,38 +149,39 @@ class HomeView extends PureComponent {
     const joined = Object.values(users).filter(u => u.sessionId === sessionId)
     return (
       <View style={s.box}>
-        <Text style={s.youAreIn}>You are in!</Text>
+        <Text style={s.youAreIn}>{t('youIn')}</Text>
         <Text style={s.joinCount}>{joined.length - 1}</Text>
-        <Text style={s.haveJoined}>
-          {joined.length === 2 ? 'Other Has Joined' : 'Others Have Joined'}
-        </Text>
+        <Text style={s.haveJoined}>{joined.length === 2 ? t('other') : t('others')}</Text>
         {joined.slice(Math.max(0, joined.length - numJoinedToShow)).map((u, i) => (
           <View key={u.id} style={[s.joinedUser, i === 0 ? { opacity: 0.5 } : null]}>
             <Avatar user={u} size={30} />
             <Text style={s.joinedUserName}>
               {u.firstName} {u.lastName}
             </Text>
-            <Text style={s.hasJoined}> has joined</Text>
+            <Text style={s.hasJoined}>{t('hasJoined')}</Text>
           </View>
         ))}
       </View>
     )
   }
 
-  renderAcceptingAnswers = (session, sessionId) => <Question
+  renderAcceptingAnswers = (session, sessionId) => (
+    <Question
       question={session.question}
       totalSeconds={session.question.totalSeconds}
       countDown
       selectedIndex={this.state.answers[sessionId]}
       onOptionSelected={this.selectOption}
     />
-  }
+  )
 
-  renderQuestionFinished = (session, sessionId) => <Question
+  renderQuestionFinished = (session, sessionId) => (
+    <Question
       question={session.question}
       totalSeconds={0}
       selectedIndex={this.state.answers[sessionId]}
     />
+  )
 
   renderLeaderboard = session => {
     const leaderboard = session.leaderboard || []
@@ -187,11 +191,11 @@ class HomeView extends PureComponent {
         {myPlace && (
           <View style={[s.box, s.myPlace]}>
             <Text style={s.myPlaceTitle}>
-              You are in {ordinal(myPlace)} place{myPlace < 10 ? '!' : ''}
+              {t('currentPlace', { place: ordinal(myPlace), punctuation: myPlace < 10 ? '!' : '' })}
             </Text>
           </View>
         )}
-        <Text style={s.leaderboardHeader}>Leaderboard</Text>
+        <Text style={s.leaderboardHeader}>{t('leaderboard')}</Text>
         <Leaderboard leaderboard={leaderboard} />
       </View>
     )
@@ -205,12 +209,12 @@ class HomeView extends PureComponent {
         {myPlace && (
           <View style={[s.box, s.myPlace]}>
             <Text style={s.myPlaceTitle}>
-              You placed {ordinal(myPlace)}
+              {t('placed', { place: ordinal(myPlace) })}
               {myPlace < 10 ? '!' : ''}
             </Text>
           </View>
         )}
-        <Text style={s.leaderboardHeader}>Leaderboard</Text>
+        <Text style={s.leaderboardHeader}>{t('leaderboard')}</Text>
         <Leaderboard leaderboard={leaderboard} />
       </View>
     )

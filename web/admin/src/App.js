@@ -16,11 +16,14 @@
 
 import React, { PureComponent } from 'react'
 import './base.css'
-import client from '@doubledutch/admin-client'
+import client, { translate as t, useStrings } from '@doubledutch/admin-client'
 import { provideFirebaseConnectorToReactComponent } from '@doubledutch/firebase-connector'
 import Admin from './Admin'
+import i18n from './i18n'
 import BigScreen from './BigScreen'
 import { parseQueryString } from './utils'
+
+useStrings(i18n)
 
 const { token } = parseQueryString()
 if (token) client.longLivedToken = token
