@@ -16,7 +16,7 @@
 
 import React, { PureComponent } from 'react'
 import './Admin.css'
-
+import { translate as t } from '@doubledutch/admin-client'
 import {
   mapPushedDataToStateObjects,
   mapPushedDataToObjectOfStateObjects,
@@ -73,11 +73,11 @@ export default class Admin extends PureComponent {
     const { backgroundUrl, launchDisabled, sessionId, sessions, users } = this.state
     return (
       <div className="Admin">
-        <p className="boxTitle">Trivia Challenge</p>
-        <p className="bigBoxTitle">Trivia Questions</p>
+        <p className="boxTitle">{t('challenge')}</p>
+        <p className="bigBoxTitle">{t('questions')}</p>
         <div className="row">
           <select value={sessionId} onChange={this.onSessionChange}>
-            <option value="">-- Select a session --</option>
+            <option value="">{t('select')}</option>
             {Object.values(sessions).map(s => (
               <option key={s.id} value={s.id}>
                 {s.name}
@@ -85,13 +85,13 @@ export default class Admin extends PureComponent {
             ))}
           </select>
           <button className="dd-bordered secondary" onClick={this.createSession}>
-            Create new session
+            {t('create')}
           </button>
         </div>
         {sessionId && (
           <div>
             <label className="row">
-              <span>Session Name:&nbsp;</span>
+              <span>{t('name')}</span>
               <input
                 className={this.isDisplayable(sessionId) ? '' : 'bordered-error'}
                 type="text"
@@ -103,7 +103,7 @@ export default class Admin extends PureComponent {
                 ref="nameInput"
               />
               <button className="secondary" onClick={this.deleteSession}>
-                Delete Session
+                {t('delete')}
               </button>
             </label>
             <div className="session">
@@ -117,19 +117,19 @@ export default class Admin extends PureComponent {
                   <footer>
                     <div>
                       <label>
-                        Time per question:{' '}
+                        {t('timePer')}{' '}
                         <input
                           type="number"
                           min="0"
                           value={sessions[sessionId].secondsPerQuestion}
                           onChange={this.onSecondsChange}
                         />{' '}
-                        seconds
+                        {t('seconds')}
                       </label>
                     </div>
                     <div>
                       <label>
-                        Leaderboard up to{' '}
+                        {t('leaderboardUp')}{' '}
                         <input
                           type="number"
                           min="1"
@@ -137,16 +137,16 @@ export default class Admin extends PureComponent {
                           value={sessions[sessionId].leaderboardMax || 1000}
                           onChange={this.onLeaderboardMaxChange}
                         />{' '}
-                        {th(sessions[sessionId].leaderboardMax)} place
+                        {th(sessions[sessionId].leaderboardMax)} {t('place')}
                       </label>
                     </div>
                     <div>
                       {this.canAddNewQuestion() ? (
                         <button onClick={() => this.addQuestion(this.state.sessionId)}>
-                          Add New Question
+                          {t('addNew')}
                         </button>
                       ) : (
-                        <button disabled>Complete Last Question</button>
+                        <button disabled>{t('completeLast')}</button>
                       )}
                     </div>
                   </footer>
@@ -162,13 +162,13 @@ export default class Admin extends PureComponent {
                 />
                 <div className="presentation-overlays">
                   <div>
-                    Presentation Screen{' '}
+                    {t('presentation')}{' '}
                     <button
                       className="overlay-button"
                       onClick={this.launchPresentation}
                       disabled={launchDisabled || !this.bigScreenUrl()}
                     >
-                      Launch Presentation
+                      {t('launch')}
                     </button>
                   </div>
                 </div>
@@ -182,7 +182,7 @@ export default class Admin extends PureComponent {
                   users={users}
                 />
                 <div className="presentation-overlays">
-                  <div>Up Next</div>
+                  <div>{t('next')}</div>
                 </div>
               </div>
             </div>
@@ -193,7 +193,7 @@ export default class Admin extends PureComponent {
             type="text"
             value={backgroundUrl}
             onChange={this.onBackgroundUrlChange}
-            placeholder="Custom background image URL. Suggested at least 700px high and wide."
+            placeholder={t('background')}
             className="background-url"
           />
         </div>
@@ -273,7 +273,7 @@ export default class Admin extends PureComponent {
 
   deleteSession = () => {
     const { sessionId, sessions } = this.state
-    if (window.confirm(`Are you sure you want to delete session '${sessions[sessionId].name}'?`)) {
+    if (window.confirm(t('confirmDelete', { session: sessions[sessionId].name }))) {
       this.setState({ sessionId: '' })
       this.sessionsRef()
         .child(sessionId)

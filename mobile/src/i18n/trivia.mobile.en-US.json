@@ -1,0 +1,14 @@
+{
+  "trivia": "Trivia",
+  "triviaCap": "TRIVIA",
+  "challengeCap": "CHALLENGE",
+  "noGames": "No trivia games currently. Try back later!",
+  "choose": "Choose a trivia game",
+  "youIn": "You are in!",
+  "hasJoined": " has joined",
+  "currentPlace": "You are in ${place} place ${punctuation}",
+  "leaderboard": "Leaderboard",
+  "placed": "You placed ${place}",
+  "other": "Other has joined",
+  "others": "Others has joined"
+}

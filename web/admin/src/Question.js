@@ -15,6 +15,7 @@
  */
 
 import React, { PureComponent } from 'react'
+import { translate as t } from '@doubledutch/admin-client'
 
 export default class Question extends PureComponent {
   state = {}
@@ -67,7 +68,7 @@ export default class Question extends PureComponent {
       <div className="box">
         <div className="box-content">
           <div className="question-title">
-            <div>Question {number}</div>
+            <div>{t('question', { num: number })}</div>
             <div className={secondsLeft === 0 ? 'time-up' : null}>
               {secondsLeft != null && durationString(secondsLeft)}
             </div>
