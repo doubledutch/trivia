@@ -1,5 +1,5 @@
-import enUS from './trivia.admin.en-US.json'
-// import deDE from './trivia.admin.de-DE.json'
+import enUS from './en-us/trivia.admin.json'
+// import deDE from './de-de/trivia.admin.json'
 
 export default {
   '': enUS,

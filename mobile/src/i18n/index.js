@@ -1,5 +1,5 @@
-import enUS from './trivia.mobile.en-US.json'
-// import deDE from './trivia.mobile.de-DE.json'
+import enUS from './en-us/trivia.mobile.json'
+// import deDE from './de-de/trivia.mobile.json'
 
 export default (strings = {
   '': enUS,
