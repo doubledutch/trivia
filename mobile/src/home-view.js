@@ -72,6 +72,7 @@ class HomeView extends PureComponent {
   }
 
   render() {
+    const { suggestedTitle } = this.props
     const { backgroundUrl, currentUser, sessionId, sessions, me } = this.state
     if (!currentUser) return null
     const session = sessions[sessionId]
@@ -82,7 +83,7 @@ class HomeView extends PureComponent {
         style={s.container}
         source={backgroundUrl ? { uri: backgroundUrl } : background}
       >
-        <TitleBar title={t('trivia')} client={client} signin={this.signin} />
+        <TitleBar title={suggestedTitle || t('trivia')} client={client} signin={this.signin} />
         <ScrollView style={s.scroll}>
           {me === undefined
             ? null
