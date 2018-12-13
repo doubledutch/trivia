@@ -27,6 +27,15 @@ html, body, input, button, select, form{
   padding: 10px;  
 }
 
+.adminContainer {
+  border: 1px solid #dcdcdc;
+  border-radius: 5px;
+  width: 760px;
+  height: 200px;
+  margin: 20px 0px;
+  padding: 20px;
+}
+
 .container.questions {
   width: 800px;
   height: 800px;
@@ -81,6 +90,34 @@ html, body, input, button, select, form{
   height: 400px;
   position: relative;
   flex: 1
+}
+
+.mobile-side {
+  height: 400px;
+  background-color: #F5F5F5;
+  padding: 50px 0px;
+}
+
+.wide-button{
+  width: 90%;
+  font-size: 18px;
+  margin-left: 0px;
+}
+
+.wide-cell{
+  width: 90%;
+  border: 1px solid #dedede;
+  border-radius: 10px;
+  background-color: #FFFFFF;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+}
+
+.wide-cell-text{
+  font-size: 18px;
 }
 
 iframe.big-screen-container {

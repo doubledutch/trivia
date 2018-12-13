@@ -14,6 +14,109 @@
  * limitations under the License.
  */
 
+ .presentation-driver-mobile {
+  width: 100%;
+  height: 100%;
+  background-color: #eaeaea;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* padding: 50px 0px; */
+}
+
+.presentation-driver-new {
+  height: 100%;
+  width: 100%;
+  background-color: #F5F5F5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.presentation-driver-new .box {
+  background-color: #fff;
+  border-radius: 7px;
+  display: flex;
+  width: 90%;
+  flex-direction: column;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.presentation-driver-new .box-content {
+  padding: 1em 1.5em;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+}
+
+.presentation-driver-new .question-title {
+  color: #9b9b9b;
+  font-size: 18px;
+}
+
+.presentation-driver-new .timer-bar {
+  height: 5px;
+  width: 100%;
+  background-color: #f3f3f3;
+  position: relative;
+}
+.presentation-driver-new .timer-bar-remaining {
+  height: 100%;
+  right: 0;
+  position: absolute;
+  background-color: #2daaa0;
+}
+.presentation-driver-new .question-title {
+  display: flex;
+  justify-content: space-between;
+}
+.presentation-driver-new .question-title :last-child {
+  color: #2daaa0;
+  font-size: 18px;
+}
+.presentation-driver-new h2 {
+  color: #442564;
+  font-size: 24px;
+  text-align: center;
+  margin: 1em 0;
+}
+
+.presentation-driver-new .buttons {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  margin-top: 1em;
+  align-items: center;
+  justify-content: center;
+}
+
+.presentation-driver-new button {
+  margin: 0;
+  font-size: 18px;
+}
+
+.wide-button-blue{
+  width: 90%;
+  font-size: 18px;
+  margin-left: 0px;
+}
+
+.wide-button{
+  width: 90%;
+  border: 1px solid #dedede !important;
+  border-radius: 10px;
+  color: #4e92df;
+  background-color: #FFFFFF;
+  margin-bottom: 10px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+}
+
 .presentation-driver {
   height: 100%;
   width: 100%;

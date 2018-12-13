@@ -16,11 +16,12 @@
 
 import React, { PureComponent } from 'react'
 import './Admin.css'
-import { translate as t } from '@doubledutch/admin-client'
+import client, { translate as t } from '@doubledutch/admin-client'
 import {
   mapPushedDataToStateObjects,
   mapPushedDataToObjectOfStateObjects,
 } from '@doubledutch/firebase-connector'
+import { AttendeeSelector } from '@doubledutch/react-components'
 import Questions from './Questions'
 import PresentationDriver from './PresentationDriver'
 import { openTab } from './utils'
@@ -35,7 +36,11 @@ export default class Admin extends PureComponent {
     backgroundUrl: '',
     isFocus: false,
     isNew: false,
+    admins: [],
+    attendees: [],
   }
+
+  adminableUsersRef = () => this.props.fbc.database.private.adminableUsersRef()
 
   sessionsRef = () => this.props.fbc.database.private.adminRef('sessions')
 
@@ -49,17 +54,26 @@ export default class Admin extends PureComponent {
 
   componentDidMount() {
     const { fbc } = this.props
-    mapPushedDataToStateObjects(this.sessionsRef(), this, 'sessions')
-    mapPushedDataToObjectOfStateObjects(
-      this.questionsRef(),
-      this,
-      'questionsBySession',
-      (key, value) => value.sessionId,
-    )
-    mapPushedDataToStateObjects(this.publicUsersRef(), this, 'users')
-    mapPushedDataToStateObjects(this.publicSessionRef(), this, 'publicSessions')
-    this.backgroundUrlRef().on('value', data => this.setState({ backgroundUrl: data.val() }))
-    fbc.getLongLivedAdminToken().then(longLivedToken => this.setState({ longLivedToken }))
+    client.getAttendees().then(users => {
+      this.setState({ attendees: users })
+
+      this.adminableUsersRef().on('value', data => {
+        const users = data.val() || {}
+        this.setState({ admins: Object.keys(users).filter(id => users[id].adminToken) })
+      })
+
+      mapPushedDataToStateObjects(this.sessionsRef(), this, 'sessions')
+      mapPushedDataToObjectOfStateObjects(
+        this.questionsRef(),
+        this,
+        'questionsBySession',
+        (key, value) => value.sessionId,
+      )
+      mapPushedDataToStateObjects(this.publicUsersRef(), this, 'users')
+      mapPushedDataToStateObjects(this.publicSessionRef(), this, 'publicSessions')
+      this.backgroundUrlRef().on('value', data => this.setState({ backgroundUrl: data.val() }))
+      fbc.getLongLivedAdminToken().then(longLivedToken => this.setState({ longLivedToken }))
+    })
   }
 
   componentDidUpdate() {
@@ -153,6 +167,16 @@ export default class Admin extends PureComponent {
                 )}
               />
             </div>
+            <div className="adminContainer">
+              <AttendeeSelector
+                client={client}
+                searchTitle="Select Admins"
+                selectedTitle="Current Admins"
+                onSelected={this.onAdminSelected}
+                onDeselected={this.onAdminDeselected}
+                selected={this.state.attendees.filter(a => this.isAdmin(a.id))}
+              />
+            </div>
             <div className="presentation-container">
               <div className="presentation-side">
                 <iframe
@@ -183,6 +207,13 @@ export default class Admin extends PureComponent {
                 />
                 <div className="presentation-overlays">
                   <div>{t('next')}</div>
+                  <button
+                    className="overlay-button"
+                    onClick={this.launchAdmin}
+                    disabled={launchDisabled || !this.adminScreenUrl()}
+                  >
+                    {t('launchAdmin')}
+                  </button>
                 </div>
               </div>
             </div>
@@ -199,6 +230,28 @@ export default class Admin extends PureComponent {
         </div>
       </div>
     )
+  }
+
+  onAdminSelected = attendee => {
+    const tokenRef = this.props.fbc.database.private
+      .adminableUsersRef(attendee.id)
+      .child('adminToken')
+    this.setState()
+    this.props.fbc.getLongLivedAdminToken().then(token => tokenRef.set(token))
+    this.props.fbc.database.private
+      .adminRef('adminUrl')
+      .set(window.location.href + this.adminScreenUrlSave())
+  }
+
+  onAdminDeselected = attendee => {
+    const tokenRef = this.props.fbc.database.private
+      .adminableUsersRef(attendee.id)
+      .child('adminToken')
+    tokenRef.remove()
+  }
+
+  isAdmin(id) {
+    return this.state.admins.includes(id)
   }
 
   isDisplayable = sessionId => {
@@ -319,6 +372,26 @@ export default class Admin extends PureComponent {
     }
     return true
   }
+
+  launchAdmin = () => {
+    this.setState({ launchDisabled: true })
+    setTimeout(() => this.setState({ launchDisabled: false }), 2000)
+    openTab(this.adminScreenUrl())
+  }
+
+  adminScreenUrl = () =>
+    this.state.longLivedToken
+      ? `?page=adminScreen&sessionId=${encodeURIComponent(
+          this.state.sessionId,
+        )}&sessionName=${encodeURIComponent(
+          this.state.sessions[this.state.sessionId].name,
+        )}&token=${encodeURIComponent(this.state.longLivedToken)}`
+      : null
+
+  adminScreenUrlSave = () =>
+    this.state.longLivedToken
+      ? `?page=adminScreen&token=${encodeURIComponent(this.state.longLivedToken)}`
+      : null
 
   launchPresentation = () => {
     this.setState({ launchDisabled: true })
