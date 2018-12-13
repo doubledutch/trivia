@@ -176,6 +176,7 @@ class HomeView extends PureComponent {
   }
 
   render() {
+<<<<<<< HEAD
     const { backgroundUrl, currentUser, adminSessionId, adminUrl, isAdminView } = this.state
     if (!currentUser) return null
 
@@ -212,6 +213,10 @@ class HomeView extends PureComponent {
 
   renderCoreView = () => {
     const { currentUser, sessionId, sessions, me, isAdminView } = this.state
+=======
+    const { suggestedTitle } = this.props
+    const { backgroundUrl, currentUser, sessionId, sessions, me } = this.state
+>>>>>>> 7f74cb4fffcdda3d05db1f4a557b68dbb52d6afa
     if (!currentUser) return null
     const session = sessions[sessionId]
     const meJoined = me && me.sessionId === sessionId ? me : null
@@ -245,6 +250,7 @@ class HomeView extends PureComponent {
       return this.renderAdmin()
     }
     return (
+<<<<<<< HEAD
       <ScrollView style={s.scroll}>
         {me === undefined
           ? null
@@ -252,6 +258,21 @@ class HomeView extends PureComponent {
           ? this.renderSession(session, sessionId, meJoined)
           : this.renderSessions(sessions, me)}
       </ScrollView>
+=======
+      <ImageBackground
+        style={s.container}
+        source={backgroundUrl ? { uri: backgroundUrl } : background}
+      >
+        <TitleBar title={suggestedTitle || t('trivia')} client={client} signin={this.signin} />
+        <ScrollView style={s.scroll}>
+          {me === undefined
+            ? null
+            : session
+            ? this.renderSession(session, sessionId, meJoined)
+            : this.renderSessions(sessions, me)}
+        </ScrollView>
+      </ImageBackground>
+>>>>>>> 7f74cb4fffcdda3d05db1f4a557b68dbb52d6afa
     )
   }
 

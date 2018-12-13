@@ -9,10 +9,10 @@
     "@doubledutch/firebase-connector": "^4.0.1",
     "@doubledutch/react-components": "^0.1.0",
     "qs": "^6.5.1",
-    "react": "^16.5.1",
+    "react": "^16.6.3",
     "react-beautiful-dnd": "^6.0.1",
-    "react-dom": "^16.5.1",
-    "react-scripts": "1.0.14"
+    "react-dom": "^16.6.3",
+    "react-scripts": "^2.1.1"
   },
   "scripts": {
     "start": "node emulator",
@@ -21,8 +21,6 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.9.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-prettier": "^3.3.0",
     "eslint-import-resolver-node": "^0.3.2",
