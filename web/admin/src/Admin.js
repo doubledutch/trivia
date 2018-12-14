@@ -24,6 +24,7 @@ import {
 import { AttendeeSelector } from '@doubledutch/react-components'
 import Questions from './Questions'
 import PresentationDriver from './PresentationDriver'
+import PresentationMobileDriver from './PresentationMobileDriver'
 import { openTab } from './utils'
 
 export default class Admin extends PureComponent {
@@ -198,22 +199,23 @@ export default class Admin extends PureComponent {
                 </div>
               </div>
               <div className="presentation-side">
-                <PresentationDriver
+                <PresentationMobileDriver
                   fbc={this.props.fbc}
-                  session={sessions[sessionId]}
+                  sessionId={sessionId}
+                  sessionName={sessions[sessionId].name}
                   saveCurrentIndex={this.saveCurrentIndex}
                   questions={this.questionsForCurrentSession()}
                   users={users}
                 />
                 <div className="presentation-overlays">
-                  <div>{t('next')}</div>
-                  <button
+                  {/* <div>{t('next')}</div> */}
+                  {/* <button
                     className="overlay-button"
                     onClick={this.launchAdmin}
                     disabled={launchDisabled || !this.adminScreenUrl()}
                   >
                     {t('launchAdmin')}
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>

@@ -89,7 +89,7 @@ export default class PresentationMobileDriver extends PureComponent {
   render() {
     const session = this.state.sessions[this.props.sessionId]
     const { publicSession } = this.state
-    const questions = this.questionsForCurrentSession()
+    const questions = this.props.questions || this.questionsForCurrentSession()
     if (!session || !publicSession || !questions)
       return (
         <div className="presentation-driver-new">
@@ -220,12 +220,12 @@ export default class PresentationMobileDriver extends PureComponent {
     this.publicSessionRef().set({ state: 'NOT_STARTED', name: this.props.sessionName })
 
   startNextQuestion = () => {
-    const questions = this.questionsForCurrentSession()
+    const questions = this.props.questions || this.questionsForCurrentSession()
     const session = this.state.sessions[this.props.sessionId]
     const { publicSession } = this.state
     const index = publicSession.question ? publicSession.question.index + 1 : 0
     const question = questions[index]
-    // this.props.saveCurrentIndex(index)
+    if (this.props.saveCurrentIndex) this.props.saveCurrentIndex(index)
     if (this.timer) clearInterval(this.timer)
 
     this.publicSessionRef()
@@ -248,7 +248,7 @@ export default class PresentationMobileDriver extends PureComponent {
   endGame = () => this.publicSessionRef().update({ state: 'ENDED' })
 
   endQuestion = () => {
-    const questions = this.questionsForCurrentSession()
+    const questions = this.props.questions || this.questionsForCurrentSession()
     this.setState({ startCountdown: false })
     if (!this.timer) return // Ensure we only end the question once.
     this.clearTimer()
@@ -313,7 +313,7 @@ export default class PresentationMobileDriver extends PureComponent {
 
   getLeaderboard(scores) {
     if (!scores) return []
-    const { users } = this.state
+    const users = this.props.users || this.state.users
     const session = this.state.sessions[this.props.sessionId]
     let prevScore = Number.MAX_SAFE_INTEGER
     let place = 0
