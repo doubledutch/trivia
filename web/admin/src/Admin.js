@@ -207,16 +207,6 @@ export default class Admin extends PureComponent {
                   questions={this.questionsForCurrentSession()}
                   users={users}
                 />
-                <div className="presentation-overlays">
-                  {/* <div>{t('next')}</div> */}
-                  {/* <button
-                    className="overlay-button"
-                    onClick={this.launchAdmin}
-                    disabled={launchDisabled || !this.adminScreenUrl()}
-                  >
-                    {t('launchAdmin')}
-                  </button> */}
-                </div>
               </div>
             </div>
           </div>
