@@ -92,7 +92,7 @@ export default class PresentationMobileDriver extends PureComponent {
     const questions = this.props.questions || this.questionsForCurrentSession()
     if (!session || !publicSession || !questions)
       return (
-        <div className="presentation-driver-new">
+        <div className="presenation-driver">
           <div className="wide-cell">
             <p className="wide-cell-text">{this.props.sessionName}</p>
           </div>
@@ -118,7 +118,7 @@ export default class PresentationMobileDriver extends PureComponent {
           true,
         )
       default:
-        return <div className="presentation-driver-new">{this.renderReset()}</div>
+        return <div className="presenation-driver">{this.renderReset()}</div>
     }
   }
 
@@ -137,7 +137,7 @@ export default class PresentationMobileDriver extends PureComponent {
     const question = questions[questionIndex]
 
     return (
-      <div className="presentation-driver-new">
+      <div className="presenation-driver">
         {question && (
           <Question
             question={question}
