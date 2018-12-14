@@ -145,20 +145,17 @@ export default class PresentationScreen extends PureComponent {
             totalSeconds={session.secondsPerQuestion}
             startCountdown={this.state.startCountdown}
           >
-            <button
-              onClick={() => this.startNextQuestion(questions)}
-              disabled={isQuestionInProgress}
-            >
+            <button onClick={this.startNextQuestion} disabled={isQuestionInProgress}>
               {t('start')}
             </button>
           </Question>
         )}
         {isQuestionInProgress ? (
           <div className="buttons">
-            <button className="wide-button" onClick={() => this.endQuestion(questions)}>
+            <button className="wide-button" onClick={this.endQuestion}>
               {t('endEarly')}
             </button>
-            <button className="wide-button" disabled={true} onClick={this.showLeaderboard}>
+            <button className="wide-button" disabled onClick={this.showLeaderboard}>
               {t('display')}
             </button>
           </div>
@@ -222,8 +219,8 @@ export default class PresentationScreen extends PureComponent {
   initializeSession = () =>
     this.publicSessionRef().set({ state: 'NOT_STARTED', name: this.props.sessionName })
 
-  startNextQuestion = questions => {
-    // const { questions } = this.props
+  startNextQuestion = () => {
+    const questions = this.questionsForCurrentSession()
     const session = this.state.sessions[this.props.sessionId]
     const { publicSession } = this.state
     const index = publicSession.question ? publicSession.question.index + 1 : 0
@@ -250,7 +247,8 @@ export default class PresentationScreen extends PureComponent {
 
   endGame = () => this.publicSessionRef().update({ state: 'ENDED' })
 
-  endQuestion = questions => {
+  endQuestion = () => {
+    const questions = this.questionsForCurrentSession()
     this.setState({ startCountdown: false })
     if (!this.timer) return // Ensure we only end the question once.
     this.clearTimer()
@@ -315,7 +313,7 @@ export default class PresentationScreen extends PureComponent {
 
   getLeaderboard(scores) {
     if (!scores) return []
-    const { users } = this.props
+    const { users } = this.state
     const session = this.state.sessions[this.props.sessionId]
     let prevScore = Number.MAX_SAFE_INTEGER
     let place = 0
