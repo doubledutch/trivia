@@ -24,7 +24,7 @@ import {
 
 import Question from './Question'
 
-export default class PresentationScreen extends PureComponent {
+export default class PresentationMobileDriver extends PureComponent {
   publicSessionRef = () =>
     this.props.fbc.database.public.adminRef('sessions').child(this.props.sessionId)
 
