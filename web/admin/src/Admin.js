@@ -24,7 +24,6 @@ import {
 import { AttendeeSelector } from '@doubledutch/react-components'
 import Questions from './Questions'
 import PresentationDriver from './PresentationDriver'
-import PresentationMobileDriver from './PresentationMobileDriver'
 import { openTab } from './utils'
 
 export default class Admin extends PureComponent {
@@ -199,7 +198,7 @@ export default class Admin extends PureComponent {
                 </div>
               </div>
               <div className="presentation-side">
-                <PresentationMobileDriver
+                <PresentationDriver
                   fbc={this.props.fbc}
                   sessionId={sessionId}
                   sessionName={sessions[sessionId].name}

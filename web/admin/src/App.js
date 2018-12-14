@@ -21,7 +21,7 @@ import { provideFirebaseConnectorToReactComponent } from '@doubledutch/firebase-
 import Admin from './Admin'
 import i18n from './i18n'
 import BigScreen from './BigScreen'
-import PresentationMobileDriver from './PresentationMobileDriver'
+import PresentationDriver from './PresentationDriver'
 import { parseQueryString } from './utils'
 
 useStrings(i18n)
@@ -51,11 +51,7 @@ class App extends PureComponent {
         return (
           <div>
             <div className="mobile-side">
-              <PresentationMobileDriver
-                fbc={fbc}
-                sessionId={qs.sessionId}
-                sessionName={qs.sessionName}
-              />
+              <PresentationDriver fbc={fbc} sessionId={qs.sessionId} sessionName={qs.sessionName} />
             </div>
           </div>
         )
