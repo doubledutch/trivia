@@ -200,8 +200,7 @@ export default class Admin extends PureComponent {
               <div className="presentation-side">
                 <PresentationDriver
                   fbc={this.props.fbc}
-                  sessionId={sessionId}
-                  sessionName={sessions[sessionId].name}
+                  session={sessions[sessionId]}
                   saveCurrentIndex={this.saveCurrentIndex}
                   questions={this.questionsForCurrentSession()}
                   users={users}

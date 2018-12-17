@@ -17,35 +17,23 @@
 import React, { PureComponent } from 'react'
 import { translate as t } from '@doubledutch/admin-client'
 import './PresentationDriver.css'
-import {
-  mapPushedDataToStateObjects,
-  mapPushedDataToObjectOfStateObjects,
-} from '@doubledutch/firebase-connector'
 
 import Question from './Question'
 
-export default class PresentationMobileDriver extends PureComponent {
+export default class PresentationDriver extends PureComponent {
   publicSessionRef = () =>
-    this.props.fbc.database.public.adminRef('sessions').child(this.props.sessionId)
+    this.props.fbc.database.public.adminRef('sessions').child(this.props.session.id)
 
   publicUsersRef = () => this.props.fbc.database.public.usersRef()
 
   privateUsersRef = () => this.props.fbc.database.private.adminableUsersRef()
 
-  sessionsRef = () => this.props.fbc.database.private.adminRef('sessions')
-
-  questionsRef = () => this.props.fbc.database.private.adminRef('questions')
-
   state = {
-    questionsBySession: {},
-    users: {},
-    sessions: {},
-    questions: {},
     startCountdown: false,
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.sessionId !== this.props.sessionId) {
+    if (prevProps.session.id !== this.props.session.id) {
       this.unwireHandlers()
       this.wireHandlers()
 
@@ -66,20 +54,7 @@ export default class PresentationMobileDriver extends PureComponent {
     this.publicSessionHandler = this.publicSessionRef().on('value', data =>
       this.setState({ publicSession: data.val() }),
     )
-    mapPushedDataToObjectOfStateObjects(
-      this.questionsRef(),
-      this,
-      'questionsBySession',
-      (key, value) => value.sessionId,
-    )
-    mapPushedDataToStateObjects(this.publicUsersRef(), this, 'users')
-    mapPushedDataToStateObjects(this.sessionsRef(), this, 'sessions')
   }
-
-  questionsForCurrentSession = () =>
-    Object.values(this.state.questionsBySession[this.props.sessionId] || {}).sort(
-      (a, b) => a.order - b.order,
-    )
 
   unwireHandlers() {
     this.publicSessionRef().off('value', this.publicSessionHandler)
@@ -87,57 +62,35 @@ export default class PresentationMobileDriver extends PureComponent {
   }
 
   render() {
-    const session = this.state.sessions[this.props.sessionId]
+    const { session } = this.props
     const { publicSession } = this.state
-    const questions = this.props.questions || this.questionsForCurrentSession()
-    if (!session || !publicSession || !questions)
+    if (!session || !publicSession)
       return (
-        <div className="presenation-driver">
-          <div className="wide-cell">
-            <p className="wide-cell-text">{this.props.sessionName}</p>
-          </div>
-          <button className="wide-button-blue" onClick={this.initializeSession}>
-            {t('init')}
-          </button>
+        <div className="presentation-driver">
+          <button onClick={this.initializeSession}>{t('init')}</button>
         </div>
       )
 
     switch (publicSession.state) {
       case 'NOT_STARTED':
-        return this.renderNextQuestion(questions, session, 0, false)
+        return this.renderNextQuestion(session, 0, false)
       case 'QUESTION_OPEN':
-        return this.renderNextQuestion(questions, session, publicSession.question.index + 1, true)
+        return this.renderNextQuestion(session, publicSession.question.index + 1, true)
       case 'QUESTION_CLOSED':
-        return this.renderNextQuestion(questions, session, publicSession.question.index + 1, false)
+        return this.renderNextQuestion(session, publicSession.question.index + 1, false)
       case 'LEADERBOARD':
-        return this.renderNextQuestion(
-          questions,
-          session,
-          publicSession.question.index + 1,
-          false,
-          true,
-        )
+        return this.renderNextQuestion(session, publicSession.question.index + 1, false, true)
       default:
-        return <div className="presenation-driver">{this.renderReset()}</div>
+        return <div className="presentation-driver">{this.renderReset()}</div>
     }
   }
 
-  questionsForCurrentSession = () =>
-    Object.values(this.state.questionsBySession[this.props.sessionId] || {}).sort(
-      (a, b) => a.order - b.order,
-    )
-
-  renderNextQuestion(
-    questions,
-    session,
-    questionIndex,
-    isQuestionInProgress,
-    hideLeaderboardButton,
-  ) {
+  renderNextQuestion(session, questionIndex, isQuestionInProgress, hideLeaderboardButton) {
+    const { questions } = this.props
     const question = questions[questionIndex]
 
     return (
-      <div className="presenation-driver">
+      <div className="presentation-driver">
         {question && (
           <Question
             question={question}
@@ -163,11 +116,7 @@ export default class PresentationMobileDriver extends PureComponent {
           questionIndex > 0 && (
             <div className="buttons">
               {!hideLeaderboardButton && (
-                <button
-                  className="wide-button"
-                  disabled={hideLeaderboardButton}
-                  onClick={this.showLeaderboard}
-                >
+                <button className="wide-button" onClick={this.showLeaderboard}>
                   {t('display')}
                 </button>
               )}
@@ -206,7 +155,7 @@ export default class PresentationMobileDriver extends PureComponent {
       this.publicUsersRef().once('value', data => {
         const users = data.val() || {}
         Object.keys(users)
-          .filter(id => users[id].sessionId === this.props.sessionId)
+          .filter(id => users[id].sessionId === this.props.session.id)
           .forEach(id =>
             this.publicUsersRef()
               .child(id)
@@ -217,11 +166,10 @@ export default class PresentationMobileDriver extends PureComponent {
   }
 
   initializeSession = () =>
-    this.publicSessionRef().set({ state: 'NOT_STARTED', name: this.props.sessionName })
+    this.publicSessionRef().set({ state: 'NOT_STARTED', name: this.props.session.name })
 
   startNextQuestion = () => {
-    const questions = this.props.questions || this.questionsForCurrentSession()
-    const session = this.state.sessions[this.props.sessionId]
+    const { session, questions } = this.props
     const { publicSession } = this.state
     const index = publicSession.question ? publicSession.question.index + 1 : 0
     const question = questions[index]
@@ -248,13 +196,10 @@ export default class PresentationMobileDriver extends PureComponent {
   endGame = () => this.publicSessionRef().update({ state: 'ENDED' })
 
   endQuestion = () => {
-    const questions = this.props.questions || this.questionsForCurrentSession()
-    this.setState({ startCountdown: false })
     if (!this.timer) return // Ensure we only end the question once.
     this.clearTimer()
-
-    // const { questions } = this.props
-    const session = this.state.sessions[this.props.sessionId]
+    this.setState({ startCountdown: false })
+    const { questions, session } = this.props
     const { publicSession } = this.state
     if (publicSession.state === 'QUESTION_OPEN') {
       const { question } = publicSession
@@ -313,8 +258,7 @@ export default class PresentationMobileDriver extends PureComponent {
 
   getLeaderboard(scores) {
     if (!scores) return []
-    const users = this.props.users || this.state.users
-    const session = this.state.sessions[this.props.sessionId]
+    const { users, session } = this.props
     let prevScore = Number.MAX_SAFE_INTEGER
     let place = 0
     const leaderboard = Object.keys(scores)

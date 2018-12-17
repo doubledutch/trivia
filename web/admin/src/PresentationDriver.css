@@ -25,7 +25,7 @@
   /* padding: 50px 0px; */
 }
 
-.presenation-driver {
+.presentation-driver {
   height: 100%;
   width: 100%;
   background-color: #F5F5F5;
@@ -35,7 +35,7 @@
   justify-content: center;
 }
 
-.presenation-driver .box {
+.presentation-driver .box {
   background-color: #fff;
   border-radius: 7px;
   display: flex;
@@ -45,46 +45,46 @@
   align-items: center;
 }
 
-.presenation-driver .box-content {
+.presentation-driver .box-content {
   padding: 1em 1.5em;
   width: 90%;
   display: flex;
   flex-direction: column;
 }
 
-.presenation-driver .question-title {
+.presentation-driver .question-title {
   color: #9b9b9b;
   font-size: 18px;
 }
 
-.presenation-driver .timer-bar {
+.presentation-driver .timer-bar {
   height: 5px;
   width: 100%;
   background-color: #f3f3f3;
   position: relative;
 }
-.presenation-driver .timer-bar-remaining {
+.presentation-driver .timer-bar-remaining {
   height: 100%;
   right: 0;
   position: absolute;
   background-color: #2daaa0;
 }
-.presenation-driver .question-title {
+.presentation-driver .question-title {
   display: flex;
   justify-content: space-between;
 }
-.presenation-driver .question-title :last-child {
+.presentation-driver .question-title :last-child {
   color: #2daaa0;
   font-size: 18px;
 }
-.presenation-driver h2 {
+.presentation-driver h2 {
   color: #442564;
   font-size: 24px;
   text-align: center;
   margin: 1em 0;
 }
 
-.presenation-driver .buttons {
+.presentation-driver .buttons {
   display: flex;
   width: 100%;
   flex-direction: column;
@@ -93,7 +93,7 @@
   justify-content: center;
 }
 
-.presenation-driver button {
+.presentation-driver button {
   margin: 0;
   font-size: 18px;
 }
