@@ -34,5 +34,7 @@
   "saveQ": "Save Question",
   "deleteQ": "Delete Question",
   "cancelChanges": "Cancel Changes",
-  "confirmDeleteQ": "Are you sure you want to delete the question"
+  "confirmDeleteQ": "Are you sure you want to delete the question",
+  "selectAdmin": "Select Admins",
+  "currentAdmin": "Current Admins"
 }

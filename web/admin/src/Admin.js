@@ -115,6 +115,7 @@ export default class Admin extends PureComponent {
                 maxLength={50}
                 onChange={this.onSessionNameChange}
                 ref="nameInput"
+                className="sessionName"
               />
               <button className="secondary" onClick={this.deleteSession}>
                 {t('delete')}
@@ -170,8 +171,8 @@ export default class Admin extends PureComponent {
             <div className="adminContainer">
               <AttendeeSelector
                 client={client}
-                searchTitle="Select Admins"
-                selectedTitle="Current Admins"
+                searchTitle={t('selectAdmin')}
+                selectedTitle={t('currentAdmin')}
                 onSelected={this.onAdminSelected}
                 onDeselected={this.onAdminDeselected}
                 selected={this.state.attendees.filter(a => this.isAdmin(a.id))}

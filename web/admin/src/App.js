@@ -15,7 +15,8 @@
  */
 
 import React, { PureComponent } from 'react'
-import './base.css'
+import './App.css'
+import '@doubledutch/react-components/lib/base.css'
 import client, { translate as t, useStrings } from '@doubledutch/admin-client'
 import { provideFirebaseConnectorToReactComponent } from '@doubledutch/firebase-connector'
 import Admin from './Admin'

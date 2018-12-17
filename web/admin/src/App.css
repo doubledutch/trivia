@@ -24,7 +24,20 @@ html, body {
   margin-bottom: 1em;
 }
 
-button, input[type="text"], input[type="number"], select {
+button, input[type="number"], select {
+  height: 2.8em;
+  font-size: 1em;
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+
+input[type="text"]{
+  font-size: 1em;
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+
+.sessionName {
   height: 2.8em;
   font-size: 1em;
   opacity: 1;
