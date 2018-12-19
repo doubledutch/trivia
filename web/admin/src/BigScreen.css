@@ -86,7 +86,7 @@
   overflow: hidden;
 }
 .big-screen .option-text-front {
-  width: 75vh;
+  width: 75vw;
   display: flex;
   justify-content: space-between;
 }

@@ -54,26 +54,24 @@ export default class Admin extends PureComponent {
 
   componentDidMount() {
     const { fbc } = this.props
-    client.getAttendees().then(users => {
-      this.setState({ attendees: users })
 
-      this.adminableUsersRef().on('value', data => {
-        const users = data.val() || {}
-        this.setState({ admins: Object.keys(users).filter(id => users[id].adminToken) })
-      })
-
-      mapPushedDataToStateObjects(this.sessionsRef(), this, 'sessions')
-      mapPushedDataToObjectOfStateObjects(
-        this.questionsRef(),
-        this,
-        'questionsBySession',
-        (key, value) => value.sessionId,
-      )
-      mapPushedDataToStateObjects(this.publicUsersRef(), this, 'users')
-      mapPushedDataToStateObjects(this.publicSessionRef(), this, 'publicSessions')
-      this.backgroundUrlRef().on('value', data => this.setState({ backgroundUrl: data.val() }))
-      fbc.getLongLivedAdminToken().then(longLivedToken => this.setState({ longLivedToken }))
+    this.adminableUsersRef().on('value', data => {
+      const users = data.val() || {}
+      const adminKeys = Object.keys(users).filter(id => users[id].adminToken)
+      this.getAdmins(adminKeys)
     })
+
+    mapPushedDataToStateObjects(this.sessionsRef(), this, 'sessions')
+    mapPushedDataToObjectOfStateObjects(
+      this.questionsRef(),
+      this,
+      'questionsBySession',
+      (key, value) => value.sessionId,
+    )
+    mapPushedDataToStateObjects(this.publicUsersRef(), this, 'users')
+    mapPushedDataToStateObjects(this.publicSessionRef(), this, 'publicSessions')
+    this.backgroundUrlRef().on('value', data => this.setState({ backgroundUrl: data.val() }))
+    fbc.getLongLivedAdminToken().then(longLivedToken => this.setState({ longLivedToken }))
   }
 
   componentDidUpdate() {
@@ -175,7 +173,7 @@ export default class Admin extends PureComponent {
                 selectedTitle={t('currentAdmin')}
                 onSelected={this.onAdminSelected}
                 onDeselected={this.onAdminDeselected}
-                selected={this.state.attendees.filter(a => this.isAdmin(a.id))}
+                selected={this.state.admins}
               />
             </div>
             <div className="presentation-container">
@@ -223,6 +221,18 @@ export default class Admin extends PureComponent {
     )
   }
 
+  getAdmins = keys => {
+    const attendeeClickPromises = keys.map(result =>
+      client
+        .getAttendee(result)
+        .then(attendee => ({ ...attendee }))
+        .catch(err => result),
+    )
+    Promise.all(attendeeClickPromises).then(newResults => {
+      this.setState({ admins: newResults })
+    })
+  }
+
   onAdminSelected = attendee => {
     const tokenRef = this.props.fbc.database.private
       .adminableUsersRef(attendee.id)
@@ -239,10 +249,6 @@ export default class Admin extends PureComponent {
       .adminableUsersRef(attendee.id)
       .child('adminToken')
     tokenRef.remove()
-  }
-
-  isAdmin(id) {
-    return this.state.admins.includes(id)
   }
 
   isDisplayable = sessionId => {
