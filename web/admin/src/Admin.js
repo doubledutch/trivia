@@ -364,21 +364,6 @@ export default class Admin extends PureComponent {
     return true
   }
 
-  launchAdmin = () => {
-    this.setState({ launchDisabled: true })
-    setTimeout(() => this.setState({ launchDisabled: false }), 2000)
-    openTab(this.adminScreenUrl())
-  }
-
-  adminScreenUrl = () =>
-    this.state.longLivedToken
-      ? `?page=adminScreen&sessionId=${encodeURIComponent(
-          this.state.sessionId,
-        )}&sessionName=${encodeURIComponent(
-          this.state.sessions[this.state.sessionId].name,
-        )}&token=${encodeURIComponent(this.state.longLivedToken)}`
-      : null
-
   adminScreenUrlSave = () =>
     this.state.longLivedToken
       ? `?page=adminScreen&token=${encodeURIComponent(this.state.longLivedToken)}`

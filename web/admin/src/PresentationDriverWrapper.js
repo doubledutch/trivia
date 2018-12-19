@@ -29,8 +29,6 @@ export default class PresentationDriverWrapper extends PureComponent {
 
   publicUsersRef = () => this.props.fbc.database.public.usersRef()
 
-  privateUsersRef = () => this.props.fbc.database.private.adminableUsersRef()
-
   sessionsRef = () => this.props.fbc.database.private.adminRef('sessions')
 
   questionsRef = () => this.props.fbc.database.private.adminRef('questions')
@@ -40,7 +38,6 @@ export default class PresentationDriverWrapper extends PureComponent {
     users: {},
     sessions: {},
     questions: {},
-    startCountdown: false,
   }
 
   componentDidUpdate(prevProps) {

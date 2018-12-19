@@ -67,6 +67,7 @@ html, body, input, button, select, form{
 
 .background-url {
   width: 800px;
+  height: 2.8em;
   margin-top: 10px;
   box-sizing: border-box;
 }
