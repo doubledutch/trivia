@@ -55,12 +55,6 @@ export default class Question extends PureComponent {
     ) {
       this.startTimer(nextProps)
     }
-    if (nextProps.startCountdown) {
-      this.startTimer(nextProps)
-    } else {
-      clearInterval(this.timer)
-      this.setState({ secondsLeft: this.props.totalSeconds })
-    }
   }
 
   componentWillUnmount() {

@@ -28,9 +28,7 @@ export default class PresentationDriver extends PureComponent {
 
   privateUsersRef = () => this.props.fbc.database.private.adminableUsersRef()
 
-  state = {
-    startCountdown: false,
-  }
+  state = {}
 
   componentDidUpdate(prevProps) {
     if (prevProps.session.id !== this.props.session.id) {
@@ -96,7 +94,6 @@ export default class PresentationDriver extends PureComponent {
             question={question}
             number={questionIndex + 1}
             totalSeconds={session.secondsPerQuestion}
-            startCountdown={this.state.startCountdown}
           >
             <button onClick={this.startNextQuestion} disabled={isQuestionInProgress}>
               {t('start')}
@@ -198,7 +195,6 @@ export default class PresentationDriver extends PureComponent {
   endQuestion = () => {
     if (!this.timer) return // Ensure we only end the question once.
     this.clearTimer()
-    this.setState({ startCountdown: false })
     const { questions, session } = this.props
     const { publicSession } = this.state
     if (publicSession.state === 'QUESTION_OPEN') {
@@ -280,7 +276,6 @@ export default class PresentationDriver extends PureComponent {
   startTimer() {
     this.questionStartedAt = new Date().valueOf()
     this.clearTimer()
-    this.setState({ startCountdown: true })
     this.timer = setInterval(() => {
       const { publicSession } = this.state
       if (!publicSession || !publicSession.question) return

@@ -18,7 +18,7 @@
   opacity: 0.9;
 }
 .big-screen .box-content {
-  width: 75vh;
+  width: 75vw;
   padding: 3vh 6vh;
   display: flex;
   flex-direction: column;
@@ -73,7 +73,7 @@
   margin-bottom: 2vh;
   position: relative;
   font-size: 1.3em;
-  width: 75vh;
+  width: 75vw;
 }
 .big-screen .option .option-text-back {
   border: 0.5vh solid #9b9b9b;

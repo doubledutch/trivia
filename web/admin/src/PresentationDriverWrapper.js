@@ -20,7 +20,7 @@ import {
   mapPushedDataToStateObjects,
   mapPushedDataToObjectOfStateObjects,
 } from '@doubledutch/firebase-connector'
-
+import BigScreen from './BigScreen'
 import PresentationDriver from './PresentationDriver'
 
 export default class PresentationDriverWrapper extends PureComponent {
@@ -88,10 +88,13 @@ export default class PresentationDriverWrapper extends PureComponent {
     const questions = this.questionsForCurrentSession()
     const session = this.state.sessions[sessionId]
     return (
-      <div className="mobile-side">
-        {questions && session && (
-          <PresentationDriver fbc={fbc} session={session} questions={questions} users={users} />
-        )}
+      <div>
+        <div className="mobile-side">
+          {questions && session && (
+            <PresentationDriver fbc={fbc} session={session} questions={questions} users={users} />
+          )}
+        </div>
+        {questions && session && <BigScreen fbc={fbc} sessionId={session.id} />}
       </div>
     )
   }

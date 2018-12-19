@@ -480,6 +480,7 @@ const s = StyleSheet.create({
     borderColor: '#DEDEDE',
     borderWidth: 1,
     backgroundColor: 'white',
+    marginTop: 20,
   },
   select: {
     borderRadius: 25,

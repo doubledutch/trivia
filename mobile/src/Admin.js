@@ -15,7 +15,7 @@
  */
 
 import React, { PureComponent } from 'react'
-import { Text, View, StyleSheet, WebView, ScrollView } from 'react-native'
+import { Text, View, StyleSheet, WebView, ScrollView, Dimensions } from 'react-native'
 import colors from './colors'
 
 export default class Admin extends PureComponent {
@@ -23,7 +23,7 @@ export default class Admin extends PureComponent {
     const uri = this.updateUrl()
     return (
       <View style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
-        <View style={{ height: 500 }}>
+        <View style={{ flex: 1 }}>
           <WebView
             source={{
               uri,
