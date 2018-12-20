@@ -185,12 +185,12 @@ class HomeView extends PureComponent {
           <View style={{ flex: 1 }}>
             <TitleBar title={t('trivia')} client={client} signin={this.signin} />
             <ImageBackground style={s.container} source={this.renderBackground()}>
-              {this.renderCoreView()}
               {adminUrl && adminSessionId && (
                 <TouchableOpacity style={s.option} onPress={this.cancelGame}>
                   <Text style={s.optionText}>{t('cancelGame')}</Text>
                 </TouchableOpacity>
               )}
+              {this.renderCoreView()}
             </ImageBackground>
           </View>
         ) : (
@@ -469,18 +469,14 @@ const s = StyleSheet.create({
     padding: 20,
   },
   option: {
-    borderRadius: 10,
     height: 44,
+    display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 15,
-    marginBottom: 50,
-    marginHorizontal: 20,
     borderColor: '#DEDEDE',
-    borderWidth: 1,
+    borderBottomWidth: 1,
     backgroundColor: 'white',
-    marginTop: 20,
   },
   select: {
     borderRadius: 25,
@@ -518,7 +514,7 @@ const s = StyleSheet.create({
     fontSize: 18,
   },
   optionText: {
-    color: 'red',
+    color: '#364347',
     fontSize: 16,
   },
   box: {

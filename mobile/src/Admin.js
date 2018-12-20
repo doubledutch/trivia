@@ -15,7 +15,8 @@
  */
 
 import React, { PureComponent } from 'react'
-import { View, StyleSheet, WebView } from 'react-native'
+import { View, StyleSheet, WebView, Text } from 'react-native'
+import { translate as t } from '@doubledutch/rn-client'
 import colors from './colors'
 
 export default class Admin extends PureComponent {
@@ -28,6 +29,10 @@ export default class Admin extends PureComponent {
             uri,
           }}
         />
+        <View style={[s.boxLeft, s.bottom]}>
+          <Text style={s.titleText}>{t('important')}</Text>
+          <Text style={s.desText}>{t('importantInt')}</Text>
+        </View>
       </View>
     )
   }
@@ -41,6 +46,28 @@ export default class Admin extends PureComponent {
   }
 }
 const s = StyleSheet.create({
+  boxLeft: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    alignItems: 'flex-start',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    marginBottom: 15,
+    marginTop: 10,
+  },
+  bottom: {
+    marginBottom: 50,
+  },
+  desText: {
+    fontSize: 18,
+    color: '#364347',
+  },
+  titleText: {
+    marginBottom: 5,
+    fontSize: 28,
+    fontWeight: '600',
+    color: '#364347',
+  },
   tile: {
     flexDirection: 'row',
     alignItems: 'center',
