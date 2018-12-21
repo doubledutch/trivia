@@ -44,6 +44,23 @@
   overflow: auto;
 }
 
+.presentation-driver .session-title-box {
+  width: 90%;
+  display: flex;
+  background-color: #FFFFFF;
+  border: 1px solid #dedede !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  margin-bottom: 10px;
+
+}
+
+.presentation-driver .session-title{
+  font-size: 16px;
+  font-weight:bold;
+}
+
 .presentation-driver .box-content {
   padding: 1em 1.5em;
   width: 90%;

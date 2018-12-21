@@ -65,7 +65,12 @@ export default class PresentationDriver extends PureComponent {
     if (!session || !publicSession)
       return (
         <div className="presentation-driver">
-          <button onClick={this.initializeSession}>{t('init')}</button>
+          <div className="session-title-box">
+            <p className="session-title">{session.name}</p>
+          </div>
+          <button className="wide-button" onClick={this.initializeSession}>
+            {t('init')}
+          </button>
         </div>
       )
 

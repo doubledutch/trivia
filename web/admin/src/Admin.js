@@ -222,13 +222,13 @@ export default class Admin extends PureComponent {
   }
 
   getAdmins = keys => {
-    const attendeeClickPromises = keys.map(result =>
+    const adminClickPromises = keys.map(result =>
       client
         .getAttendee(result)
-        .then(attendee => ({ ...attendee }))
+        .then(user => ({ ...user }))
         .catch(err => result),
     )
-    Promise.all(attendeeClickPromises).then(newResults => {
+    Promise.all(adminClickPromises).then(newResults => {
       this.setState({ admins: newResults })
     })
   }
@@ -241,7 +241,7 @@ export default class Admin extends PureComponent {
     this.props.fbc.getLongLivedAdminToken().then(token => tokenRef.set(token))
     this.props.fbc.database.private
       .adminRef('adminUrl')
-      .set(window.location.href + this.adminScreenUrlSave())
+      .set(window.location.href + this.returnAdminScreenUrl())
   }
 
   onAdminDeselected = attendee => {
@@ -370,7 +370,7 @@ export default class Admin extends PureComponent {
     return true
   }
 
-  adminScreenUrlSave = () =>
+  returnAdminScreenUrl = () =>
     this.state.longLivedToken
       ? `?page=adminScreen&token=${encodeURIComponent(this.state.longLivedToken)}`
       : null
