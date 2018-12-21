@@ -225,7 +225,11 @@ export default class Admin extends PureComponent {
     const adminClickPromises = keys.map(result =>
       client
         .getAttendee(result)
-        .then(user => ({ ...user }))
+        .then(user => {
+          if (user.id) {
+            return { ...user }
+          }
+        })
         .catch(err => result),
     )
     Promise.all(adminClickPromises).then(newResults => {

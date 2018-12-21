@@ -125,23 +125,12 @@ class HomeView extends PureComponent {
     })
   }
 
-  switchView = () => {
-    const currentState = this.state.isAdminView
-    this.setState({
-      isAdminView: !currentState,
-      adminSessionId: undefined,
-      adminSessionName: undefined,
-      sessionId: undefined,
-      sessionName: undefined,
-    })
-  }
-
   cancelGame = () => {
     Alert.alert(
       t('confirm'),
       t('confirmExit'),
       [
-        { text: t('cancel'), onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+        { text: t('cancel'), style: 'cancel' },
         {
           text: 'OK',
           onPress: () => {
@@ -180,7 +169,7 @@ class HomeView extends PureComponent {
     if (!currentUser) return null
 
     return (
-      <View style={{ flex: 1 }}>
+      <View style={s.flex}>
         {this.state.isLoggedIn ? (
           <View style={{ flex: 1 }}>
             <TitleBar title={t('trivia')} client={client} signin={this.signin} />
@@ -321,10 +310,6 @@ class HomeView extends PureComponent {
             </View>
           ))}
         </ScrollView>
-        <View style={[s.boxLeft, s.bottom]}>
-          <Text style={s.titleText}>{t('important')}</Text>
-          <Text style={s.desText}>{t('importantInt')}</Text>
-        </View>
       </View>
     )
   }
@@ -463,6 +448,9 @@ const s = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
+  },
+  flex: {
+    flex: 1,
   },
   scroll: {
     flex: 1,

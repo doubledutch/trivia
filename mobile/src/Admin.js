@@ -21,7 +21,7 @@ import colors from './colors'
 
 export default class Admin extends PureComponent {
   render() {
-    const uri = this.updateUrl()
+    const uri = this.buildCompleteUrl()
     return (
       <View style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
         <WebView
@@ -29,15 +29,11 @@ export default class Admin extends PureComponent {
             uri,
           }}
         />
-        <View style={[s.boxLeft, s.bottom]}>
-          <Text style={s.titleText}>{t('important')}</Text>
-          <Text style={s.desText}>{t('importantInt')}</Text>
-        </View>
       </View>
     )
   }
 
-  updateUrl = () => {
+  buildCompleteUrl = () => {
     const { sessionId, sessionName, url } = this.props
     const newUrl = `&sessionId=${encodeURIComponent(sessionId)}&sessionName=${encodeURIComponent(
       sessionName,
@@ -94,22 +90,5 @@ const s = StyleSheet.create({
   points: {
     color: colors.orange,
     fontSize: 16,
-  },
-  place2: {
-    color: colors.orange,
-    fontSize: 18,
-    fontWeight: 'bold',
-    minWidth: 22,
-  },
-  name2: {
-    flex: 1,
-    color: colors.purple,
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  points2: {
-    color: colors.orange,
-    fontSize: 18,
-    fontWeight: 'bold',
   },
 })
