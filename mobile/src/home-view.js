@@ -288,7 +288,7 @@ class HomeView extends PureComponent {
 
     if (currentSessions.length === 0)
       return (
-        <View style={s.box}>
+        <View style={s.scrollView}>
           <Text>{t('noGames')}</Text>
         </View>
       )
@@ -310,6 +310,10 @@ class HomeView extends PureComponent {
             </View>
           ))}
         </ScrollView>
+        <View style={[s.boxLeft, s.bottom]}>
+          <Text style={s.titleText}>{t('important')}</Text>
+          <Text style={s.desText}>{t('importantInt')}</Text>
+        </View>
       </View>
     )
   }

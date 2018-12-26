@@ -230,10 +230,10 @@ export default class Admin extends PureComponent {
             return { ...user }
           }
         })
-        .catch(err => result),
+        .catch(err => null),
     )
     Promise.all(adminClickPromises).then(newResults => {
-      this.setState({ admins: newResults })
+      this.setState({ admins: newResults.filter(x => x) })
     })
   }
 
