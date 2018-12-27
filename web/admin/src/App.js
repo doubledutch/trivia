@@ -15,13 +15,15 @@
  */
 
 import React, { PureComponent } from 'react'
-import './base.css'
+import './App.css'
+import '@doubledutch/react-components/lib/base.css'
 import client, { translate as t, useStrings } from '@doubledutch/admin-client'
 import { provideFirebaseConnectorToReactComponent } from '@doubledutch/firebase-connector'
 import Admin from './Admin'
 import i18n from './i18n'
 import BigScreen from './BigScreen'
 import { parseQueryString } from './utils'
+import PresentationDriverWrapper from './PresentationDriverWrapper'
 
 useStrings(i18n)
 
@@ -46,6 +48,14 @@ class App extends PureComponent {
     switch (qs.page) {
       case 'bigScreen':
         return <BigScreen fbc={fbc} sessionId={qs.sessionId} />
+      case 'adminScreen':
+        return (
+          <PresentationDriverWrapper
+            fbc={fbc}
+            sessionId={qs.sessionId}
+            sessionName={qs.sessionName}
+          />
+        )
       default:
         return <Admin fbc={fbc} />
     }

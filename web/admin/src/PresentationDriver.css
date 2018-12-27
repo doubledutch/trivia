@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
+ .presentation-driver-mobile {
+  width: 100%;
+  height: 100%;
+  background-color: #eaeaea;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .presentation-driver {
   height: 100%;
   width: 100%;
-  background-color: #eaeaea;
+  background-color: #F5F5F5;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -27,20 +37,40 @@
 .presentation-driver .box {
   background-color: #fff;
   border-radius: 7px;
-  display: flex;
+  width: 90%;
   flex-direction: column;
+  margin-bottom: 20px;
   align-items: center;
+  overflow: auto;
+}
+
+.presentation-driver .session-title-box {
+  width: 90%;
+  display: flex;
+  background-color: #FFFFFF;
+  border: 1px solid #dedede !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  margin-bottom: 10px;
+
+}
+
+.presentation-driver .session-title{
+  font-size: 16px;
+  font-weight:bold;
 }
 
 .presentation-driver .box-content {
   padding: 1em 1.5em;
-  width: 250px;
+  width: 90%;
   display: flex;
   flex-direction: column;
 }
 
 .presentation-driver .question-title {
   color: #9b9b9b;
+  font-size: 18px;
 }
 
 .presentation-driver .timer-bar {
@@ -61,20 +91,44 @@
 }
 .presentation-driver .question-title :last-child {
   color: #2daaa0;
+  font-size: 18px;
 }
 .presentation-driver h2 {
   color: #442564;
-  font-size: 1.2em;
+  font-size: 24px;
   text-align: center;
   margin: 1em 0;
 }
 
 .presentation-driver .buttons {
   display: flex;
+  width: 100%;
   flex-direction: column;
   margin-top: 1em;
+  align-items: center;
+  justify-content: center;
 }
 
 .presentation-driver button {
   margin: 0;
+  font-size: 18px;
+}
+
+.wide-button-blue{
+  width: 90%;
+  font-size: 18px;
+  margin-left: 0px;
+}
+
+.wide-button{
+  width: 90%;
+  border: 1px solid #dedede !important;
+  border-radius: 10px;
+  color: #4e92df;
+  background-color: #FFFFFF;
+  margin-bottom: 10px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
 }

@@ -65,7 +65,12 @@ export default class PresentationDriver extends PureComponent {
     if (!session || !publicSession)
       return (
         <div className="presentation-driver">
-          <button onClick={this.initializeSession}>{t('init')}</button>
+          <div className="session-title-box">
+            <p className="session-title">{session.name}</p>
+          </div>
+          <button className="wide-button" onClick={this.initializeSession}>
+            {t('init')}
+          </button>
         </div>
       )
 
@@ -102,19 +107,22 @@ export default class PresentationDriver extends PureComponent {
         )}
         {isQuestionInProgress ? (
           <div className="buttons">
-            <button className="tertiary" onClick={this.endQuestion}>
+            <button className="wide-button" onClick={this.endQuestion}>
               {t('endEarly')}
+            </button>
+            <button className="wide-button" disabled onClick={this.showLeaderboard}>
+              {t('display')}
             </button>
           </div>
         ) : (
           questionIndex > 0 && (
             <div className="buttons">
               {!hideLeaderboardButton && (
-                <button className="secondary" onClick={this.showLeaderboard}>
+                <button className="wide-button" onClick={this.showLeaderboard}>
                   {t('display')}
                 </button>
               )}
-              <button className="tertiary" onClick={this.endGame}>
+              <button className="wide-button" onClick={this.endGame}>
                 {t('end')}
               </button>
             </div>
@@ -126,7 +134,7 @@ export default class PresentationDriver extends PureComponent {
   }
 
   renderReset = () => (
-    <button className="tertiary" onClick={this.resetSession}>
+    <button className="wide-button" onClick={this.resetSession}>
       {t('reset')}
     </button>
   )
@@ -167,7 +175,7 @@ export default class PresentationDriver extends PureComponent {
     const { publicSession } = this.state
     const index = publicSession.question ? publicSession.question.index + 1 : 0
     const question = questions[index]
-    this.props.saveCurrentIndex(index)
+    if (this.props.saveCurrentIndex) this.props.saveCurrentIndex(index)
     if (this.timer) clearInterval(this.timer)
 
     this.publicSessionRef()
@@ -192,7 +200,6 @@ export default class PresentationDriver extends PureComponent {
   endQuestion = () => {
     if (!this.timer) return // Ensure we only end the question once.
     this.clearTimer()
-
     const { questions, session } = this.props
     const { publicSession } = this.state
     if (publicSession.state === 'QUESTION_OPEN') {

@@ -13,15 +13,16 @@
   "completeLast": "Complete Last Question",
   "presentation": "Presentation Screen",
   "launch": "Launch Presentation",
+  "launchAdmin": "Enable Mobile Controls",
   "next": "Up Next",
   "background": "Custom background image URL. Suggested at least 700px high and wide.",
   "confirmDelete": "Are you sure you want to delete session ${session}?",
-  "initialize": "This trivia session has not been initialized. Please click 'Initialize' in the Trivia admin panel to allow players to start joining.",
+  "initialize": "This trivia session has not been initialized. Please click 'Start Game' in the Trivia admin panel to allow players to start joining.",
   "waiting": "Waiting",
   "toJoin": "for players to join",
   "hasJoined": "has joined",
   "leaderboard": "Leaderboard",
-  "init": "Initialize",
+  "init": "Start Game",
   "start": "Start Question",
   "endEarly": "End Current Question Early",
   "display": "Display Leaderboard",
@@ -33,5 +34,7 @@
   "saveQ": "Save Question",
   "deleteQ": "Delete Question",
   "cancelChanges": "Cancel Changes",
-  "confirmDeleteQ": "Are you sure you want to delete the question"
+  "confirmDeleteQ": "Are you sure you want to delete the question",
+  "selectAdmin": "Select Admins",
+  "currentAdmin": "Current Admins"
 }

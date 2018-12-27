@@ -15,7 +15,16 @@
  */
 
 import React, { PureComponent } from 'react'
-import { Image, ImageBackground, Text, View, ScrollView, StyleSheet } from 'react-native'
+import {
+  Image,
+  ImageBackground,
+  Text,
+  View,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+} from 'react-native'
 
 // rn-client must be imported before FirebaseConnector
 import client, { Avatar, TitleBar, translate as t, useStrings } from '@doubledutch/rn-client'
@@ -23,10 +32,13 @@ import {
   mapPushedDataToStateObjects,
   provideFirebaseConnectorToReactComponent,
 } from '@doubledutch/firebase-connector'
+import firebase from 'firebase/app'
 import i18n from './i18n'
 import { background, trophy } from './images'
 import { Button } from './components'
 import Leaderboard from './Leaderboard'
+import LoadingView from './LoadingView'
+import Admin from './Admin'
 import Question from './Question'
 import colors from './colors'
 
@@ -35,7 +47,18 @@ useStrings(i18n)
 const numJoinedToShow = 5
 
 class HomeView extends PureComponent {
-  state = { sessions: {}, users: {}, answers: {} }
+  state = {
+    sessions: {},
+    adminSessions: {},
+    users: {},
+    answers: {},
+    isAdminView: undefined,
+    isAdmin: false,
+    adminUrl: undefined,
+    logInFailed: false,
+    isLoggedIn: false,
+    primaryColor: '#000000',
+  }
 
   constructor(props) {
     super(props)
@@ -45,13 +68,15 @@ class HomeView extends PureComponent {
     this.signin.catch(err => console.error(err))
 
     sessionsRef = fbc.database.public.adminRef('sessions')
+    adminSessionsRef = fbc.database.private.adminRef('sessions')
+    adminRef = fbc.database.public.adminRef('sessions')
     userRef = fbc.database.public.userRef()
     usersRef = fbc.database.public.usersRef()
     backgroundUrlRef = fbc.database.public.adminRef('backgroundUrl')
   }
 
   componentDidUpdate() {
-    const { sessionId, sessions } = this.state
+    const { sessionId, sessions, isAdminView } = this.state
     // If there is only one session, pick that automatically.
     if (!sessionId && Object.keys(sessions).length === 1) {
       this.setState({ sessionId: Object.keys(sessions)[0] })
@@ -59,40 +84,172 @@ class HomeView extends PureComponent {
   }
 
   componentDidMount() {
+    client.getPrimaryColor().then(primaryColor => this.setState({ primaryColor }))
     client.getCurrentUser().then(currentUser => {
       this.setState({ currentUser })
-      this.signin.then(() => {
-        backgroundUrlRef.on('value', data => this.setState({ backgroundUrl: data.val() }))
-        sessionsRef.on('value', data => this.setState({ sessions: data.val() || {} }))
-        userRef.on('value', data => this.setState({ me: data.val() }))
-        this.answersRef().on('value', data => this.setState({ answers: data.val() || {} }))
-        mapPushedDataToStateObjects(usersRef, this, 'users')
-      })
+      this.signin
+        .then(() => {
+          backgroundUrlRef.on('value', data => this.setState({ backgroundUrl: data.val() }))
+          sessionsRef.on('value', data => this.setState({ sessions: data.val() || {} }))
+          userRef.on('value', data => this.setState({ me: data.val() }))
+          this.answersRef().on('value', data => this.setState({ answers: data.val() || {} }))
+          mapPushedDataToStateObjects(usersRef, this, 'users')
+
+          getAdmin = () => {
+            this.props.fbc.database.private
+              .adminRef('adminUrl')
+              .on('value', data => this.setState({ adminUrl: data.val() || undefined }))
+            adminSessionsRef.on('value', data => this.setState({ adminSessions: data.val() || {} }))
+          }
+
+          this.props.fbc.database.private
+            .adminableUserRef('adminToken')
+            .once('value', async data => {
+              const longLivedToken = data.val()
+              if (longLivedToken) {
+                await firebase.auth().signOut()
+                client.longLivedToken = longLivedToken
+                await this.props.fbc.signinAdmin()
+                console.log('Re-logged in as admin')
+                this.setState({ isAdmin: true })
+                getAdmin()
+              } else {
+                this.setState({ isAdminView: false })
+              }
+              this.hideLogInScreen = setTimeout(() => {
+                this.setState({ isLoggedIn: true })
+              }, 500)
+            })
+        })
+        .catch(() => this.setState({ logInFailed: true }))
     })
   }
 
+  cancelGame = () => {
+    Alert.alert(
+      t('confirm'),
+      t('confirmExit'),
+      [
+        { text: t('cancel'), style: 'cancel' },
+        {
+          text: 'OK',
+          onPress: () => {
+            this.props.fbc.database.public
+              .adminRef('sessions')
+              .child(this.state.sessionId)
+              .remove()
+
+            // Remove users who were in the removed trivia session.
+            this.props.fbc.database.public.usersRef().once('value', data => {
+              const users = data.val() || {}
+              Object.keys(users)
+                .filter(id => users[id].sessionId === this.state.sessionId)
+                .forEach(id =>
+                  this.props.fbc.database.public
+                    .usersRef()
+                    .child(id)
+                    .remove(),
+                )
+            })
+            this.setState({
+              adminSessionId: undefined,
+              adminSessionName: undefined,
+              sessionId: undefined,
+              sessionName: undefined,
+            })
+          },
+        },
+      ],
+      { cancelable: false },
+    )
+  }
+
   render() {
-    const { suggestedTitle } = this.props
-    const { backgroundUrl, currentUser, sessionId, sessions, me } = this.state
+    const { backgroundUrl, currentUser, adminSessionId, adminUrl, isAdminView } = this.state
+    if (!currentUser) return null
+
+    return (
+      <View style={s.flex}>
+        {this.state.isLoggedIn ? (
+          <View style={{ flex: 1 }}>
+            <TitleBar title={t('trivia')} client={client} signin={this.signin} />
+            <ImageBackground style={s.container} source={this.renderBackground()}>
+              {adminUrl && adminSessionId && (
+                <TouchableOpacity style={s.option} onPress={this.cancelGame}>
+                  <Text style={s.optionText}>{t('cancelGame')}</Text>
+                </TouchableOpacity>
+              )}
+              {this.renderCoreView()}
+            </ImageBackground>
+          </View>
+        ) : (
+          <LoadingView logInFailed={this.state.logInFailed} />
+        )}
+      </View>
+    )
+  }
+
+  renderBackground = () => {
+    const { backgroundUrl } = this.props
+    if (this.state.isAdminView === false) {
+      if (backgroundUrl) {
+        return { uri: backgroundUrl }
+      }
+      return background
+    }
+  }
+
+  renderCoreView = () => {
+    const { currentUser, sessionId, sessions, me, isAdminView } = this.state
     if (!currentUser) return null
     const session = sessions[sessionId]
     const meJoined = me && me.sessionId === sessionId ? me : null
-
+    if (isAdminView === undefined) {
+      return (
+        <View style={s.scroll}>
+          <Text style={s.titleText}>{t('information')}</Text>
+          <View style={s.boxLeft}>
+            <Text style={s.desText}>{t('infoDets')}</Text>
+            <TouchableOpacity
+              style={s.selectClear}
+              onPress={() => this.setState({ isAdminView: false })}
+            >
+              <Text style={[s.tealTextBold, { color: this.state.primaryColor }]}>
+                {t('playerView')}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={s.selectClear}
+              onPress={() => this.setState({ isAdminView: true })}
+            >
+              <Text style={[s.tealTextBold, { color: this.state.primaryColor }]}>
+                {t('adminView')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )
+    }
+    if (isAdminView === true) {
+      return this.renderAdmin()
+    }
     return (
-      <ImageBackground
-        style={s.container}
-        source={backgroundUrl ? { uri: backgroundUrl } : background}
-      >
-        <TitleBar title={suggestedTitle || t('trivia')} client={client} signin={this.signin} />
-        <ScrollView style={s.scroll}>
-          {me === undefined
-            ? null
-            : session
-            ? this.renderSession(session, sessionId, meJoined)
-            : this.renderSessions(sessions, me)}
-        </ScrollView>
-      </ImageBackground>
+      <ScrollView style={s.scroll}>
+        {me === undefined
+          ? null
+          : session
+          ? this.renderSession(session, sessionId, meJoined)
+          : this.renderSessions(sessions, me)}
+      </ScrollView>
     )
+  }
+
+  renderAdmin = () => {
+    const { adminSessionId, adminSessions, me, adminUrl, adminSessionName } = this.state
+    if (adminSessionId) {
+      return <Admin url={adminUrl} sessionId={adminSessionId} sessionName={adminSessionName} />
+    }
+    return <View style={s.scroll}>{this.renderAdminSessions(adminSessions, me)}</View>
   }
 
   renderSession = (session, sessionId, meJoined) => {
@@ -120,9 +277,46 @@ class HomeView extends PureComponent {
       <Image source={trophy} style={s.trophy} />
       <Text style={s.whiteTitle}>{t('challengeCap')}</Text>
       <Text style={s.joinSessionName}>{session.name}</Text>
-      <Button title="Let's Play!" onPress={this.join} />
+      <Button title={t('letsPlay')} onPress={this.join} />
     </View>
   )
+
+  renderAdminSessions = (sessions, me) => {
+    const currentSessions = Object.keys(sessions)
+      .map(id => ({ ...sessions[id], id }))
+      .filter(s => s.name.trim().length || (me && s.id === me.sessionIds))
+
+    if (currentSessions.length === 0)
+      return (
+        <View style={s.scrollView}>
+          <Text>{t('noGames')}</Text>
+        </View>
+      )
+    return (
+      <View style={{ flex: 1, display: 'flex' }}>
+        <View style={{ marginLeft: 10, marginBottom: 15 }}>
+          <Text style={s.titleText}>{t('games')}</Text>
+          <Text style={s.desText}>{t('startManage')}</Text>
+        </View>
+        <ScrollView style={{ flex: 1, display: 'flex' }}>
+          {currentSessions.map(session => (
+            <View key={session.id} style={s.boxLeft}>
+              <Text style={s.cellTitleText}>{session.name}</Text>
+              <TouchableOpacity style={s.selectClear} onPress={this.selectSession(session)}>
+                <Text style={[s.tealTextBold, { color: this.state.primaryColor }]}>
+                  {t('manage')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </ScrollView>
+        <View style={[s.boxLeft, s.bottom]}>
+          <Text style={s.titleText}>{t('important')}</Text>
+          <Text style={s.desText}>{t('importantInt')}</Text>
+        </View>
+      </View>
+    )
+  }
 
   renderSessions = (sessions, me) => {
     const currentSessions = Object.keys(sessions)
@@ -225,7 +419,13 @@ class HomeView extends PureComponent {
 
   join = () => userRef.set({ ...this.state.currentUser, sessionId: this.state.sessionId })
 
-  selectSession = session => () => this.setState({ sessionId: session.id })
+  selectSession = session => () =>
+    this.setState({
+      sessionId: session.id,
+      sessionName: session.name,
+      adminSessionId: session.id,
+      adminSessionName: session.name,
+    })
 
   selectOption = i => {
     const { sessions, sessionId } = this.state
@@ -251,10 +451,63 @@ function ordinal(x) {
 const s = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
+  flex: {
+    flex: 1,
   },
   scroll: {
     flex: 1,
     padding: 20,
+  },
+  option: {
+    height: 44,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    borderColor: '#DEDEDE',
+    borderBottomWidth: 1,
+    backgroundColor: 'white',
+  },
+  select: {
+    borderRadius: 25,
+    height: 50,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+    paddingHorizontal: 15,
+    borderColor: colors.teal,
+    borderWidth: 2,
+    backgroundColor: colors.teal,
+  },
+  selectClear: {
+    backgroundColor: 'white',
+    marginTop: 20,
+  },
+  desText: {
+    fontSize: 18,
+    color: '#364347',
+  },
+  titleText: {
+    marginBottom: 5,
+    fontSize: 28,
+    fontWeight: '600',
+    color: '#364347',
+  },
+  cellTitleText: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#364347',
+  },
+  selectText: {
+    color: 'white',
+    fontSize: 18,
+  },
+  optionText: {
+    color: '#364347',
+    fontSize: 16,
   },
   box: {
     backgroundColor: 'rgba(255,255,255,0.8)',
@@ -262,6 +515,18 @@ const s = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 15,
     paddingHorizontal: 20,
+  },
+  boxLeft: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    alignItems: 'flex-start',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    marginBottom: 15,
+    marginTop: 10,
+  },
+  bottom: {
+    marginBottom: 50,
   },
   notJoined: {
     alignItems: 'center',
@@ -276,6 +541,12 @@ const s = StyleSheet.create({
   tealText: {
     color: colors.teal,
     fontSize: 20,
+    backgroundColor: 'transparent',
+  },
+  tealTextBold: {
+    fontSize: 18,
+    fontWeight: '600',
+    backgroundColor: 'transparent',
   },
   joinSessionName: {
     textAlign: 'center',

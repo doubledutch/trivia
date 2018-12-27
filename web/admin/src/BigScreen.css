@@ -1,6 +1,6 @@
 .big-screen {
-  font-size: 3vh;
-  height: 100vh;
+  font-size: 3vmin;
+  height: 100vmin;
   width: 100vw;
   background: url(./background.jpg);
   background-size: cover;
@@ -11,15 +11,15 @@
 
 .big-screen .box {
   background-color: #fff;
-  border-radius: 2vh;
+  border-radius: 2vmin;
   display: flex;
   flex-direction: column;
   align-items: center;
   opacity: 0.9;
 }
 .big-screen .box-content {
-  width: 75vh;
-  padding: 3vh 6vh;
+  width: 75vmin;
+  padding: 3vmin 6vmin;
   display: flex;
   flex-direction: column;
 }
@@ -50,7 +50,7 @@
 }
 
 .big-screen .timer-bar {
-  height: 1.5vh;
+  height: 1.5vmin;
   width: 100%;
   background-color: #f3f3f3;
   position: relative;
@@ -70,31 +70,31 @@
 }
 
 .big-screen .option {
-  margin-bottom: 2vh;
+  margin-bottom: 2vmin;
   position: relative;
   font-size: 1.3em;
-  width: 75vh;
+  width: 75vmin;
 }
 .big-screen .option .option-text-back {
-  border: 0.5vh solid #9b9b9b;
-  height: 10vh;
-  border-radius: 5.5vh;
+  border: 0.5vmin solid #9b9b9b;
+  height: 10vmin;
+  border-radius: 5.5vmin;
   color: #9b9b9b;
-  line-height: 10vh;
+  line-height: 10vmin;
   display: flex;
   justify-content: space-between;
   overflow: hidden;
 }
 .big-screen .option-text-front {
-  width: 75vh;
+  width: 75vmin;
   display: flex;
   justify-content: space-between;
 }
 .big-screen .option-text-back span {
-  padding: 0 4vh;
+  padding: 0 4vmin;
 }
 .big-screen .option-text-front span {
-  padding: 0 4.5vh;
+  padding: 0 4.5vmin;
 }
 
 .big-screen .option.correct .option-text-back {
@@ -104,7 +104,7 @@
 
 .big-screen .option-overlay {
   position: absolute;
-  border-radius: 5.5vh;
+  border-radius: 5.5vmin;
   overflow: hidden;
   left: 0;
   right: 0;
@@ -112,9 +112,9 @@
   bottom: 0;
 }
 .big-screen .option .option-overlay > * {
-  border-radius: 5.5vh;
-  height: 11vh;
-  line-height: 11vh;
+  border-radius: 5.5vmin;
+  height: 11vmin;
+  line-height: 11vmin;
   overflow: hidden;
   background-color: #9b9b9b;
   color: #fff;
@@ -126,7 +126,7 @@
 .attendees-joined > * {
   display: flex;
   align-items: center;
-  margin-bottom: 2vh;
+  margin-bottom: 2vmin;
 }
 .attendees-joined > :first-child {
   opacity: 0.5;
@@ -135,7 +135,7 @@
   font-weight: bold;
 }
 .attendees-joined .avatar {
-  margin-right: 3vh;
+  margin-right: 3vmin;
 }
 
 .leaderboard {
@@ -154,17 +154,17 @@
 }
 .big-screen .leaderboard-tile.box {
   display: flex;
-  margin-bottom: 1vh;
+  margin-bottom: 1vmin;
   width: 40%;
   flex-direction: row;
-  padding: 2vh;
-  margin: 1vh auto;
+  padding: 2vmin;
+  margin: 1vmin auto;
 }
 .leaderboard-place {
-  min-width: 2vh;
+  min-width: 2vmin;
 }
 .leaderboard-tile .avatar, .leaderboard-title .avatar-initials {
-  margin: 0 2vh;
+  margin: 0 2vmin;
 }
 .leaderboard-name {
   flex: 1;
@@ -174,5 +174,5 @@
   color: #684f82;
 }
 .leaderboard-points {
-  margin-left: 1vh;
+  margin-left: 1vmin;
 }

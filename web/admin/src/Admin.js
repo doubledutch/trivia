@@ -16,11 +16,12 @@
 
 import React, { PureComponent } from 'react'
 import './Admin.css'
-import { translate as t } from '@doubledutch/admin-client'
+import client, { translate as t } from '@doubledutch/admin-client'
 import {
   mapPushedDataToStateObjects,
   mapPushedDataToObjectOfStateObjects,
 } from '@doubledutch/firebase-connector'
+import { AttendeeSelector } from '@doubledutch/react-components'
 import Questions from './Questions'
 import PresentationDriver from './PresentationDriver'
 import { openTab } from './utils'
@@ -35,7 +36,11 @@ export default class Admin extends PureComponent {
     backgroundUrl: '',
     isFocus: false,
     isNew: false,
+    admins: [],
+    attendees: [],
   }
+
+  adminableUsersRef = () => this.props.fbc.database.private.adminableUsersRef()
 
   sessionsRef = () => this.props.fbc.database.private.adminRef('sessions')
 
@@ -49,6 +54,13 @@ export default class Admin extends PureComponent {
 
   componentDidMount() {
     const { fbc } = this.props
+
+    this.adminableUsersRef().on('value', data => {
+      const users = data.val() || {}
+      const adminKeys = Object.keys(users).filter(id => users[id].adminToken)
+      this.getAdmins(adminKeys)
+    })
+
     mapPushedDataToStateObjects(this.sessionsRef(), this, 'sessions')
     mapPushedDataToObjectOfStateObjects(
       this.questionsRef(),
@@ -101,6 +113,7 @@ export default class Admin extends PureComponent {
                 maxLength={50}
                 onChange={this.onSessionNameChange}
                 ref="nameInput"
+                className="sessionName"
               />
               <button className="secondary" onClick={this.deleteSession}>
                 {t('delete')}
@@ -153,6 +166,16 @@ export default class Admin extends PureComponent {
                 )}
               />
             </div>
+            <div className="adminContainer">
+              <AttendeeSelector
+                client={client}
+                searchTitle={t('selectAdmin')}
+                selectedTitle={t('currentAdmin')}
+                onSelected={this.onAdminSelected}
+                onDeselected={this.onAdminDeselected}
+                selected={this.state.admins}
+              />
+            </div>
             <div className="presentation-container">
               <div className="presentation-side">
                 <iframe
@@ -181,9 +204,6 @@ export default class Admin extends PureComponent {
                   questions={this.questionsForCurrentSession()}
                   users={users}
                 />
-                <div className="presentation-overlays">
-                  <div>{t('next')}</div>
-                </div>
               </div>
             </div>
           </div>
@@ -199,6 +219,40 @@ export default class Admin extends PureComponent {
         </div>
       </div>
     )
+  }
+
+  getAdmins = keys => {
+    const adminClickPromises = keys.map(result =>
+      client
+        .getAttendee(result)
+        .then(user => {
+          if (user.id) {
+            return { ...user }
+          }
+        })
+        .catch(err => null),
+    )
+    Promise.all(adminClickPromises).then(newResults => {
+      this.setState({ admins: newResults.filter(x => x) })
+    })
+  }
+
+  onAdminSelected = attendee => {
+    const tokenRef = this.props.fbc.database.private
+      .adminableUsersRef(attendee.id)
+      .child('adminToken')
+    this.setState()
+    this.props.fbc.getLongLivedAdminToken().then(token => tokenRef.set(token))
+    this.props.fbc.database.private
+      .adminRef('adminUrl')
+      .set(window.location.href + this.returnAdminScreenUrl())
+  }
+
+  onAdminDeselected = attendee => {
+    const tokenRef = this.props.fbc.database.private
+      .adminableUsersRef(attendee.id)
+      .child('adminToken')
+    tokenRef.remove()
   }
 
   isDisplayable = sessionId => {
@@ -319,6 +373,11 @@ export default class Admin extends PureComponent {
     }
     return true
   }
+
+  returnAdminScreenUrl = () =>
+    this.state.longLivedToken
+      ? `?page=adminScreen&token=${encodeURIComponent(this.state.longLivedToken)}`
+      : null
 
   launchPresentation = () => {
     this.setState({ launchDisabled: true })
