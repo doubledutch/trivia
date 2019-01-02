@@ -89,19 +89,6 @@ class HomeView extends PureComponent {
       this.setState({ currentUser })
       this.signin
         .then(() => {
-          backgroundUrlRef.on('value', data => this.setState({ backgroundUrl: data.val() }))
-          sessionsRef.on('value', data => this.setState({ sessions: data.val() || {} }))
-          userRef.on('value', data => this.setState({ me: data.val() }))
-          this.answersRef().on('value', data => this.setState({ answers: data.val() || {} }))
-          mapPushedDataToStateObjects(usersRef, this, 'users')
-
-          getAdmin = () => {
-            this.props.fbc.database.private
-              .adminRef('adminUrl')
-              .on('value', data => this.setState({ adminUrl: data.val() || undefined }))
-            adminSessionsRef.on('value', data => this.setState({ adminSessions: data.val() || {} }))
-          }
-
           this.props.fbc.database.private
             .adminableUserRef('adminToken')
             .once('value', async data => {
@@ -112,10 +99,11 @@ class HomeView extends PureComponent {
                 await this.props.fbc.signinAdmin()
                 console.log('Re-logged in as admin')
                 this.setState({ isAdmin: true })
-                getAdmin()
+                this.getAdmin()
               } else {
                 this.setState({ isAdminView: false })
               }
+              this.wireListeners()
               this.hideLogInScreen = setTimeout(() => {
                 this.setState({ isLoggedIn: true })
               }, 500)
@@ -123,6 +111,21 @@ class HomeView extends PureComponent {
         })
         .catch(() => this.setState({ logInFailed: true }))
     })
+  }
+
+  getAdmin = () => {
+    this.props.fbc.database.private
+      .adminRef('adminUrl')
+      .on('value', data => this.setState({ adminUrl: data.val() || undefined }))
+    adminSessionsRef.on('value', data => this.setState({ adminSessions: data.val() || {} }))
+  }
+
+  wireListeners = () => {
+    backgroundUrlRef.on('value', data => this.setState({ backgroundUrl: data.val() }))
+    sessionsRef.on('value', data => this.setState({ sessions: data.val() || {} }))
+    userRef.on('value', data => this.setState({ me: data.val() }))
+    this.answersRef().on('value', data => this.setState({ answers: data.val() || {} }))
+    mapPushedDataToStateObjects(usersRef, this, 'users')
   }
 
   cancelGame = () => {
@@ -174,7 +177,7 @@ class HomeView extends PureComponent {
           <View style={{ flex: 1 }}>
             <TitleBar title={t('trivia')} client={client} signin={this.signin} />
             <ImageBackground style={s.container} source={this.renderBackground()}>
-              {adminUrl && adminSessionId && (
+              {isAdminView && adminSessionId && (
                 <TouchableOpacity style={s.option} onPress={this.cancelGame}>
                   <Text style={s.optionText}>{t('cancelGame')}</Text>
                 </TouchableOpacity>
@@ -204,31 +207,11 @@ class HomeView extends PureComponent {
     if (!currentUser) return null
     const session = sessions[sessionId]
     const meJoined = me && me.sessionId === sessionId ? me : null
+    console.log(me)
+    console.log(session)
+    console.log(meJoined)
     if (isAdminView === undefined) {
-      return (
-        <View style={s.scroll}>
-          <Text style={s.titleText}>{t('information')}</Text>
-          <View style={s.boxLeft}>
-            <Text style={s.desText}>{t('infoDets')}</Text>
-            <TouchableOpacity
-              style={s.selectClear}
-              onPress={() => this.setState({ isAdminView: false })}
-            >
-              <Text style={[s.tealTextBold, { color: this.state.primaryColor }]}>
-                {t('playerView')}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={s.selectClear}
-              onPress={() => this.setState({ isAdminView: true })}
-            >
-              <Text style={[s.tealTextBold, { color: this.state.primaryColor }]}>
-                {t('adminView')}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )
+      return this.renderSelectView()
     }
     if (isAdminView === true) {
       return this.renderAdmin()
@@ -243,6 +226,29 @@ class HomeView extends PureComponent {
       </ScrollView>
     )
   }
+
+  renderSelectView = () => (
+    <View style={s.scroll}>
+      <Text style={s.titleText}>{t('information')}</Text>
+      <View style={s.boxLeft}>
+        <Text style={s.desText}>{t('infoDets')}</Text>
+        <TouchableOpacity
+          style={s.selectClear}
+          onPress={() => this.setState({ isAdminView: false })}
+        >
+          <Text style={[s.tealTextBold, { color: this.state.primaryColor }]}>
+            {t('playerView')}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={s.selectClear}
+          onPress={() => this.setState({ isAdminView: true })}
+        >
+          <Text style={[s.tealTextBold, { color: this.state.primaryColor }]}>{t('adminView')}</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  )
 
   renderAdmin = () => {
     const { adminSessionId, adminSessions, me, adminUrl, adminSessionName } = this.state
@@ -417,7 +423,10 @@ class HomeView extends PureComponent {
 
   answersRef = () => this.props.fbc.database.private.adminableUserRef()
 
-  join = () => userRef.set({ ...this.state.currentUser, sessionId: this.state.sessionId })
+  join = () => {
+    // this.setState({ me: { ...this.state.currentUser, sessionId: this.state.sessionId } })
+    userRef.set({ ...this.state.currentUser, sessionId: this.state.sessionId })
+  }
 
   selectSession = session => () =>
     this.setState({
