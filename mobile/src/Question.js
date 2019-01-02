@@ -70,7 +70,9 @@ export default class Question extends PureComponent {
       <View style={s.box}>
         <View style={[s.boxContent, s.questionTop]}>
           <Text style={s.questionNumber}>Question {question.index + 1}</Text>
-          <Text style={s.timeRemaining}>{durationString(secondsLeft)}</Text>
+          <Text style={secondsLeft === 0 ? s.timeZeroRemaining : s.timeRemaining}>
+            {durationString(secondsLeft)}
+          </Text>
         </View>
         <View style={s.timerBar}>
           <View style={[s.timerBarRemaining, { width: percentLeft }]} />
@@ -151,7 +153,11 @@ const s = StyleSheet.create({
   },
   timeRemaining: {
     fontSize: 18,
-    color: colors.teal,
+    color: colors.orange,
+  },
+  timeZeroRemaining: {
+    fontSize: 18,
+    color: colors.red,
   },
   timerBar: {
     backgroundColor: colors.lightGray,

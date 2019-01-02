@@ -423,10 +423,7 @@ class HomeView extends PureComponent {
 
   answersRef = () => this.props.fbc.database.private.adminableUserRef()
 
-  join = () => {
-    // this.setState({ me: { ...this.state.currentUser, sessionId: this.state.sessionId } })
-    userRef.set({ ...this.state.currentUser, sessionId: this.state.sessionId })
-  }
+  join = () => userRef.set({ ...this.state.currentUser, sessionId: this.state.sessionId })
 
   selectSession = session => () =>
     this.setState({
