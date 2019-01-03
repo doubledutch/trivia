@@ -207,9 +207,6 @@ class HomeView extends PureComponent {
     if (!currentUser) return null
     const session = sessions[sessionId]
     const meJoined = me && me.sessionId === sessionId ? me : null
-    console.log(me)
-    console.log(session)
-    console.log(meJoined)
     if (isAdminView === undefined) {
       return this.renderSelectView()
     }

@@ -153,11 +153,11 @@ const s = StyleSheet.create({
   },
   timeRemaining: {
     fontSize: 18,
-    color: colors.orange,
+    color: colors.teal,
   },
   timeZeroRemaining: {
     fontSize: 18,
-    color: colors.red,
+    color: colors.orange,
   },
   timerBar: {
     backgroundColor: colors.lightGray,
