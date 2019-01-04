@@ -193,7 +193,7 @@ class HomeView extends PureComponent {
   }
 
   renderBackground = () => {
-    const { backgroundUrl } = this.props
+    const { backgroundUrl } = this.state
     if (this.state.isAdminView === false) {
       if (backgroundUrl) {
         return { uri: backgroundUrl }
