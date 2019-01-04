@@ -91,12 +91,12 @@ html, body, input, button, select, form{
 .presentation-side {
   width: 400px;
   height: 400px;
+  overflow: auto;
   position: relative;
   flex: 1
 }
 
 .mobile-side {
-  height: 400px;
   background-color: #F5F5F5;
   padding: 50px 0px;
   overflow: auto;

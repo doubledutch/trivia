@@ -81,7 +81,7 @@ input.underbar:focus, .underbar input:focus {
   position: relative;
 }
 .input-container input {
-  padding-right: 1em;
+  padding-right: 1.6em;
   flex: 1;
 }
 .input-chars-remaining {
