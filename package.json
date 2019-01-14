@@ -6,11 +6,6 @@
   "scripts": {
     "start": "pushd mobile && npm run ios && popd && pushd web/admin && npm start && popd"
   },
-  "dependencies": {
-    "react": "15.6.1",
-    "react-native": "0.46.4",
-    "react-native-cli": "^2.0.1"
-  },
   "doubledutch": {
     "extension": true
   }
