@@ -95,18 +95,18 @@
   resolved "https://registry.yarnpkg.com/@doubledutch/base-client/-/base-client-4.2.0.tgz#3a9c96cd7f3d006692c78c39f2e9da21bf3cffd0"
   integrity sha512-KU49gdwkA97axemiNojJFiGm8zxRVk0wHuimn8zx0xfGKH0wUIpoGEJhdcBCeflc21wAtPPheVZrbjtBLuHWiQ==
 
-"@doubledutch/firebase-connector@^4.1.1":
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/@doubledutch/firebase-connector/-/firebase-connector-4.1.1.tgz#d570a4ef4802d29f7bdd62cb61157b37e45933bb"
-  integrity sha512-YztPG2YoOkXMjRYpSRDgEjoAkGq30ro22w8vETWvHyiifYSMAGeOLFfBXKq2K0R4Po/kGXMJNhfDtY4ia+VqYA==
+"@doubledutch/firebase-connector@^4.1.2":
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/@doubledutch/firebase-connector/-/firebase-connector-4.1.2.tgz#1eb0a8c413014cd4d5ffe4225f98fb2310f9bf68"
+  integrity sha512-07XRbPpcVPHbJk7Ajh5XjDBRUZRpcEpfoyBGgF8N3zxkCj+8S6A5cli1i3PEGmAJKHMyjZUCqvHnUAO6pE0Lfg==
   dependencies:
     babel-runtime "^6.26.0"
     firebase "^5.5.8"
 
-"@doubledutch/rn-client@^4.2.3":
-  version "4.2.3"
-  resolved "https://registry.yarnpkg.com/@doubledutch/rn-client/-/rn-client-4.2.3.tgz#5a8e81d58409d619ddedd237c6db6610b0e423cf"
-  integrity sha512-1RvJbeTBeN/Z9NUUU16U9GzDtqKhX6VGla13EQcgTcHWCibvEQ5ibOf1YuHRk5/edMPm3LApXqLm6jI+WZrhPg==
+"@doubledutch/rn-client@^4.2.4":
+  version "4.2.4"
+  resolved "https://registry.yarnpkg.com/@doubledutch/rn-client/-/rn-client-4.2.4.tgz#da14e1cb5ece1342f780c3bfe0420a925df401ca"
+  integrity sha512-ce3PcDIXKY+brQ5Sg4hrGvmMJkG20iGRhGv5EpURB3S0o89ovupM0OH5RtuFKc9GPBd67EG1a43UuwdH5DJhww==
   dependencies:
     "@doubledutch/base-client" "^4.2.0"
     react "16.0.0-alpha.12"
