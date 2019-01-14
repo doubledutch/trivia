@@ -62,21 +62,13 @@ class HomeView extends PureComponent {
 
   constructor(props) {
     super(props)
-    const { fbc } = props
 
-    this.signin = fbc.signin()
+    this.signin = this.props.fbc.signin()
     this.signin.catch(err => console.error(err))
-
-    sessionsRef = fbc.database.public.adminRef('sessions')
-    adminSessionsRef = fbc.database.private.adminRef('sessions')
-    adminRef = fbc.database.public.adminRef('sessions')
-    userRef = fbc.database.public.userRef()
-    usersRef = fbc.database.public.usersRef()
-    backgroundUrlRef = fbc.database.public.adminRef('backgroundUrl')
   }
 
   componentDidUpdate() {
-    const { sessionId, sessions, isAdminView } = this.state
+    const { sessionId, sessions } = this.state
     // If there is only one session, pick that automatically.
     if (!sessionId && Object.keys(sessions).length === 1) {
       this.setState({ sessionId: Object.keys(sessions)[0] })
@@ -117,15 +109,15 @@ class HomeView extends PureComponent {
     this.props.fbc.database.private
       .adminRef('adminUrl')
       .on('value', data => this.setState({ adminUrl: data.val() || undefined }))
-    adminSessionsRef.on('value', data => this.setState({ adminSessions: data.val() || {} }))
+    this.adminSessionsRef().on('value', data => this.setState({ adminSessions: data.val() || {} }))
   }
 
   wireListeners = () => {
-    backgroundUrlRef.on('value', data => this.setState({ backgroundUrl: data.val() }))
-    sessionsRef.on('value', data => this.setState({ sessions: data.val() || {} }))
-    userRef.on('value', data => this.setState({ me: data.val() }))
+    this.backgroundUrlRef().on('value', data => this.setState({ backgroundUrl: data.val() }))
+    this.sessionsRef().on('value', data => this.setState({ sessions: data.val() || {} }))
+    this.userRef().on('value', data => this.setState({ me: data.val() }))
     this.answersRef().on('value', data => this.setState({ answers: data.val() || {} }))
-    mapPushedDataToStateObjects(usersRef, this, 'users')
+    mapPushedDataToStateObjects(this.usersRef(), this, 'users')
   }
 
   cancelGame = () => {
@@ -419,8 +411,15 @@ class HomeView extends PureComponent {
   }
 
   answersRef = () => this.props.fbc.database.private.adminableUserRef()
+  sessionsRef = () => this.props.fbc.database.public.adminRef('sessions')
+  adminSessionsRef = () => this.props.fbc.database.private.adminRef('sessions')
+  adminRef = () => this.props.fbc.database.public.adminRef('sessions')
+  userRef = () => this.props.fbc.database.public.userRef()
+  usersRef = () => this.props.fbc.database.public.usersRef()
+  backgroundUrlRef = () => this.props.fbc.database.public.adminRef('backgroundUrl')
 
-  join = () => userRef.set({ ...this.state.currentUser, sessionId: this.state.sessionId })
+
+  join = () => this.userRef().set({ ...this.state.currentUser, sessionId: this.state.sessionId })
 
   selectSession = session => () =>
     this.setState({
