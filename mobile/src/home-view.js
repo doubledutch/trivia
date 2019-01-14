@@ -64,7 +64,7 @@ class HomeView extends PureComponent {
     super(props)
     const { fbc } = props
 
-    this.signin = fbc.signin()
+    this.signin = fbc.signin().then(user => (this.user = user))
     this.signin.catch(err => console.error(err))
 
     sessionsRef = fbc.database.public.adminRef('sessions')
