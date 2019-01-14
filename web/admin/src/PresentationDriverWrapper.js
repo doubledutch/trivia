@@ -94,6 +94,9 @@ export default class PresentationDriverWrapper extends PureComponent {
             <PresentationDriver fbc={fbc} session={session} questions={questions} users={users} />
           )}
         </div>
+        <div className="help-text-box">
+          <p className="help-text">{t('scroll')}</p>
+        </div>
         {questions && session && <BigScreen fbc={fbc} sessionId={session.id} />}
       </div>
     )
