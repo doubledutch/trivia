@@ -1,10 +1,10 @@
 {
   "name": "trivia",
   "version": "2.0.0",
-  "baseBundleVersion": "0.46.4",
+  "baseBundleVersion": "0.57.5",
   "private": true,
   "scripts": {
-    "start": "pushd mobile && npm run ios && popd && pushd web/admin && npm start && popd"
+    "start": "pushd mobile && npm start && popd && pushd web/admin && npm start && popd"
   },
   "doubledutch": {
     "extension": true
