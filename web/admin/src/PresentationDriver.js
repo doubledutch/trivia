@@ -60,15 +60,15 @@ export default class PresentationDriver extends PureComponent {
   }
 
   render() {
-    const { session } = this.props
+    const { className, session } = this.props
     const { publicSession } = this.state
     if (!session || !publicSession)
       return (
-        <div className="presentation-driver">
+        <div className={`presentation-driver ${className}`}>
           <div className="session-title-box">
             <p className="session-title">{session.name}</p>
           </div>
-          <button className="wide-button" onClick={this.initializeSession}>
+          <button className="wide-button" onClick={this.initializeSession} type="button">
             {t('init')}
           </button>
         </div>

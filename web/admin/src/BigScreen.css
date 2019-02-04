@@ -10,8 +10,13 @@
   align-items: center;
 }
 
+.big-screen.mobile {
+  height: initial;
+}
+
 .big-screen .box {
   background-color: #fff;
+  margin: 1vh 0;
   border-radius: 2vmin;
   display: flex;
   flex-direction: column;
