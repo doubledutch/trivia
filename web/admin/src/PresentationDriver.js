@@ -59,16 +59,18 @@ export default class PresentationDriver extends PureComponent {
     this.clearTimer()
   }
 
+  className = () => `presentation-driver ${this.props.className}`
+
   render() {
     const { session } = this.props
     const { publicSession } = this.state
     if (!session || !publicSession)
       return (
-        <div className="presentation-driver">
+        <div className={this.className()}>
           <div className="session-title-box">
             <p className="session-title">{session.name}</p>
           </div>
-          <button className="wide-button" onClick={this.initializeSession}>
+          <button className="wide-button" onClick={this.initializeSession} type="button">
             {t('init')}
           </button>
         </div>
@@ -84,7 +86,7 @@ export default class PresentationDriver extends PureComponent {
       case 'LEADERBOARD':
         return this.renderNextQuestion(session, publicSession.question.index + 1, false, true)
       default:
-        return <div className="presentation-driver">{this.renderReset()}</div>
+        return <div className={this.className()}>{this.renderReset()}</div>
     }
   }
 
@@ -93,7 +95,7 @@ export default class PresentationDriver extends PureComponent {
     const question = questions[questionIndex]
 
     return (
-      <div className="presentation-driver">
+      <div className={this.className()}>
         {question && (
           <Question
             question={question}

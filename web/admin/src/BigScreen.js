@@ -45,11 +45,12 @@ export default class BigScreen extends PureComponent {
 
   render() {
     const { backgroundUrl, session } = this.state
+    const { className } = this.props
     if (session === undefined) return <div>Loading...</div>
     if (!session) return this.renderNonexistent()
     return (
       <div
-        className="big-screen"
+        className={`big-screen ${className}`}
         style={backgroundUrl ? { backgroundImage: `url(${backgroundUrl})` } : null}
       >
         {this.renderState(session)}
