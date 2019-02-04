@@ -105,7 +105,7 @@ export default class Admin extends PureComponent {
             <label className="row">
               <span>{t('name')}</span>
               <input
-                className={this.isDisplayable(sessionId) ? '' : 'bordered-error'}
+                className={`sessionName ${this.isDisplayable(sessionId) ? '' : 'bordered-error'}`}
                 type="text"
                 onFocus={this.saveFocus}
                 onBlur={this.saveBlur}
@@ -113,7 +113,6 @@ export default class Admin extends PureComponent {
                 maxLength={50}
                 onChange={this.onSessionNameChange}
                 ref="nameInput"
-                className="sessionName"
               />
               <button className="secondary" onClick={this.deleteSession}>
                 {t('delete')}

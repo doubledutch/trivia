@@ -83,7 +83,7 @@ export default class PresentationDriverWrapper extends PureComponent {
     )
 
   render() {
-    const { fbc, sessionId, sessionName } = this.props
+    const { fbc, sessionId } = this.props
     const { users } = this.state
     const questions = this.questionsForCurrentSession()
     const session = this.state.sessions[sessionId]
