@@ -234,59 +234,48 @@ export default class Admin extends PureComponent {
   }
 
   formatDataForExport = () => {
-    const { sessionId } = this.state
+    const { sessionId, users } = this.state
     this.props.fbc.database.public
       .adminRef('sessions')
       .child(sessionId)
       .once('value', data => {
         if (data.val().scores) {
-          // const origScores = data.val().scores
-          const attendeeClickPromises = Object.entries(data.val().scores).map(result =>
-            client
-              .getAttendee(result[0])
-              .then(attendee => ({ score: result[1], ...attendee }))
-              .catch(err => result),
-          )
-          Promise.all(attendeeClickPromises).then(newResults => {
-            // Build CSV and trigger download...
-            const exportList = newResults
-              .map(user => ({
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-                score: user.score,
-              }))
-              .sort((a, b) => b.score - a.score)
-            // newList = this.parseResultsForExport(newResults)
-            this.setState({ isExporting: true, exportList })
-            setTimeout(() => this.setState({ isExporting: false, exportList: [] }), 3000)
-          })
-          // console.log(Object.entries(data.val().scores))
+          const leaderboard = Object.keys(data.val().scores)
+            .map(userId => ({ score: data.val().scores[userId], user: users[userId] }))
+            .filter(x => x.user)
+            .sort((a, b) => b.score - a.score) // Sort by descending score
+            .map(user => ({
+              score: user.score,
+              firstName: user.user.firstName,
+              lastName: user.user.lastName,
+              email: user.user.email,
+            }))
+          this.setState({ isExporting: true, exportList: leaderboard })
+          setTimeout(() => this.setState({ isExporting: false, exportList: [] }), 3000)
         }
-        // const users = data.val().scores.
       })
   }
 
-  // getLeaderboard(scores) {
-  //   if (!scores) return []
-  //   const { users, session } = this.props
-  //   let prevScore = Number.MAX_SAFE_INTEGER
-  //   let place = 0
-  //   const leaderboard = Object.keys(scores)
-  //     .map(userId => ({ score: scores[userId], user: users[userId] }))
-  //     .filter(x => x.user)
-  //     .sort((a, b) => b.score - a.score) // Sort by descending score
-  //   leaderboard.forEach((playerScore, index) => {
-  //     if (playerScore.score < prevScore) {
-  //       place = index + 1
-  //     }
-  //     playerScore.place = place
-  //     prevScore = playerScore.score
-  //   })
-  //   return session.leaderboardMax
-  //     ? leaderboard.filter(p => p.place <= session.leaderboardMax)
-  //     : leaderboard
-  // }
+  getLeaderboard(scores) {
+    if (!scores) return []
+    const { users, session } = this.props
+    let prevScore = Number.MAX_SAFE_INTEGER
+    let place = 0
+    const leaderboard = Object.keys(scores)
+      .map(userId => ({ score: scores[userId], user: users[userId] }))
+      .filter(x => x.user)
+      .sort((a, b) => b.score - a.score) // Sort by descending score
+    leaderboard.forEach((playerScore, index) => {
+      if (playerScore.score < prevScore) {
+        place = index + 1
+      }
+      playerScore.place = place
+      prevScore = playerScore.score
+    })
+    return session.leaderboardMax
+      ? leaderboard.filter(p => p.place <= session.leaderboardMax)
+      : leaderboard
+  }
 
   getAdmins = keys => {
     const adminClickPromises = keys.map(result =>
