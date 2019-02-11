@@ -83,7 +83,7 @@ export default class PresentationDriverWrapper extends PureComponent {
     )
 
   render() {
-    const { fbc, sessionId, sessionName } = this.props
+    const { fbc, sessionId } = this.props
     const { users } = this.state
     const questions = this.questionsForCurrentSession()
     const session = this.state.sessions[sessionId]
@@ -91,13 +91,19 @@ export default class PresentationDriverWrapper extends PureComponent {
       <div>
         <div className="mobile-side">
           {questions && session && (
-            <PresentationDriver fbc={fbc} session={session} questions={questions} users={users} />
+            <PresentationDriver
+              fbc={fbc}
+              session={session}
+              questions={questions}
+              users={users}
+              className="mobile"
+            />
           )}
         </div>
         <div className="help-text-box">
           <p className="help-text">{t('scroll')}</p>
         </div>
-        {questions && session && <BigScreen fbc={fbc} sessionId={session.id} />}
+        {questions && session && <BigScreen fbc={fbc} sessionId={session.id} className="mobile" />}
       </div>
     )
   }
