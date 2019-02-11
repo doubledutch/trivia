@@ -21,6 +21,7 @@ import {
   mapPushedDataToStateObjects,
   mapPushedDataToObjectOfStateObjects,
 } from '@doubledutch/firebase-connector'
+import { CSVDownload } from '@doubledutch/react-csv'
 import { AttendeeSelector } from '@doubledutch/react-components'
 import Questions from './Questions'
 import PresentationDriver from './PresentationDriver'
@@ -38,6 +39,8 @@ export default class Admin extends PureComponent {
     isNew: false,
     admins: [],
     attendees: [],
+    isExporting: false,
+    exportList: [],
   }
 
   adminableUsersRef = () => this.props.fbc.database.private.adminableUsersRef()
@@ -208,6 +211,16 @@ export default class Admin extends PureComponent {
             </div>
           </div>
         )}
+        {this.state.sessionId && (
+          <div className="csvLinkBox">
+            <button className="csvButton" onClick={this.formatDataForExport}>
+              {t('export')}
+            </button>
+            {this.state.isExporting ? (
+              <CSVDownload data={this.state.exportList} filename="results.csv" target="_blank" />
+            ) : null}
+          </div>
+        )}
         <div>
           <input
             type="text"
@@ -220,6 +233,61 @@ export default class Admin extends PureComponent {
       </div>
     )
   }
+
+  formatDataForExport = () => {
+    const { sessionId } = this.state
+    this.props.fbc.database.public
+      .adminRef('sessions')
+      .child(sessionId)
+      .once('value', data => {
+        if (data.val().scores) {
+          // const origScores = data.val().scores
+          const attendeeClickPromises = Object.entries(data.val().scores).map(result =>
+            client
+              .getAttendee(result[0])
+              .then(attendee => ({ score: result[1], ...attendee }))
+              .catch(err => result),
+          )
+          Promise.all(attendeeClickPromises).then(newResults => {
+            // Build CSV and trigger download...
+            const exportList = newResults
+              .map(user => ({
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                score: user.score,
+              }))
+              .sort((a, b) => b.score - a.score)
+            // newList = this.parseResultsForExport(newResults)
+            this.setState({ isExporting: true, exportList })
+            setTimeout(() => this.setState({ isExporting: false, exportList: [] }), 3000)
+          })
+          // console.log(Object.entries(data.val().scores))
+        }
+        // const users = data.val().scores.
+      })
+  }
+
+  // getLeaderboard(scores) {
+  //   if (!scores) return []
+  //   const { users, session } = this.props
+  //   let prevScore = Number.MAX_SAFE_INTEGER
+  //   let place = 0
+  //   const leaderboard = Object.keys(scores)
+  //     .map(userId => ({ score: scores[userId], user: users[userId] }))
+  //     .filter(x => x.user)
+  //     .sort((a, b) => b.score - a.score) // Sort by descending score
+  //   leaderboard.forEach((playerScore, index) => {
+  //     if (playerScore.score < prevScore) {
+  //       place = index + 1
+  //     }
+  //     playerScore.place = place
+  //     prevScore = playerScore.score
+  //   })
+  //   return session.leaderboardMax
+  //     ? leaderboard.filter(p => p.place <= session.leaderboardMax)
+  //     : leaderboard
+  // }
 
   getAdmins = keys => {
     const adminClickPromises = keys.map(result =>

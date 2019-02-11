@@ -37,5 +37,6 @@
   "confirmDeleteQ": "Are you sure you want to delete the question",
   "selectAdmin": "Select Admins",
   "currentAdmin": "Current Admins",
-  "scroll": "Scroll Down to View Active Game"
+  "scroll": "Scroll Down to View Active Game",
+  "export": "Export Leaderboard"
 }
