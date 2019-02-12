@@ -40,7 +40,9 @@ export default class Admin extends PureComponent {
     admins: [],
     attendees: [],
     isExporting: false,
+    isExportingResponses: false,
     exportList: [],
+    responsesList: [],
   }
 
   adminableUsersRef = () => this.props.fbc.database.private.adminableUsersRef()
@@ -212,11 +214,21 @@ export default class Admin extends PureComponent {
         )}
         {this.state.sessionId && (
           <div className="csvLinkBox">
+            <button className="csvButton" onClick={this.formatResponsesForExport}>
+              {t('exportResponses')}
+            </button>
             <button className="csvButton" onClick={this.formatDataForExport}>
               {t('export')}
             </button>
             {this.state.isExporting ? (
               <CSVDownload data={this.state.exportList} filename="results.csv" target="_blank" />
+            ) : null}
+            {this.state.isExportingResponses ? (
+              <CSVDownload
+                data={this.state.responsesList}
+                filename="responses.csv"
+                target="_blank"
+              />
             ) : null}
           </div>
         )}
@@ -233,6 +245,24 @@ export default class Admin extends PureComponent {
     )
   }
 
+  formatResponsesForExport = () => {
+    const { sessionId, users } = this.state
+    this.props.fbc.database.private.adminableUsersRef().once('value', data => {
+      const answersPerUser = data.val() || {}
+      const answers = Object.keys(answersPerUser)
+        .filter(id => answersPerUser[id].responses[sessionId] != null)
+        .filter(id => users[id])
+        .map(id => ({
+          firstName: users[id].firstName,
+          lastName: users[id].lastName,
+          email: users[id].email,
+          ...answersPerUser[id].responses[sessionId],
+        }))
+      this.setState({ isExportingResponses: true, responsesList: answers })
+      setTimeout(() => this.setState({ isExportingResponses: false, responsesList: [] }), 3000)
+    })
+  }
+
   formatDataForExport = () => {
     const { sessionId, users } = this.state
     this.props.fbc.database.public
@@ -241,14 +271,13 @@ export default class Admin extends PureComponent {
       .once('value', data => {
         if (data.val().scores) {
           const leaderboard = Object.keys(data.val().scores)
-            .map(userId => ({ score: data.val().scores[userId], user: users[userId] }))
-            .filter(x => x.user)
+            .filter(userId => users[userId])
             .sort((a, b) => b.score - a.score) // Sort by descending score
-            .map(user => ({
-              score: user.score,
-              firstName: user.user.firstName,
-              lastName: user.user.lastName,
-              email: user.user.email,
+            .map(userId => ({
+              score: data.val().scores[userId],
+              firstName: users[userId].firstName,
+              lastName: users[userId].lastName,
+              email: users[userId].email,
             }))
           this.setState({ isExporting: true, exportList: leaderboard })
           setTimeout(() => this.setState({ isExporting: false, exportList: [] }), 3000)

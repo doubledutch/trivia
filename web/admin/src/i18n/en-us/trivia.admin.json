@@ -38,5 +38,6 @@
   "selectAdmin": "Select Admins",
   "currentAdmin": "Current Admins",
   "scroll": "Scroll Down to View Active Game",
-  "export": "Export Leaderboard"
+  "export": "Export Leaderboard",
+  "exportResponses": "Export Responses"
 }
