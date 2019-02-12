@@ -249,8 +249,11 @@ export default class Admin extends PureComponent {
     const { sessionId, users } = this.state
     this.props.fbc.database.private.adminableUsersRef().once('value', data => {
       const answersPerUser = data.val() || {}
+      // if (answersPerUser[id].responses) {
       const answers = Object.keys(answersPerUser)
-        .filter(id => answersPerUser[id].responses[sessionId] != null)
+        .filter(id => {
+          if (answersPerUser[id].responses) return answersPerUser[id].responses[sessionId] != null
+        })
         .filter(id => users[id])
         .map(id => ({
           firstName: users[id].firstName,
@@ -269,8 +272,9 @@ export default class Admin extends PureComponent {
       .adminRef('sessions')
       .child(sessionId)
       .once('value', data => {
-        if (data.val().scores) {
-          const leaderboard = Object.keys(data.val().scores)
+        const activeSession = data.val() || {}
+        if (activeSession.scores) {
+          const leaderboard = Object.keys(activeSession.scores)
             .filter(userId => users[userId])
             .sort((a, b) => b.score - a.score) // Sort by descending score
             .map(userId => ({
