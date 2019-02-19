@@ -268,9 +268,9 @@ export default class Admin extends PureComponent {
       const answersPerUser = data.val() || {}
       // if (answersPerUser[id].responses) {
       const answers = Object.keys(answersPerUser)
-        .filter(id => {
-          if (answersPerUser[id].responses) return answersPerUser[id].responses[sessionId] != null
-        })
+        .filter(
+          id => answersPerUser[id].responses && answersPerUser[id].responses[sessionId] != null,
+        )
         .filter(id => users[id])
         .map(id => ({
           firstName: users[id].firstName,
