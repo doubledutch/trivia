@@ -169,8 +169,10 @@ export default class PresentationDriver extends PureComponent {
     }
   }
 
-  initializeSession = () =>
+  initializeSession = () => {
+    this.props.updateExportIsDisabled(true)
     this.publicSessionRef().set({ state: 'NOT_STARTED', name: this.props.session.name })
+  }
 
   startNextQuestion = () => {
     const { session, questions } = this.props
@@ -197,7 +199,10 @@ export default class PresentationDriver extends PureComponent {
 
   showLeaderboard = () => this.publicSessionRef().update({ state: 'LEADERBOARD' })
 
-  endGame = () => this.publicSessionRef().update({ state: 'ENDED' })
+  endGame = () => {
+    this.props.updateExportIsDisabled(false)
+    this.publicSessionRef().update({ state: 'ENDED' })
+  }
 
   endQuestion = () => {
     if (!this.timer) return // Ensure we only end the question once.

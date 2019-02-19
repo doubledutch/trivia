@@ -43,6 +43,7 @@ export default class Admin extends PureComponent {
     isExportingResponses: false,
     exportList: [],
     responsesList: [],
+    exportIsDisabled: false,
   }
 
   adminableUsersRef = () => this.props.fbc.database.private.adminableUsersRef()
@@ -87,7 +88,14 @@ export default class Admin extends PureComponent {
   }
 
   render() {
-    const { backgroundUrl, launchDisabled, sessionId, sessions, users } = this.state
+    const {
+      backgroundUrl,
+      launchDisabled,
+      sessionId,
+      sessions,
+      users,
+      exportIsDisabled,
+    } = this.state
     return (
       <div className="Admin">
         <p className="boxTitle">{t('challenge')}</p>
@@ -207,6 +215,7 @@ export default class Admin extends PureComponent {
                   saveCurrentIndex={this.saveCurrentIndex}
                   questions={this.questionsForCurrentSession()}
                   users={users}
+                  updateExportIsDisabled={this.updateExportIsDisabled}
                 />
               </div>
             </div>
@@ -214,16 +223,24 @@ export default class Admin extends PureComponent {
         )}
         {this.state.sessionId && (
           <div className="csvLinkBox">
-            <button className="csvButton" onClick={this.formatResponsesForExport}>
+            <button
+              className="csvButton"
+              onClick={this.formatResponsesForExport}
+              disabled={exportIsDisabled}
+            >
               {t('exportResponses')}
             </button>
-            <button className="csvButton" onClick={this.formatDataForExport}>
+            <button
+              className="csvButton"
+              onClick={this.formatDataForExport}
+              disabled={exportIsDisabled}
+            >
               {t('export')}
             </button>
-            {this.state.isExporting ? (
+            {this.state.isExporting && this.state.exportList ? (
               <CSVDownload data={this.state.exportList} filename="results.csv" target="_blank" />
             ) : null}
-            {this.state.isExportingResponses ? (
+            {this.state.isExportingResponses && this.state.responsesList ? (
               <CSVDownload
                 data={this.state.responsesList}
                 filename="responses.csv"
@@ -342,6 +359,10 @@ export default class Admin extends PureComponent {
       .adminableUsersRef(attendee.id)
       .child('adminToken')
     tokenRef.remove()
+  }
+
+  updateExportIsDisabled = bool => {
+    this.setState({ exportIsDisabled: bool })
   }
 
   isDisplayable = sessionId => {
