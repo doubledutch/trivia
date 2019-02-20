@@ -433,7 +433,9 @@ class HomeView extends PureComponent {
     const { sessions, sessionId } = this.state
     const session = sessions[sessionId]
     const { question } = session
+    const title = question.text.replace('.',',').replace('#','hashtag').replace('$','USD').replace('[','|').replace('}','`|')
     this.answersRef().update({ [sessionId]: i })
+    this.answersRef().child("responses").child(sessionId).child(title).set(question.options[i])
   }
 
   myPlace = leaderboard =>
