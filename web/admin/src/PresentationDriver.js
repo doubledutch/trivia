@@ -170,7 +170,6 @@ export default class PresentationDriver extends PureComponent {
   }
 
   initializeSession = () => {
-    this.props.updateExportIsDisabled(true)
     this.publicSessionRef().set({ state: 'NOT_STARTED', name: this.props.session.name })
   }
 
@@ -200,7 +199,6 @@ export default class PresentationDriver extends PureComponent {
   showLeaderboard = () => this.publicSessionRef().update({ state: 'LEADERBOARD' })
 
   endGame = () => {
-    this.props.updateExportIsDisabled(false)
     this.publicSessionRef().update({ state: 'ENDED' })
   }
 
