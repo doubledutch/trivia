@@ -28,7 +28,7 @@
   "display": "Display Leaderboard",
   "end": "End Game",
   "reset": "Restart trivia session", 
-  "confirmReset": "Are you sure you want to restart the trivia session? This will delete all leaderboard and user responses data and cannot be undone. Please export any relevant reports before hand.",
+  "confirmReset": "Are you sure you want to restart the trivia session? This will delete all leaderboard and user response data and cannot be undone. Please export any relevant reports beforehand.",
   "question": "Question ${num}",
   "correct": "Correct Answer",
   "saveQ": "Save Question",

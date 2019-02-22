@@ -155,8 +155,6 @@ export default class PresentationDriver extends PureComponent {
       // Remove the trivia session
       this.publicSessionRef().remove()
 
-      // remove the saved response data
-
       // Remove users who were in the removed trivia session.
       this.publicUsersRef().once('value', data => {
         const users = data.val() || {}
@@ -167,6 +165,7 @@ export default class PresentationDriver extends PureComponent {
               .child(id)
               .remove()
 
+            // remove the saved response data
             this.privateUsersRef()
               .child(id)
               .child('responses')
