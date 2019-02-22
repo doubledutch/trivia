@@ -1,6 +1,6 @@
 {
   "name": "trivia",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "baseBundleVersion": "0.57.5",
   "private": true,
   "scripts": {
