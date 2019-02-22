@@ -43,7 +43,6 @@ export default class Admin extends PureComponent {
     isExportingResponses: false,
     exportList: [],
     responsesList: [],
-    exportIsDisabled: false,
   }
 
   adminableUsersRef = () => this.props.fbc.database.private.adminableUsersRef()
@@ -83,19 +82,26 @@ export default class Admin extends PureComponent {
   componentDidUpdate() {
     if (!this.state.sessionId) {
       const sessionIds = Object.keys(this.state.sessions)
-      if (sessionIds.length) this.setState({ sessionId: sessionIds[0] })
+      if (sessionIds.length) {
+        this.setState({ sessionId: sessionIds[0] })
+      }
     }
   }
 
+  isSessionEnded = () => {
+    const { publicSessions, sessionId } = this.state
+    if (publicSessions[sessionId]) {
+      const currentSession = publicSessions[sessionId]
+      if (currentSession.state === 'ENDED') {
+        return true
+      }
+    }
+    return false
+  }
+
   render() {
-    const {
-      backgroundUrl,
-      launchDisabled,
-      sessionId,
-      sessions,
-      users,
-      exportIsDisabled,
-    } = this.state
+    const { backgroundUrl, launchDisabled, sessionId, sessions, users } = this.state
+    const exportIsDisabled = !this.isSessionEnded()
     return (
       <div className="Admin">
         <p className="boxTitle">{t('challenge')}</p>
@@ -215,7 +221,6 @@ export default class Admin extends PureComponent {
                   saveCurrentIndex={this.saveCurrentIndex}
                   questions={this.questionsForCurrentSession()}
                   users={users}
-                  updateExportIsDisabled={this.updateExportIsDisabled}
                 />
               </div>
             </div>
@@ -359,10 +364,6 @@ export default class Admin extends PureComponent {
       .adminableUsersRef(attendee.id)
       .child('adminToken')
     tokenRef.remove()
-  }
-
-  updateExportIsDisabled = bool => {
-    this.setState({ exportIsDisabled: bool })
   }
 
   isDisplayable = sessionId => {

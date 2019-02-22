@@ -160,17 +160,23 @@ export default class PresentationDriver extends PureComponent {
         const users = data.val() || {}
         Object.keys(users)
           .filter(id => users[id].sessionId === this.props.session.id)
-          .forEach(id =>
+          .forEach(id => {
             this.publicUsersRef()
               .child(id)
-              .remove(),
-          )
+              .remove()
+
+            // remove the saved response data
+            this.privateUsersRef()
+              .child(id)
+              .child('responses')
+              .child(this.props.session.id)
+              .remove()
+          })
       })
     }
   }
 
   initializeSession = () => {
-    this.props.updateExportIsDisabled(true)
     this.publicSessionRef().set({ state: 'NOT_STARTED', name: this.props.session.name })
   }
 
@@ -200,7 +206,6 @@ export default class PresentationDriver extends PureComponent {
   showLeaderboard = () => this.publicSessionRef().update({ state: 'LEADERBOARD' })
 
   endGame = () => {
-    this.props.updateExportIsDisabled(false)
     this.publicSessionRef().update({ state: 'ENDED' })
   }
 
