@@ -93,15 +93,15 @@ export default class Admin extends PureComponent {
     if (publicSessions[sessionId]) {
       const currentSession = publicSessions[sessionId]
       if (currentSession.state === 'ENDED') {
-        return false
+        return true
       }
     }
-    return true
+    return false
   }
 
   render() {
     const { backgroundUrl, launchDisabled, sessionId, sessions, users } = this.state
-    const exportIsDisabled = this.isSessionEnded()
+    const exportIsDisabled = !this.isSessionEnded()
     return (
       <div className="Admin">
         <p className="boxTitle">{t('challenge')}</p>
