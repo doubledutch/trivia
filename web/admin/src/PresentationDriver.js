@@ -155,16 +155,24 @@ export default class PresentationDriver extends PureComponent {
       // Remove the trivia session
       this.publicSessionRef().remove()
 
+      // remove the saved response data
+
       // Remove users who were in the removed trivia session.
       this.publicUsersRef().once('value', data => {
         const users = data.val() || {}
         Object.keys(users)
           .filter(id => users[id].sessionId === this.props.session.id)
-          .forEach(id =>
+          .forEach(id => {
             this.publicUsersRef()
               .child(id)
-              .remove(),
-          )
+              .remove()
+
+            this.privateUsersRef()
+              .child(id)
+              .child('responses')
+              .child(this.props.session.id)
+              .remove()
+          })
       })
     }
   }
