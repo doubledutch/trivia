@@ -109,7 +109,12 @@ class HomeView extends PureComponent {
     this.props.fbc.database.private
       .adminRef('adminUrl')
       .on('value', data => this.setState({ adminUrl: data.val() || undefined }))
-    this.adminSessionsRef().on('value', data => this.setState({ adminSessions: data.val() || {} }))
+    this.adminSessionsRef().on('value', data => {
+      this.setState({ adminSessions: data.val() || {} })
+      if (this.state.adminSessionId && !data.val()[this.state.adminSessionId]){
+        this.setState({adminSessionId: undefined})
+      }
+    })
   }
 
   wireListeners = () => {

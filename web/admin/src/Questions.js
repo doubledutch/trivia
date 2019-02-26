@@ -14,7 +14,7 @@ export default class Questions extends PureComponent {
       <Reorderable
         className="questions"
         droppableId="questions"
-        enabled
+        enabled={!isActive}
         onMove={this.moveQuestion}
         renderDragHandle={renderLeftDragHandle}
         onItemFocus={this.onQuestionFocus}
