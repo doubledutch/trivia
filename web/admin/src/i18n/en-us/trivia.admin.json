@@ -27,8 +27,8 @@
   "endEarly": "End Current Question Early",
   "display": "Display Leaderboard",
   "end": "End Game",
-  "reset": "Reset trivia session", 
-  "confirmReset": "Are you sure you want to destroy the current trivia session? This cannot be undone.",
+  "reset": "Restart trivia session", 
+  "confirmReset": "Are you sure you want to restart the trivia session? This will delete all leaderboard and user response data and cannot be undone. Please export any relevant reports beforehand.",
   "question": "Question ${num}",
   "correct": "Correct Answer",
   "saveQ": "Save Question",
@@ -37,5 +37,7 @@
   "confirmDeleteQ": "Are you sure you want to delete the question",
   "selectAdmin": "Select Admins",
   "currentAdmin": "Current Admins",
-  "scroll": "Scroll Down to View Active Game"
+  "scroll": "Scroll Down to View Active Game",
+  "export": "Export Leaderboard",
+  "exportResponses": "Export Responses"
 }

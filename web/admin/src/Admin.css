@@ -166,3 +166,23 @@ button.overlay-button {
 .bordered-error {
   background-color: #dc5154;
 }
+
+.csvButton{
+  float: right;
+  text-decoration: none;
+  border: 1px solid #73aaf3;
+  color: #73aaf3;
+  border-radius: 5px;
+  padding: 10px;
+  margin-left: 20px;
+  background-color: white;
+}
+
+.csvLinkBox{
+  flex-direction: row;
+  align-items: flex-end; 
+  justify-content: flex-end;
+  display: flex;
+  margin-top: 10px;
+  width: 800px;
+}

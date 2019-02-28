@@ -160,17 +160,25 @@ export default class PresentationDriver extends PureComponent {
         const users = data.val() || {}
         Object.keys(users)
           .filter(id => users[id].sessionId === this.props.session.id)
-          .forEach(id =>
+          .forEach(id => {
             this.publicUsersRef()
               .child(id)
-              .remove(),
-          )
+              .remove()
+
+            // remove the saved response data
+            this.privateUsersRef()
+              .child(id)
+              .child('responses')
+              .child(this.props.session.id)
+              .remove()
+          })
       })
     }
   }
 
-  initializeSession = () =>
+  initializeSession = () => {
     this.publicSessionRef().set({ state: 'NOT_STARTED', name: this.props.session.name })
+  }
 
   startNextQuestion = () => {
     const { session, questions } = this.props
@@ -197,7 +205,9 @@ export default class PresentationDriver extends PureComponent {
 
   showLeaderboard = () => this.publicSessionRef().update({ state: 'LEADERBOARD' })
 
-  endGame = () => this.publicSessionRef().update({ state: 'ENDED' })
+  endGame = () => {
+    this.publicSessionRef().update({ state: 'ENDED' })
+  }
 
   endQuestion = () => {
     if (!this.timer) return // Ensure we only end the question once.
