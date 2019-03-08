@@ -271,7 +271,6 @@ export default class Admin extends PureComponent {
     const { sessionId, users } = this.state
     this.props.fbc.database.private.adminableUsersRef().once('value', data => {
       const answersPerUser = data.val() || {}
-      // if (answersPerUser[id].responses) {
       const answers = Object.keys(answersPerUser)
         .filter(
           id => answersPerUser[id].responses && answersPerUser[id].responses[sessionId] != null,
