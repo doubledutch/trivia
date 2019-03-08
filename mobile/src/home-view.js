@@ -111,9 +111,7 @@ class HomeView extends PureComponent {
       .on('value', data => this.setState({ adminUrl: data.val() || undefined }))
     this.adminSessionsRef().on('value', data => {
       this.setState({ adminSessions: data.val() || {} })
-      if (this.state.adminSessionId && !data.val()[this.state.adminSessionId]){
-        this.setState({adminSessionId: undefined})
-      }
+      this.setState(prevState => ({adminSessionId : prevState.adminSessionId && !data.val()[prevState.adminSessionId] ? undefined : prevState.adminSessionId }) )
     })
   }
 
