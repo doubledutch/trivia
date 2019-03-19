@@ -49,13 +49,14 @@ export default class PresentationDriver extends PureComponent {
   }
 
   wireHandlers() {
-    this.publicSessionHandler = this.publicSessionRef().on('value', data =>
+    this.publicSessionHandlerRef = this.publicSessionRef()
+    this.publicSessionHandler = this.publicSessionHandlerRef.on('value', data =>
       this.setState({ publicSession: data.val() }),
     )
   }
 
   unwireHandlers() {
-    this.publicSessionRef().off('value', this.publicSessionHandler)
+    this.publicSessionHandlerRef.off('value', this.publicSessionHandler)
     this.clearTimer()
   }
 
