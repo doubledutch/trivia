@@ -75,7 +75,7 @@ export default class Admin extends PureComponent {
     )
     mapPushedDataToStateObjects(this.publicUsersRef(), this, 'users')
     mapPushedDataToStateObjects(this.publicSessionRef(), this, 'publicSessions')
-    this.backgroundUrlRef().on('value', data => this.setState({ backgroundUrl: data.val() }))
+    this.backgroundUrlRef().on('value', data => this.setState({ backgroundUrl: data.val() || '' }))
     fbc.getLongLivedAdminToken().then(longLivedToken => this.setState({ longLivedToken }))
   }
 
