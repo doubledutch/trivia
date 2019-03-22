@@ -10,9 +10,9 @@
     "@doubledutch/react-components": "^0.2.1",
     "@doubledutch/react-csv": "^1.1.0",
     "qs": "^6.6.0",
-    "react": "^16.8.4",
+    "react": "^16.8.5",
     "react-beautiful-dnd": "^6.0.1",
-    "react-dom": "^16.8.4",
+    "react-dom": "^16.8.5",
     "react-scripts": "^2.1.8"
   },
   "scripts": {
