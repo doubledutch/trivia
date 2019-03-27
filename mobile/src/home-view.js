@@ -446,6 +446,7 @@ class HomeView extends PureComponent {
     const title = question.text.replace('.',',').replace('#','hashtag').replace('$','USD').replace('[','|').replace('}','`|')
     this.answersRef().update({ [sessionId]: i })
     this.answersRef().child("responses").child(sessionId).child(title).set(question.options[i])
+    this.answersRef().child("responseTimes").child(sessionId).child(title).set({time: firebase.database.ServerValue.TIMESTAMP})
   }
 
   myPlace = leaderboard =>
