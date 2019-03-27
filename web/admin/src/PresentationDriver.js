@@ -17,6 +17,7 @@
 import React, { PureComponent } from 'react'
 import { translate as t } from '@doubledutch/admin-client'
 import './PresentationDriver.css'
+import firebase from 'firebase/app'
 
 import Question from './Question'
 
@@ -197,6 +198,7 @@ export default class PresentationDriver extends PureComponent {
           text: question.text,
           totalSeconds: session.secondsPerQuestion,
           options: question.options,
+          startTime: firebase.database.ServerValue.TIMESTAMP,
         },
       })
       .then(() => {
