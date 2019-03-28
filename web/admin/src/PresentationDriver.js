@@ -225,7 +225,11 @@ export default class PresentationDriver extends PureComponent {
         const answersPerUser = data.val() || {}
         const answers = Object.keys(answersPerUser)
           .filter(id => answersPerUser[id][session.id] != null)
-          .map(id => ({ id, answer: answersPerUser[id][session.id] }))
+          .map(id => ({
+            id,
+            answer: answersPerUser[id][session.id].answer || 0,
+            time: answersPerUser[id][session.id].time || 0,
+          }))
         const guesses = answers.reduce(
           (counts, answer) => {
             counts[answer.answer]++
@@ -236,17 +240,27 @@ export default class PresentationDriver extends PureComponent {
 
         // Score
         const correctIndex = questions[question.index].correctIndex
+
+        // get publicSession start time
+        const startTime = this.state.publicSession.question.startTime
+
         const scores = answers.reduce((scores, answer) => {
           if (!scores[answer.id]) {
-            scores[answer.id] = 0
+            scores[answer.id] = {}
+            scores[answer.id].score = 0
+            scores[answer.id].time = 0
           }
           if (answer.answer === correctIndex) {
-            scores[answer.id] = scores[answer.id] + 1
+            scores[answer.id].score = scores[answer.id].score + 1
+            const newTime = startTime - answer.time
+            const currentTime = scores[answer.id].time || 0
+            scores[answer.id].time = currentTime + newTime
           }
           return scores
         }, publicSession.scores || {})
 
         // Close the question and show responses
+
         this.publicSessionRef().update({
           state: 'QUESTION_CLOSED',
           scores,
@@ -256,6 +270,7 @@ export default class PresentationDriver extends PureComponent {
             text: question.text,
             options: question.options,
             correctIndex,
+            startTime: question.startTime,
             guesses,
             totalGuesses: guesses[0] + guesses[1] + guesses[2] + guesses[3],
           },
@@ -278,9 +293,13 @@ export default class PresentationDriver extends PureComponent {
     let prevScore = Number.MAX_SAFE_INTEGER
     let place = 0
     const leaderboard = Object.keys(scores)
-      .map(userId => ({ score: scores[userId], user: users[userId] }))
+      .map(userId => ({
+        score: scores[userId].score || 0,
+        user: users[userId],
+        time: scores[userId].time || 0,
+      }))
       .filter(x => x.user)
-      .sort((a, b) => b.score - a.score) // Sort by descending score
+      .sort(sortUsers) // Sort by descending score
     leaderboard.forEach((playerScore, index) => {
       if (playerScore.score < prevScore) {
         place = index + 1
@@ -306,4 +325,9 @@ export default class PresentationDriver extends PureComponent {
       }
     }, 500)
   }
+}
+
+function sortUsers(a, b) {
+  if (a.score !== b.score) return b.score - a.score
+  return b.time - a.time
 }

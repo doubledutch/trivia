@@ -32,9 +32,12 @@ export default class Leaderboard extends PureComponent {
             <Text style={i === 0 ? s.name2 : s.name} numberOfLines={1}>
               {p.user.firstName} {p.user.lastName}
             </Text>
-            <Text style={i === 0 ? s.points2 : s.points}>
-              {p.score} {p.score === 1 ? 'pt' : 'pts'}
-            </Text>
+            <View style={s.column}>
+              <Text style={i === 0 ? s.points2 : s.points}>
+                {p.score} {p.score === 1 ? 'pt' : 'pts'}
+              </Text>
+              <Text style={s.time}>Avg {p.time ? (p.time / p.score / 1000) * -1: 0} s</Text>
+            </View>
           </View>
         ))}
       </View>
@@ -43,19 +46,26 @@ export default class Leaderboard extends PureComponent {
 }
 const s = StyleSheet.create({
   tile: {
-    flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.8)',
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginBottom: 5,
+    flexDirection: "row"
+  },
+  row: {
+    flexDirection: "column"
   },
   place: {
     color: colors.orange,
     fontSize: 16,
     fontWeight: 'bold',
     minWidth: 22,
+  },
+  time: {
+    marginTop: 0,
+    color: colors.orange,
   },
   avatar: {
     marginHorizontal: 11,
