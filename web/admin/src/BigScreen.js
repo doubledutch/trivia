@@ -175,6 +175,9 @@ export default class BigScreen extends PureComponent {
               </div>
               <div className="leaderboard-points">
                 {p.score} {p.score === 1 ? 'pt' : 'pts'}
+                <p className="leaderboard-time">
+                  Avg {p.time ? (p.time / p.score / 1000) * -1 : 0} s
+                </p>
               </div>
             </div>
           ))}
