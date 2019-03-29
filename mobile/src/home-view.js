@@ -370,7 +370,7 @@ class HomeView extends PureComponent {
       question={session.question}
       totalSeconds={session.question.totalSeconds}
       countDown
-      selectedIndex={this.state.answers[sessionId] ? this.state.answers[sessionId].answer : undefined}
+      selectedIndex={(this.state.answers[sessionId] || {}).answer}
       onOptionSelected={this.selectOption}
     />
   )
@@ -443,9 +443,8 @@ class HomeView extends PureComponent {
     const { sessions, sessionId } = this.state
     const session = sessions[sessionId]
     const { question } = session
-    const title = question.text.replace(/./g,',').replace(/#/g,'hashtag').replace(/$/g,'USD').replace('[','|').replace('}','`|')
     this.answersRef().update({ [sessionId]: {answer: i, time:  firebase.database.ServerValue.TIMESTAMP}})
-    this.answersRef().child("responses").child(sessionId).child(title).set(question.options[i])
+    this.answersRef().child("responses").child(sessionId).child(question.id).set(question.options[i])
   }
 
   myPlace = leaderboard =>

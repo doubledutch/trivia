@@ -199,6 +199,7 @@ export default class PresentationDriver extends PureComponent {
           totalSeconds: session.secondsPerQuestion,
           options: question.options,
           startTime: firebase.database.ServerValue.TIMESTAMP,
+          id: question.id,
         },
       })
       .then(() => {
@@ -246,13 +247,11 @@ export default class PresentationDriver extends PureComponent {
 
         const scores = answers.reduce((scores, answer) => {
           if (!scores[answer.id]) {
-            scores[answer.id] = {}
-            scores[answer.id].score = 0
-            scores[answer.id].time = 0
+            scores[answer.id] = { score: 0, time: 0 }
           }
           if (answer.answer === correctIndex) {
             scores[answer.id].score = scores[answer.id].score + 1
-            const newTime = startTime - answer.time
+            const newTime = answer.time - startTime
             const currentTime = scores[answer.id].time || 0
             scores[answer.id].time = currentTime + newTime
           }
@@ -260,7 +259,6 @@ export default class PresentationDriver extends PureComponent {
         }, publicSession.scores || {})
 
         // Close the question and show responses
-
         this.publicSessionRef().update({
           state: 'QUESTION_CLOSED',
           scores,
@@ -272,6 +270,7 @@ export default class PresentationDriver extends PureComponent {
             correctIndex,
             startTime: question.startTime,
             guesses,
+            id: question.id,
             totalGuesses: guesses[0] + guesses[1] + guesses[2] + guesses[3],
           },
         })
