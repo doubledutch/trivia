@@ -1,7 +1,7 @@
 {
   "name": "trivia",
-  "version": "2.2.0",
-  "baseBundleVersion": "0.59.1",
+  "version": "2.3.0",
+  "baseBundleVersion": "0.59.3",
   "private": true,
   "scripts": {
     "start": "pushd mobile && npm start && popd && pushd web/admin && npm start && popd"
