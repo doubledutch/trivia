@@ -279,7 +279,7 @@ export default class Admin extends PureComponent {
         .filter(id => users[id])
         .map(id => {
           const formattedUserResponses = {}
-          Object.entries(answersPerUser[id].responses[sessionId]).map(item => {
+          Object.entries(answersPerUser[id].responses[sessionId]).forEach(item => {
             const originalQuestion = questions.find(question => question.id === item[0])
             const title = originalQuestion ? originalQuestion.text : item[0]
             formattedUserResponses[title] = item[1]
