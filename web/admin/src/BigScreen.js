@@ -14,79 +14,76 @@
  * limitations under the License.
  */
 
-import React, { PureComponent } from 'react'
+import React, { useEffect, useState, memo } from 'react'
 import './BigScreen.css'
 import { translate as t } from '@doubledutch/admin-client'
 import Avatar from './components/Avatar'
 import Question from './Question'
 
 const numJoinedToShow = 7
-export default class BigScreen extends PureComponent {
-  state = { joined: [] }
+const Option = ({ text, correct, guesses, totalGuesses }) => (
+  <div className={`option ${correct ? 'correct' : ''}`}>
+    <div className="option-text-back">
+      <span>{text}</span>
+      <span>{guesses != null && guesses}</span>
+    </div>
+    {guesses != null ? (
+      <div className="option-overlay">
+        <div style={{ width: `${(guesses / totalGuesses) * 100}%` }}>
+          <div className="option-text-front">
+            <span>{text}</span>
+            <span>{guesses != null && guesses}</span>
+          </div>
+        </div>
+      </div>
+    ) : null}
+  </div>
+)
 
-  componentDidMount() {
-    const { sessionId } = this.props
-    this.backgroundUrlRef().on('value', data => this.setState({ backgroundUrl: data.val() }))
-    this.sessionRef().on('value', data => this.setState({ session: data.val() }))
-    this.usersRef().on('child_added', data => {
+const BigScreen = ({ className, fbc, sessionId }) => {
+  const [session, setSession] = useState()
+  const [backgroundUrl, setBackgroundUrl] = useState()
+  const [joined, setJoined] = useState([])
+
+  useEffect(() => {
+    const sessionRef = fbc.database.public.adminRef('sessions').child(sessionId)
+    const backgroundUrlRef = fbc.database.public.adminRef('backgroundUrl')
+    const usersRef = fbc.database.public.usersRef()
+
+    backgroundUrlRef.on('value', data => setBackgroundUrl(data.val()))
+    sessionRef.on('value', data => setSession(data.val()))
+    usersRef.on('child_added', data => {
       const user = data.val()
       if (user.sessionId === sessionId) {
-        this.setState(state => ({ joined: [...state.joined, { ...user, id: data.key }] }))
+        setJoined([...joined, { ...user, id: data.key }])
       }
     })
-    const removeJoinedUser = data =>
-      this.setState(state => ({ joined: state.joined.filter(u => u.id !== data.key) }))
-    this.usersRef().on(
+    const removeJoinedUser = data => setJoined(joined.filter(u => u.id !== data.key))
+    usersRef.on(
       'child_changed',
       data => data.val().sessionId !== sessionId && removeJoinedUser(data),
     )
-    this.usersRef().on('child_removed', removeJoinedUser)
-  }
+    usersRef.on('child_removed', removeJoinedUser)
 
-  render() {
-    const { backgroundUrl, session } = this.state
-    const { className } = this.props
-    if (session === undefined) return <div>Loading...</div>
-    if (!session) return this.renderNonexistent()
-    return (
-      <div
-        className={`big-screen ${className}`}
-        style={backgroundUrl ? { backgroundImage: `url(${backgroundUrl})` } : null}
-      >
-        {this.renderState(session)}
-      </div>
-    )
-  }
-
-  renderState(session) {
-    switch (session.state) {
-      case 'NOT_STARTED':
-        return this.renderNotStarted()
-      case 'QUESTION_OPEN':
-        return this.renderOpenQuestion(session)
-      case 'QUESTION_CLOSED':
-        return this.renderClosedQuestion(session)
-      case 'LEADERBOARD':
-      case 'ENDED':
-        return this.renderLeaderboard(session)
-      default:
-        return null
+    return function cleanup() {
+      backgroundUrlRef.off('value')
+      sessionRef.off('value')
+      usersRef.off('child_added')
+      usersRef.off('child_changed')
+      usersRef.off('child_removed')
     }
-  }
+  }, [sessionId])
 
-  renderNonexistent = () => (
+  const renderNonexistent = () => (
     <div
-      style={
-        this.state.backgroundUrl ? { backgroundImage: `url(${this.state.backgroundUrl})` } : null
-      }
+      style={backgroundUrl ? { backgroundImage: `url(${backgroundUrl})` } : null}
       className="big-screen"
     >
       <div className="box box-content">{t('initialize')}</div>
     </div>
   )
 
-  renderNotStarted() {
-    const { joined } = this.state
+  function renderNotStarted() {
     if (joined.length === 0) {
       return (
         <div className="box joined">
@@ -119,7 +116,7 @@ export default class BigScreen extends PureComponent {
     )
   }
 
-  renderOpenQuestion(session) {
+  function renderOpenQuestion() {
     const { question } = session
     return (
       <Question
@@ -133,7 +130,7 @@ export default class BigScreen extends PureComponent {
     )
   }
 
-  renderClosedQuestion(session) {
+  function renderClosedQuestion() {
     const { question } = session
     return (
       <Question question={question} number={question.index + 1} totalSeconds={0}>
@@ -153,7 +150,7 @@ export default class BigScreen extends PureComponent {
     )
   }
 
-  renderLeaderboard(session) {
+  function renderLeaderboard() {
     const { leaderboard } = session
     const customStyle = p =>
       p.place === 1
@@ -185,28 +182,32 @@ export default class BigScreen extends PureComponent {
     )
   }
 
-  sessionRef = () => this.props.fbc.database.public.adminRef('sessions').child(this.props.sessionId)
+  function renderState() {
+    switch (session.state) {
+      case 'NOT_STARTED':
+        return renderNotStarted()
+      case 'QUESTION_OPEN':
+        return renderOpenQuestion()
+      case 'QUESTION_CLOSED':
+        return renderClosedQuestion()
+      case 'LEADERBOARD':
+      case 'ENDED':
+        return renderLeaderboard()
+      default:
+        return null
+    }
+  }
 
-  backgroundUrlRef = () => this.props.fbc.database.public.adminRef('backgroundUrl')
-
-  usersRef = () => this.props.fbc.database.public.usersRef()
+  if (session === undefined) return <div>Loading...</div>
+  if (!session) return renderNonexistent()
+  return (
+    <div
+      className={`big-screen ${className}`}
+      style={backgroundUrl ? { backgroundImage: `url(${backgroundUrl})` } : null}
+    >
+      {renderState(session)}
+    </div>
+  )
 }
 
-const Option = ({ text, correct, guesses, totalGuesses }) => (
-  <div className={`option ${correct ? 'correct' : ''}`}>
-    <div className="option-text-back">
-      <span>{text}</span>
-      <span>{guesses != null && guesses}</span>
-    </div>
-    {guesses != null ? (
-      <div className="option-overlay">
-        <div style={{ width: `${(guesses / totalGuesses) * 100}%` }}>
-          <div className="option-text-front">
-            <span>{text}</span>
-            <span>{guesses != null && guesses}</span>
-          </div>
-        </div>
-      </div>
-    ) : null}
-  </div>
-)
+export default memo(BigScreen)

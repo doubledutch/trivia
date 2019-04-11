@@ -170,14 +170,15 @@ class HomeView extends PureComponent {
   }
 
   render() {
-    const { backgroundUrl, currentUser, adminSessionId, adminUrl, isAdminView } = this.state
+    const { suggestedTitle } = this.props
+    const { currentUser, adminSessionId, isAdminView } = this.state
     if (!currentUser) return null
 
     return (
       <View style={s.flex}>
         {this.state.isLoggedIn ? (
           <View style={{ flex: 1 }}>
-            <TitleBar title={t('trivia')} client={client} signin={this.signin} />
+            <TitleBar title={suggestedTitle || t('trivia')} client={client} signin={this.signin} />
             <ImageBackground style={s.container} source={this.renderBackground()}>
               {isAdminView && adminSessionId && (
                 <TouchableOpacity style={s.option} onPress={this.cancelGame}>
