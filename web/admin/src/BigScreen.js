@@ -172,6 +172,9 @@ const BigScreen = ({ className, fbc, sessionId }) => {
               </div>
               <div className="leaderboard-points">
                 {p.score} {p.score === 1 ? 'pt' : 'pts'}
+                <p className="leaderboard-time">
+                  Avg {p.time ? Math.round(10 * (p.time / p.score / 1000)) / 10 : 0} s
+                </p>
               </div>
             </div>
           ))}

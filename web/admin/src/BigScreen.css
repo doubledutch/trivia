@@ -181,4 +181,10 @@
 }
 .leaderboard-points {
   margin-left: 1vmin;
+  margin-top: 1vmin;
+}
+
+.leaderboard-time {
+  font-size: 2vmin;
+  margin-top: 0;
 }

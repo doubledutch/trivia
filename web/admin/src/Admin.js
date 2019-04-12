@@ -271,17 +271,26 @@ export default class Admin extends PureComponent {
     const { sessionId, users } = this.state
     this.props.fbc.database.private.adminableUsersRef().once('value', data => {
       const answersPerUser = data.val() || {}
+      const questions = this.questionsForCurrentSession()
       const answers = Object.keys(answersPerUser)
         .filter(
           id => answersPerUser[id].responses && answersPerUser[id].responses[sessionId] != null,
         )
         .filter(id => users[id])
-        .map(id => ({
-          firstName: users[id].firstName,
-          lastName: users[id].lastName,
-          email: users[id].email,
-          ...answersPerUser[id].responses[sessionId],
-        }))
+        .map(id => {
+          const formattedUserResponses = {}
+          Object.entries(answersPerUser[id].responses[sessionId]).forEach(item => {
+            const originalQuestion = questions.find(question => question.id === item[0])
+            const title = originalQuestion ? originalQuestion.text : item[0]
+            formattedUserResponses[title] = item[1]
+          })
+          return {
+            firstName: users[id].firstName,
+            lastName: users[id].lastName,
+            email: users[id].email,
+            ...formattedUserResponses,
+          }
+        })
       this.setState({ isExportingResponses: true, responsesList: answers })
       setTimeout(() => this.setState({ isExportingResponses: false, responsesList: [] }), 3000)
     })
@@ -299,7 +308,7 @@ export default class Admin extends PureComponent {
             .filter(userId => users[userId])
             .sort((a, b) => b.score - a.score) // Sort by descending score
             .map(userId => ({
-              score: data.val().scores[userId],
+              score: data.val().scores[userId].score,
               firstName: users[userId].firstName,
               lastName: users[userId].lastName,
               email: users[userId].email,
