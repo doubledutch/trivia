@@ -36,7 +36,7 @@ export default class Leaderboard extends PureComponent {
               <Text style={i === 0 ? s.points2 : s.points}>
                 {p.score} {p.score === 1 ? 'pt' : 'pts'}
               </Text>
-              <Text style={s.time}>Avg {p.time ? Math.round(10*(p.time / p.score / 1000))/10 : 0} s</Text>
+              {p.score && <Text style={s.time}>Avg {p.time ? Math.round(10*(p.time / p.score / 1000))/10 : 0} s</Text>}
             </View>
           </View>
         ))}
