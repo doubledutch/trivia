@@ -290,6 +290,7 @@ export default class PresentationDriver extends PureComponent {
     if (!scores) return []
     const { users, session } = this.props
     let prevScore = Number.MAX_SAFE_INTEGER
+    let prevTime = -1
     let place = 0
     const leaderboard = Object.keys(scores)
       .map(userId => ({
@@ -298,13 +299,14 @@ export default class PresentationDriver extends PureComponent {
         time: scores[userId].time || 0,
       }))
       .filter(x => x.user)
-      .sort(sortUsers) // Sort by descending score
+      .sort(sortUsers) // Sort by descending score and break ties with ascending avg answer time
     leaderboard.forEach((playerScore, index) => {
-      if (playerScore.score < prevScore) {
+      if (playerScore.score < prevScore || playerScore.time > prevTime) {
         place = index + 1
       }
       playerScore.place = place
       prevScore = playerScore.score
+      prevTime = playerScore.time
     })
     return session.leaderboardMax
       ? leaderboard.filter(p => p.place <= session.leaderboardMax)

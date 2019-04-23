@@ -306,7 +306,7 @@ export default class Admin extends PureComponent {
         if (activeSession.scores) {
           const leaderboard = Object.keys(activeSession.scores)
             .filter(userId => users[userId])
-            .sort((a, b) => b.score - a.score) // Sort by descending score
+            .sort(sortUsers) // Sort by descending score and break ties with ascending avg answer time
             .map(userId => ({
               score: data.val().scores[userId].score,
               firstName: users[userId].firstName,
@@ -327,7 +327,7 @@ export default class Admin extends PureComponent {
     const leaderboard = Object.keys(scores)
       .map(userId => ({ score: scores[userId], user: users[userId] }))
       .filter(x => x.user)
-      .sort((a, b) => b.score - a.score) // Sort by descending score
+      .sort(sortUsers)
     leaderboard.forEach((playerScore, index) => {
       if (playerScore.score < prevScore) {
         place = index + 1
@@ -510,6 +510,11 @@ export default class Admin extends PureComponent {
           this.state.sessionId,
         )}&token=${encodeURIComponent(this.state.longLivedToken)}`
       : null
+}
+
+function sortUsers(a, b) {
+  if (a.score !== b.score) return b.score - a.score
+  return a.time - b.time
 }
 
 const th = num => {
