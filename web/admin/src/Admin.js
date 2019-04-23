@@ -306,7 +306,7 @@ export default class Admin extends PureComponent {
         if (activeSession.scores) {
           const leaderboard = Object.keys(activeSession.scores)
             .filter(userId => users[userId])
-            .sort(sortUsers) // Sort by descending score
+            .sort(sortUsers) // Sort by descending score and break ties with ascending avg answer time
             .map(userId => ({
               score: data.val().scores[userId].score,
               firstName: users[userId].firstName,
