@@ -330,5 +330,5 @@ export default class PresentationDriver extends PureComponent {
 
 function sortUsers(a, b) {
   if (a.score !== b.score) return b.score - a.score
-  return b.time - a.time
+  return a.time - b.time
 }
