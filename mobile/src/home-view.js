@@ -32,7 +32,6 @@ import {
   mapPushedDataToStateObjects,
   provideFirebaseConnectorToReactComponent,
 } from '@doubledutch/firebase-connector'
-import firebase from 'firebase/app'
 import i18n from './i18n'
 import { background, trophy } from './images'
 import { Button } from './components'
@@ -86,7 +85,7 @@ class HomeView extends PureComponent {
             .once('value', async data => {
               const longLivedToken = data.val()
               if (longLivedToken) {
-                await firebase.auth().signOut()
+                await this.props.fbc.firebase.auth().signOut()
                 client.longLivedToken = longLivedToken
                 await this.props.fbc.signinAdmin()
                 console.log('Re-logged in as admin')
@@ -444,7 +443,7 @@ class HomeView extends PureComponent {
     const { sessions, sessionId } = this.state
     const session = sessions[sessionId]
     const { question } = session
-    this.answersRef().update({ [sessionId]: {answer: i, time:  firebase.database.ServerValue.TIMESTAMP}})
+    this.answersRef().update({ [sessionId]: {answer: i, time:  this.props.fbc.firebase.database.ServerValue.TIMESTAMP}})
     this.answersRef().child("responses").child(sessionId).child(question.id).set(question.options[i])
   }
 
