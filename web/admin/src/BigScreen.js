@@ -55,14 +55,13 @@ const BigScreen = ({ className, fbc, sessionId }) => {
     usersRef.on('child_added', data => {
       const user = data.val()
       if (user.sessionId === sessionId) {
-        setJoined([...joined, { ...user, id: data.key }])
+        setJoined(joined => [...joined, { ...user, id: data.key }])
       }
     })
-    const removeJoinedUser = data => setJoined(joined.filter(u => u.id !== data.key))
-    usersRef.on(
-      'child_changed',
-      data => data.val().sessionId !== sessionId && removeJoinedUser(data),
-    )
+    const removeJoinedUser = data => setJoined(j => j.filter(u => u.id !== data.key))
+    usersRef.on('child_changed', data => {
+      data.val().sessionId !== sessionId && removeJoinedUser(data)
+    })
     usersRef.on('child_removed', removeJoinedUser)
 
     return function cleanup() {
