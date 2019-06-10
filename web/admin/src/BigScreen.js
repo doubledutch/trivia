@@ -17,6 +17,7 @@
 import React, { useEffect, useState, memo } from 'react'
 import './BigScreen.css'
 import { translate as t } from '@doubledutch/admin-client'
+import { getSeconds } from './Admin'
 import Avatar from './components/Avatar'
 import Question from './Question'
 
@@ -55,14 +56,13 @@ const BigScreen = ({ className, fbc, sessionId }) => {
     usersRef.on('child_added', data => {
       const user = data.val()
       if (user.sessionId === sessionId) {
-        setJoined([...joined, { ...user, id: data.key }])
+        setJoined(joined => [...joined, { ...user, id: data.key }])
       }
     })
-    const removeJoinedUser = data => setJoined(joined.filter(u => u.id !== data.key))
-    usersRef.on(
-      'child_changed',
-      data => data.val().sessionId !== sessionId && removeJoinedUser(data),
-    )
+    const removeJoinedUser = data => setJoined(j => j.filter(u => u.id !== data.key))
+    usersRef.on('child_changed', data => {
+      data.val().sessionId !== sessionId && removeJoinedUser(data)
+    })
     usersRef.on('child_removed', removeJoinedUser)
 
     return function cleanup() {
@@ -172,11 +172,7 @@ const BigScreen = ({ className, fbc, sessionId }) => {
               </div>
               <div className="leaderboard-points">
                 {p.score} {p.score === 1 ? 'pt' : 'pts'}
-                {p.score > 0 ? (
-                  <p className="leaderboard-time">
-                    Avg {p.time ? Math.round(10 * (p.time / p.score / 1000)) / 10 : 0} s
-                  </p>
-                ) : null}
+                {p.score > 0 ? <p className="leaderboard-time">Avg {getSeconds(p)} s</p> : null}
               </div>
             </div>
           ))}

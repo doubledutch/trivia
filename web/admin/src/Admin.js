@@ -101,7 +101,6 @@ export default class Admin extends PureComponent {
 
   render() {
     const { backgroundUrl, launchDisabled, sessionId, sessions, users } = this.state
-    const exportIsDisabled = !this.isSessionEnded()
     return (
       <div className="Admin">
         <p className="boxTitle">{t('challenge')}</p>
@@ -228,18 +227,10 @@ export default class Admin extends PureComponent {
         )}
         {this.state.sessionId && (
           <div className="csvLinkBox">
-            <button
-              className="csvButton"
-              onClick={this.formatResponsesForExport}
-              disabled={exportIsDisabled}
-            >
+            <button className="csvButton" onClick={this.formatResponsesForExport}>
               {t('exportResponses')}
             </button>
-            <button
-              className="csvButton"
-              onClick={this.formatDataForExport}
-              disabled={exportIsDisabled}
-            >
+            <button className="csvButton" onClick={this.formatDataForExport}>
               {t('export')}
             </button>
             {this.state.isExporting && this.state.exportList ? (
@@ -307,11 +298,15 @@ export default class Admin extends PureComponent {
           const leaderboard = Object.keys(activeSession.scores)
             .filter(userId => users[userId])
             .sort(sortUsers) // Sort by descending score and break ties with ascending avg answer time
-            .map(userId => ({
-              score: data.val().scores[userId].score,
-              firstName: users[userId].firstName,
-              lastName: users[userId].lastName,
-              email: users[userId].email,
+            .map((userId, i) => ({
+              Place: i + 1,
+              Score: activeSession.scores[userId].score,
+              Average_Time: activeSession.scores[userId].time
+                ? getSeconds(activeSession.scores[userId])
+                : 0,
+              First_Name: users[userId].firstName,
+              Last_Name: users[userId].lastName,
+              Email: users[userId].email,
             }))
           this.setState({ isExporting: true, exportList: leaderboard })
           setTimeout(() => this.setState({ isExporting: false, exportList: [] }), 3000)
@@ -510,6 +505,10 @@ export default class Admin extends PureComponent {
           this.state.sessionId,
         )}&token=${encodeURIComponent(this.state.longLivedToken)}`
       : null
+}
+
+export function getSeconds(userInfo) {
+  return Math.round(10 * (userInfo.time / userInfo.score / 1000)) / 10
 }
 
 function sortUsers(a, b) {
