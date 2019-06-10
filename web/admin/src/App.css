@@ -117,3 +117,223 @@ button.tertiary {
   border: none;
   background: transparent;
 }
+
+.containerSmall {
+  box-sizing: border-box;
+  font-size: 14;
+  border-radius: 5px;
+  border: 1px solid #E3ECF8;
+  background-color: #FFFFFF;
+  padding: 20px;
+  margin: 20px 0px;
+}
+
+.cellBoxTop {
+  width: 100%;
+  flex-flow: row wrap;
+  display: flex;
+  align-items: center;
+}
+
+.margin-right {
+  margin-right: 10px;
+}
+
+.cellAssignments {
+  flex: 1
+}
+
+.hideButton{
+  color: #4A90E2;
+  border: none;
+  background-color: white;
+  font-size: 14px;
+  padding: 8px;
+  border-radius: 2px;
+  float: right;
+}
+
+.borderlessButtonSmall {
+  border: none;
+  background-color: white;
+  color: #4A90E2;
+}
+
+.modSectionDes {
+  margin-top: 0px;
+  margin-bottom: 30px;
+}
+
+.row {
+  flex-direction: row;
+  display: flex;
+}
+
+.modTitle{
+  font-size: 14px;
+  white-space: nowrap;
+  margin-right: 5px;
+  font-weight: bold;
+  margin-left: 20px;
+  margin-bottom: 7px;
+  width: 200px;
+  margin-top: 5px;
+}
+
+.modDes{
+  font-size: 14px;
+  white-space: nowrap;
+  margin-right: 5px;
+  font-weight: bold;
+  margin-left: 15px;
+  width: 200px;
+  margin-top: 5px;
+  margin-bottom: 7px;
+}
+
+.sessionListBox {
+  border-radius: 5px;
+  border: 1px solid #E3ECF8;
+  padding: 0;
+  background-color: #ffffff;
+  overflow:hidden; 
+  overflow-y:auto;
+  height: 200px;
+  box-sizing: border-box;
+  margin: 5px 0 0 0;
+}
+
+.adminCell {
+  display: flex;
+  flex: 1;
+  height: 39px;
+  padding: 0px 20px 0px 20px;
+  flex-direction: row;
+  align-items: center;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #E3ECF8;
+  border-radius: 5px;
+}
+
+.cellTitle {
+  width: 200px;
+  margin-right: 20px;
+}
+
+.Modal {
+  position: absolute;
+  width: 650px;
+  border: 1px solid #CDCDCD;
+  border-radius: 4px;
+  background-color: #FAFAFA;
+}
+
+.Overlay {
+  position: fixed;
+  top: 10%;
+  left: 20%;
+  background-color: #ffffff;
+}
+
+.formButtonWhite{
+  border-radius: 5px;
+  width: 100px;
+  height: 37px;
+  color: #4E91E0;
+  background-color: white;
+  margin: 15px 20px 15px 0px;
+  float: right;
+  border: 1px;
+  border-style: solid;
+  border-color:#4E91E0;
+}
+
+.formButton{
+  border-radius: 5px;
+  width: 100px;
+  height: 37px;
+  color: white;
+  background-color: #4E91E0;
+  margin: 15px 20px 15px 0px;
+  float: right;
+  border: none;
+}
+
+.modalBottom {
+  flex: 1;
+  flex-flow: nowrap;
+  border-top: 1px solid #E3ECF8;
+  padding: 0px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end
+}
+
+.modalTop {
+  display: flex;
+  flex: 1;
+  flex-flow: nowrap;
+  border-bottom: 1px solid #E3ECF8;
+  padding: 10px;
+  align-items: center;
+}
+
+.modalCenter {
+  padding: 10px;
+}
+
+ul.modalList {
+  height: 250px;
+  padding: 0px;
+  border: 1px solid #E3ECF8;
+  border-radius: 5px;
+  background-color: #FCFCFC;
+  overflow: auto;
+  margin: 0px;
+}
+
+.modalListCell {
+  height: 39px;
+  padding: 0px 3px 0px 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #E3ECF8;
+  border-radius: 5px;
+}
+
+.modalTitle{
+  font-weight: 300;
+}
+
+.attendeeSelector {
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.selectAllButton{
+  border: none;
+  border-radius: 0;
+  font-size: 14px;
+  color: #85B650;
+  text-align: right;
+  white-space: nowrap;
+  background-color: #FAFAFA;
+  padding: 0;
+  margin-right: 10px;
+}
+
+.removeAllButton{
+  border: none;
+  border-radius: 0;
+  font-size: 14px;
+  color: #ed4634;
+  text-align: right;
+  white-space: nowrap;
+  background-color: #FAFAFA;
+  padding: 0;
+  margin-right: 10px;
+}
+

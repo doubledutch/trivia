@@ -39,5 +39,15 @@
   "currentAdmin": "Current Admins",
   "scroll": "Scroll Down to View Active Game",
   "export": "Export Leaderboard",
-  "exportResponses": "Export Responses"
+  "exportResponses": "Export Responses",
+  "moderators": "Moderators",
+  "add_moderator": "Add Moderator",
+  "select_all": "Select All",
+  "remove_all": "Remove All",
+  "cancel": "Cancel",
+  "save": "Save",
+  "name": "Name",
+  "sessions": "Assigned Sessions",
+  "deleteConfirm": "Are you sure you want to remove this user as a moderator?",
+  "moderator_desc": "Moderators will have access to the moderator panel in the Q&A mobile app. They will be able to approve, block and mark questions as answered from within the moderator panel. Being designated as a moderator is not necessary to moderate sessions from within the CMS."
 }

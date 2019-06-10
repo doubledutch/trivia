@@ -24,6 +24,8 @@ import {
 import { CSVDownload } from '@doubledutch/react-csv'
 import { AttendeeSelector } from '@doubledutch/react-components'
 import Questions from './Questions'
+import Moderator from './Moderator'
+import ModeratorModal from './ModeratorModal'
 import PresentationDriver from './PresentationDriver'
 import { openTab } from './utils'
 
@@ -43,6 +45,9 @@ export default class Admin extends PureComponent {
     isExportingResponses: false,
     exportList: [],
     responsesList: [],
+    selectedAdmin: null,
+    showModal: false,
+    adminData: {},
   }
 
   adminableUsersRef = () => this.props.fbc.database.private.adminableUsersRef()
@@ -100,9 +105,19 @@ export default class Admin extends PureComponent {
   }
 
   render() {
-    const { backgroundUrl, launchDisabled, sessionId, sessions, users } = this.state
+    const { backgroundUrl, launchDisabled, sessionId, sessions, users, showModal } = this.state
     return (
       <div className="Admin">
+        <ModeratorModal
+          isOpen={showModal}
+          closeModal={() => this.setState({ showModal: false, selectedAdmin: null })}
+          sessions={Object.values(sessions) || []}
+          admin={this.state.selectedAdmin || {}}
+          adminData={this.state.adminData}
+          onDeselected={this.onAdminDeselected}
+          saveModerator={this.saveModerator}
+          moderators={this.state.attendees.filter(a => this.isAdmin(a.id))}
+        />
         <p className="boxTitle">{t('challenge')}</p>
         <p className="bigBoxTitle">{t('questions')}</p>
         <div className="row">
@@ -183,6 +198,12 @@ export default class Admin extends PureComponent {
                 )}
               />
             </div>
+            <Moderator
+              adminData={this.state.adminData}
+              moderators={this.state.admins}
+              openModal={() => this.setState({ showModal: true })}
+              selectMod={user => this.setState({ selectedAdmin: user, showModal: true })}
+            />
             <div className="adminContainer">
               <AttendeeSelector
                 client={client}
@@ -256,6 +277,16 @@ export default class Admin extends PureComponent {
         </div>
       </div>
     )
+  }
+
+  saveModerator = (host, sessions) => {
+    const tokenRef = this.props.fbc.database.private.adminableUsersRef(host.id).child('adminToken')
+    const sessionsRef = this.props.fbc.database.private
+      .adminableUsersRef(host.id)
+      .child('adminSessions')
+    this.props.fbc.getLongLivedAdminToken().then(token => tokenRef.set(token))
+    sessionsRef.set(sessions)
+    this.setState({ showModal: false, selectedAdmin: null })
   }
 
   formatResponsesForExport = () => {
