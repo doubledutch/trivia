@@ -300,11 +300,9 @@ export default class Admin extends PureComponent {
             .sort(sortUsers) // Sort by descending score and break ties with ascending avg answer time
             .map((userId, i) => ({
               Place: i + 1,
-              Score: data.val().scores[userId].score,
-              Average_Time: data.val().scores[userId].time
-                ? Math.round(
-                    10 * (data.val().scores[userId].time / data.val().scores[userId].score / 1000),
-                  ) / 10
+              Score: activeSession.scores[userId].score,
+              Average_Time: activeSession.scores[userId].time
+                ? getSeconds(activeSession.scores[userId])
                 : 0,
               First_Name: users[userId].firstName,
               Last_Name: users[userId].lastName,
@@ -507,6 +505,10 @@ export default class Admin extends PureComponent {
           this.state.sessionId,
         )}&token=${encodeURIComponent(this.state.longLivedToken)}`
       : null
+}
+
+export function getSeconds(userInfo) {
+  return Math.round(10 * (userInfo.time / userInfo.score / 1000)) / 10
 }
 
 function sortUsers(a, b) {

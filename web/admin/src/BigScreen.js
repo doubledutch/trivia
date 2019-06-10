@@ -17,6 +17,7 @@
 import React, { useEffect, useState, memo } from 'react'
 import './BigScreen.css'
 import { translate as t } from '@doubledutch/admin-client'
+import { getSeconds } from './Admin'
 import Avatar from './components/Avatar'
 import Question from './Question'
 
@@ -171,11 +172,7 @@ const BigScreen = ({ className, fbc, sessionId }) => {
               </div>
               <div className="leaderboard-points">
                 {p.score} {p.score === 1 ? 'pt' : 'pts'}
-                {p.score > 0 ? (
-                  <p className="leaderboard-time">
-                    Avg {p.time ? Math.round(10 * (p.time / p.score / 1000)) / 10 : 0} s
-                  </p>
-                ) : null}
+                {p.score > 0 ? <p className="leaderboard-time">Avg {getSeconds(p)} s</p> : null}
               </div>
             </div>
           ))}
