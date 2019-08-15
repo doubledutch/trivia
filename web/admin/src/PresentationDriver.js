@@ -66,13 +66,22 @@ export default class PresentationDriver extends PureComponent {
   render() {
     const { session } = this.props
     const { publicSession } = this.state
+    const isDisabled =
+      this.props.questions.length === 0
+        ? true
+        : this.props.questions.length === 1 && this.props.questions[0].text === ''
     if (!session || !publicSession)
       return (
         <div className={this.className()}>
           <div className="session-title-box">
             <p className="session-title">{session.name}</p>
           </div>
-          <button className="wide-button" onClick={this.initializeSession} type="button">
+          <button
+            className="wide-button"
+            onClick={this.initializeSession}
+            disabled={isDisabled}
+            type="button"
+          >
             {t('init')}
           </button>
         </div>
