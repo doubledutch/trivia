@@ -104,7 +104,7 @@ export default class Admin extends PureComponent {
     return (
       <div className="Admin">
         <p className="boxTitle">{t('challenge')}</p>
-        <p className="bigBoxTitle">{t('questions')}</p>
+        {/* <p className="bigBoxTitle">{t('questions')}</p> */}
         <div className="row">
           <select value={sessionId} onChange={this.onSessionChange}>
             <option value="">{t('select')}</option>
@@ -121,7 +121,7 @@ export default class Admin extends PureComponent {
         {sessionId && (
           <div>
             <label className="row">
-              <span>{t('name')}</span>
+              <span>{t('name')} </span>
               <input
                 className={`sessionName ${this.isDisplayable(sessionId) ? '' : 'bordered-error'}`}
                 type="text"
@@ -136,6 +136,7 @@ export default class Admin extends PureComponent {
                 {t('delete')}
               </button>
             </label>
+            <p className="bigBoxTitle">{t('questions')}</p>
             <div className="session">
               <Questions
                 questions={this.questionsForCurrentSession()}
@@ -184,6 +185,8 @@ export default class Admin extends PureComponent {
               />
             </div>
             <div className="adminContainer">
+              <p className="bigBoxTitle">{t('adminTitle')}</p>
+              <p className="helpText">{t('adminHelp')}</p>
               <AttendeeSelector
                 client={client}
                 searchTitle={t('selectAdmin')}

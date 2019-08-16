@@ -31,9 +31,9 @@ html, body, input, button, select, form{
   border: 1px solid #dcdcdc;
   border-radius: 5px;
   width: 760px;
-  height: 200px;
+  height: 260px;
   margin: 20px 0px;
-  padding: 20px;
+  padding: 10px 20px;
   overflow: auto;
   z-index: 1;
 }
@@ -53,9 +53,8 @@ html, body, input, button, select, form{
 }
 
 .bigBoxTitle{
-  font-size: 16px;
+  font-size: 18px;
   display: flex;
-  margin-left: 10px;
   margin-bottom: 10px;
   color: #4A4A4A;
 }
@@ -112,6 +111,10 @@ html, body, input, button, select, form{
 .help-text{
   margin: 0px;
   padding: 5px;
+}
+
+.helpText {
+  margin-bottom: 20px;
 }
 
 .wide-button{

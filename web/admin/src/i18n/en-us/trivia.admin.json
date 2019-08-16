@@ -39,5 +39,7 @@
   "currentAdmin": "Current Admins",
   "scroll": "Scroll Down to View Active Game",
   "export": "Export Leaderboard",
-  "exportResponses": "Export Responses"
+  "exportResponses": "Export Responses",
+  "adminTitle": "Admins",
+  "adminHelp": "Select users that will have the ability to manage trivia sessions directly from the app."
 }
