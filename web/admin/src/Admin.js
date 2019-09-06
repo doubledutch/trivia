@@ -104,7 +104,6 @@ export default class Admin extends PureComponent {
     return (
       <div className="Admin">
         <p className="boxTitle">{t('challenge')}</p>
-        {/* <p className="bigBoxTitle">{t('questions')}</p> */}
         <div className="row">
           <select value={sessionId} onChange={this.onSessionChange}>
             <option value="">{t('select')}</option>
