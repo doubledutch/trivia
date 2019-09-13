@@ -67,6 +67,14 @@
   position: absolute;
   background-color: #2daaa0;
 }
+
+.big-screen .timer-bar-remaining-short {
+  height: 100%;
+  right: 0;
+  position: absolute;
+  background-color: #f97a60;
+}
+
 .big-screen h2 {
   color: #442564;
   font-size: 1.4em;

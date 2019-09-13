@@ -66,6 +66,8 @@ export default class Question extends PureComponent {
     const { secondsLeft } = this.state
 
     const percentLeft = `${(secondsLeft / totalSeconds) * 100}%`
+    const timeLow = secondsLeft <= 10
+
     return (
       <View style={s.box}>
         <View style={[s.boxContent, s.questionTop]}>
@@ -75,7 +77,7 @@ export default class Question extends PureComponent {
           </Text>
         </View>
         <View style={s.timerBar}>
-          <View style={[s.timerBarRemaining, { width: percentLeft }]} />
+          <View style={timeLow ? [s.timerBarRemainingLow, { width: percentLeft }] : [s.timerBarRemaining, { width: percentLeft }]} />
         </View>
         <View style={s.boxContent}>
           <Text style={s.questionText}>{question.text}</Text>
@@ -165,6 +167,12 @@ const s = StyleSheet.create({
   },
   timerBarRemaining: {
     backgroundColor: colors.teal,
+    position: 'absolute',
+    right: 0,
+    height: '100%',
+  },
+  timerBarRemainingLow: {
+    backgroundColor: colors.orange,
     position: 'absolute',
     right: 0,
     height: '100%',

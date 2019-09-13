@@ -74,7 +74,10 @@ export default class Question extends PureComponent {
             </div>
           </div>
         </div>
-        <TimerBar ratio={totalSeconds ? secondsLeft / totalSeconds : 0} />
+        <TimerBar
+          ratio={totalSeconds ? secondsLeft / totalSeconds : 0}
+          shortTime={secondsLeft <= 10}
+        />
         <div className="box-content">
           <h2>{question.text}</h2>
           {children}
@@ -84,9 +87,12 @@ export default class Question extends PureComponent {
   }
 }
 
-export const TimerBar = ({ ratio }) => (
+export const TimerBar = ({ ratio, shortTime }) => (
   <div className="timer-bar">
-    <div className="timer-bar-remaining" style={{ width: `${ratio * 100}%` }} />
+    <div
+      className={shortTime ? 'timer-bar-remaining-short' : 'timer-bar-remaining'}
+      style={{ width: `${ratio * 100}%` }}
+    />
   </div>
 )
 
