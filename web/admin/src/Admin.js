@@ -116,7 +116,7 @@ export default class Admin extends PureComponent {
             options={reformattedSessions}
             className="select"
           />
-          <button className="dd-bordered secondary" onClick={this.createSession}>
+          <button className="dd-bordered secondary newSession" onClick={this.createSession}>
             {t('create')}
           </button>
         </div>
