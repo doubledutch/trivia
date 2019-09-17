@@ -37,6 +37,11 @@ input[type="text"]{
   transition: opacity 0.2s;
 }
 
+.select {
+  width: 300px;
+  margin: 20px 0px;
+}
+
 .sessionName {
   height: 2.8em;
   font-size: 1em;

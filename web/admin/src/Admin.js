@@ -23,6 +23,7 @@ import {
 } from '@doubledutch/firebase-connector'
 import { CSVDownload } from '@doubledutch/react-csv'
 import { AttendeeSelector } from '@doubledutch/react-components'
+import Select from 'react-select'
 import Questions from './Questions'
 import PresentationDriver from './PresentationDriver'
 import { openTab } from './utils'
@@ -101,19 +102,21 @@ export default class Admin extends PureComponent {
 
   render() {
     const { backgroundUrl, launchDisabled, sessionId, sessions, users } = this.state
+    const reformattedSessions = Object.values(sessions).map(s => {
+      return { value: s.id, label: s.name }
+    })
+    const highlighted = reformattedSessions.find(item => item.value === sessionId)
     return (
       <div className="Admin">
         <p className="boxTitle">{t('challenge')}</p>
         <div className="row">
-          <select value={sessionId} onChange={this.onSessionChange}>
-            <option value="">{t('select')}</option>
-            {Object.values(sessions).map(s => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </select>
-          <button className="dd-bordered secondary" onClick={this.createSession}>
+          <Select
+            value={highlighted}
+            onChange={this.onSessionChange}
+            options={reformattedSessions}
+            className="select"
+          />
+          <button className="dd-bordered secondary newSession" onClick={this.createSession}>
             {t('create')}
           </button>
         </div>
@@ -402,7 +405,7 @@ export default class Admin extends PureComponent {
       (a, b) => a.order - b.order,
     )
 
-  onSessionChange = e => this.setState({ sessionId: e.target.value })
+  onSessionChange = e => this.setState({ sessionId: e.value })
 
   onSessionNameChange = e => {
     const name = e.target.value

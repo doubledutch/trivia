@@ -79,6 +79,13 @@
   position: absolute;
   background-color: #2daaa0;
 }
+
+.presentation-driver .timer-bar-remaining-short {
+  height: 100%;
+  right: 0;
+  position: absolute;
+  background-color: #f97a60;
+}
 .presentation-driver .question-title {
   display: flex;
   justify-content: space-between;
