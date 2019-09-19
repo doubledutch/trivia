@@ -397,6 +397,8 @@ class HomeView extends PureComponent {
         )}
         <Text style={s.leaderboardHeader}>{t('leaderboard')}</Text>
         <Leaderboard leaderboard={leaderboard} />
+        <View style={s.box}><Text style={s.myPlaceTitle}>Let everyone know!</Text></View>
+        <TouchableOpacity onPress={() => client.openURL(`dd://update/`)} style={s.select}><Text style={s.textBold}>Post to Feed</Text></TouchableOpacity>
       </View>
     )
   }
@@ -415,6 +417,7 @@ class HomeView extends PureComponent {
           </View>
         )}
         <Text style={s.leaderboardHeader}>{t('leaderboard')}</Text>
+        <View style={{flex: 1}}/>
         <Leaderboard leaderboard={leaderboard} />
       </View>
     )
@@ -522,6 +525,13 @@ const s = StyleSheet.create({
     color: '#364347',
     fontSize: 16,
   },
+  greenBox: {
+    backgroundColor: colors.teal,
+    borderRadius: 10,
+    alignItems: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+  },
   box: {
     backgroundColor: 'rgba(255,255,255,0.8)',
     borderRadius: 10,
@@ -560,6 +570,12 @@ const s = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     backgroundColor: 'transparent',
+  },
+  textBold: {
+    fontSize: 18,
+    fontWeight: '600',
+    backgroundColor: 'transparent',
+    color: '#FFFFFF'
   },
   joinSessionName: {
     textAlign: 'center',
