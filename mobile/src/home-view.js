@@ -397,8 +397,6 @@ class HomeView extends PureComponent {
         )}
         <Text style={s.leaderboardHeader}>{t('leaderboard')}</Text>
         <Leaderboard leaderboard={leaderboard} />
-        <View style={s.box}><Text style={s.myPlaceTitle}>Let everyone know!</Text></View>
-        <TouchableOpacity onPress={() => client.openURL(`dd://update/`)} style={s.select}><Text style={s.textBold}>Post to Feed</Text></TouchableOpacity>
       </View>
     )
   }
@@ -419,6 +417,8 @@ class HomeView extends PureComponent {
         <Text style={s.leaderboardHeader}>{t('leaderboard')}</Text>
         <View style={{flex: 1}}/>
         <Leaderboard leaderboard={leaderboard} />
+        <View style={s.box}><Text style={s.myPlaceTitle}>Let everyone know!</Text></View>
+        <TouchableOpacity onPress={() => client.openURL(`dd://update/`)} style={s.select}><Text style={s.textBold}>Post to Feed</Text></TouchableOpacity>
       </View>
     )
   }
