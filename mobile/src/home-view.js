@@ -179,11 +179,7 @@ class HomeView extends PureComponent {
           <View style={{ flex: 1 }}>
             <TitleBar title={suggestedTitle || t('trivia')} client={client} signin={this.signin} />
             <ImageBackground style={s.container} source={this.renderBackground()}>
-              {isAdminView && adminSessionId && (
-                <TouchableOpacity style={s.option} onPress={this.cancelGame}>
-                  <Text style={s.optionText}>{t('cancelGame')}</Text>
-                </TouchableOpacity>
-              )}
+            {this.renderTopBar(isAdminView, adminSessionId)}
               {this.renderCoreView()}
             </ImageBackground>
           </View>
@@ -275,6 +271,32 @@ class HomeView extends PureComponent {
         return null
     }
   }
+
+  renderTopBar = (isAdminView, adminSessionId) => {
+    if (isAdminView === false && !adminSessionId) {
+      return (
+        <TouchableOpacity style={s.option} onPress={this.cancelAdminView}>
+          <Text style={s.optionText}>{"< Back to view options"}</Text>
+        </TouchableOpacity>
+      )
+    }
+    if (isAdminView && !adminSessionId) {
+      return (
+        <TouchableOpacity style={s.option} onPress={this.cancelAdminView}>
+          <Text style={s.optionText}>{"< Back to view options"}</Text>
+        </TouchableOpacity>
+      )
+    }
+    if (isAdminView && adminSessionId) {
+      return (
+        <TouchableOpacity style={s.option} onPress={this.cancelGame}>
+          <Text style={s.optionText}>{t('cancelGame')}</Text>
+        </TouchableOpacity>
+      )
+    }
+  }
+
+  cancelAdminView = () => this.setState({isAdminView: undefined})
 
   renderNotJoined = session => (
     <View style={s.notJoined}>
