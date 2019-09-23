@@ -179,7 +179,7 @@ class HomeView extends PureComponent {
           <View style={{ flex: 1 }}>
             <TitleBar title={suggestedTitle || t('trivia')} client={client} signin={this.signin} />
             <ImageBackground style={s.container} source={this.renderBackground()}>
-            {this.renderTopBar(isAdminView, adminSessionId)}
+            {this.renderTopBar()}
               {this.renderCoreView()}
             </ImageBackground>
           </View>
@@ -272,8 +272,9 @@ class HomeView extends PureComponent {
     }
   }
 
-  renderTopBar = (isAdminView, adminSessionId) => {
-    if (isAdminView === false && !adminSessionId) {
+  renderTopBar = () => {
+    const { isAdminView, adminSessionId, isAdmin } = this.state
+    if (isAdminView === false && !adminSessionId && isAdmin) {
       return (
         <TouchableOpacity style={s.option} onPress={this.cancelAdminView}>
           <Text style={s.optionText}>{"< Back to view options"}</Text>
