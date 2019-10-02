@@ -112,8 +112,14 @@ export default class Questions extends PureComponent {
     )
   }
 
-  saveQuestion = (q, updater) =>
-    this.props.questionsRef.child(q.id).update(updater.build({ options: [] }))
+  saveQuestion = (q, updater) => {
+    const question = updater.build({ options: [] })
+    const index = question.correctIndex
+    const currentAnswer = question.options[index]
+    if (currentAnswer && question.text.trim()) {
+      this.props.questionsRef.child(q.id).update(updater.build({ options: [] }))
+    }
+  }
 
   saveQuestionText = (obj, val) => (obj.text = val.trim())
 

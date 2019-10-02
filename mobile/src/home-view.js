@@ -179,11 +179,7 @@ class HomeView extends PureComponent {
           <View style={{ flex: 1 }}>
             <TitleBar title={suggestedTitle || t('trivia')} client={client} signin={this.signin} />
             <ImageBackground style={s.container} source={this.renderBackground()}>
-              {isAdminView && adminSessionId && (
-                <TouchableOpacity style={s.option} onPress={this.cancelGame}>
-                  <Text style={s.optionText}>{t('cancelGame')}</Text>
-                </TouchableOpacity>
-              )}
+            {this.renderTopBar()}
               {this.renderCoreView()}
             </ImageBackground>
           </View>
@@ -275,6 +271,33 @@ class HomeView extends PureComponent {
         return null
     }
   }
+
+  renderTopBar = () => {
+    const { isAdminView, adminSessionId, isAdmin } = this.state
+    if (isAdminView === false && !adminSessionId && isAdmin) {
+      return (
+        <TouchableOpacity style={s.option} onPress={this.cancelAdminView}>
+          <Text style={s.optionText}>{"< Back to view options"}</Text>
+        </TouchableOpacity>
+      )
+    }
+    if (isAdminView && !adminSessionId) {
+      return (
+        <TouchableOpacity style={s.option} onPress={this.cancelAdminView}>
+          <Text style={s.optionText}>{"< Back to view options"}</Text>
+        </TouchableOpacity>
+      )
+    }
+    if (isAdminView && adminSessionId) {
+      return (
+        <TouchableOpacity style={s.option} onPress={this.cancelGame}>
+          <Text style={s.optionText}>{t('cancelGame')}</Text>
+        </TouchableOpacity>
+      )
+    }
+  }
+
+  cancelAdminView = () => this.setState({isAdminView: undefined})
 
   renderNotJoined = session => (
     <View style={s.notJoined}>
@@ -415,7 +438,10 @@ class HomeView extends PureComponent {
           </View>
         )}
         <Text style={s.leaderboardHeader}>{t('leaderboard')}</Text>
+        <View style={{flex: 1}}/>
         <Leaderboard leaderboard={leaderboard} />
+        <View style={s.box}><Text style={s.myPlaceTitle}>Let everyone know!</Text></View>
+        <TouchableOpacity onPress={() => client.openURL(`dd://update/`)} style={s.select}><Text style={s.textBold}>Post to Feed</Text></TouchableOpacity>
       </View>
     )
   }
@@ -522,6 +548,13 @@ const s = StyleSheet.create({
     color: '#364347',
     fontSize: 16,
   },
+  greenBox: {
+    backgroundColor: colors.teal,
+    borderRadius: 10,
+    alignItems: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+  },
   box: {
     backgroundColor: 'rgba(255,255,255,0.8)',
     borderRadius: 10,
@@ -560,6 +593,12 @@ const s = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     backgroundColor: 'transparent',
+  },
+  textBold: {
+    fontSize: 18,
+    fontWeight: '600',
+    backgroundColor: 'transparent',
+    color: '#FFFFFF'
   },
   joinSessionName: {
     textAlign: 'center',

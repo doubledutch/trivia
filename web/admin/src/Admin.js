@@ -44,6 +44,7 @@ export default class Admin extends PureComponent {
     isExportingResponses: false,
     exportList: [],
     responsesList: [],
+    responseHeaders: null,
   }
 
   adminableUsersRef = () => this.props.fbc.database.private.adminableUsersRef()
@@ -106,6 +107,8 @@ export default class Admin extends PureComponent {
       return { value: s.id, label: s.name }
     })
     const highlighted = reformattedSessions.find(item => item.value === sessionId)
+    this.prepareExportHeaders()
+
     return (
       <div className="Admin">
         <p className="boxTitle">{t('challenge')}</p>
@@ -244,6 +247,7 @@ export default class Admin extends PureComponent {
             {this.state.isExportingResponses && this.state.responsesList ? (
               <CSVDownload
                 data={this.state.responsesList}
+                headers={this.state.responseHeaders}
                 filename="responses.csv"
                 target="_blank"
               />
@@ -263,8 +267,23 @@ export default class Admin extends PureComponent {
     )
   }
 
+  prepareExportHeaders = () => {
+    const headers = [
+      { label: 'First Name', key: 'firstName' },
+      { label: 'Last Name', key: 'lastName' },
+      { label: 'Email', key: 'email' },
+    ]
+
+    const questions = this.questionsForCurrentSession()
+    questions.forEach(question => {
+      headers.push({ label: question.text, key: question.order.toString() })
+    })
+    return headers
+  }
+
   formatResponsesForExport = () => {
     const { sessionId, users } = this.state
+    const headers = this.prepareExportHeaders()
     this.props.fbc.database.private.adminableUsersRef().once('value', data => {
       const answersPerUser = data.val() || {}
       const questions = this.questionsForCurrentSession()
@@ -277,7 +296,7 @@ export default class Admin extends PureComponent {
           const formattedUserResponses = {}
           Object.entries(answersPerUser[id].responses[sessionId]).forEach(item => {
             const originalQuestion = questions.find(question => question.id === item[0])
-            const title = originalQuestion ? originalQuestion.text : item[0]
+            const title = originalQuestion ? originalQuestion.order.toString() : item[0]
             formattedUserResponses[title] = item[1]
           })
           return {
@@ -287,8 +306,16 @@ export default class Admin extends PureComponent {
             ...formattedUserResponses,
           }
         })
-      this.setState({ isExportingResponses: true, responsesList: answers })
-      setTimeout(() => this.setState({ isExportingResponses: false, responsesList: [] }), 3000)
+      this.setState({
+        isExportingResponses: true,
+        responsesList: answers,
+        responseHeaders: headers,
+      })
+      setTimeout(
+        () =>
+          this.setState({ isExportingResponses: false, responsesList: [], responseHeaders: null }),
+        3000,
+      )
     })
   }
 
