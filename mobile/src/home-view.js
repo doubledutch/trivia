@@ -381,7 +381,7 @@ class HomeView extends PureComponent {
             <Text style={s.joinedUserName}>
               {u.firstName} {u.lastName}
             </Text>
-            <Text style={s.hasJoined}>{t('hasJoined')}</Text>
+            <Text style={s.hasJoined}> {t('hasJoined')}</Text>
           </View>
         ))}
       </View>

@@ -18,7 +18,6 @@ import React, { PureComponent } from 'react'
 import { translate as t } from '@doubledutch/admin-client'
 import Reorderable, { renderLeftDragHandle } from './components/Reorderable'
 import { GroupUpdater, Radio, RadioGroup, Text } from './components/stateEditors'
-
 import './Questions.css'
 
 export default class Questions extends PureComponent {
@@ -116,7 +115,7 @@ export default class Questions extends PureComponent {
     const question = updater.build({ options: [] })
     const index = question.correctIndex
     const currentAnswer = question.options[index]
-    if (currentAnswer && question.text.trim()) {
+    if (currentAnswer) {
       this.props.questionsRef.child(q.id).update(updater.build({ options: [] }))
     }
   }
