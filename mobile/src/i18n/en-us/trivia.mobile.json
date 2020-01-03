@@ -6,7 +6,7 @@
   "choose": "Choose a trivia game",
   "chooseAdmin": "Choose a trivia game to launch admin controls",
   "youIn": "You are in!",
-  "hasJoined": " has joined",
+  "hasJoined": "has joined",
   "currentPlace": "You are in ${place} place ${punctuation}",
   "leaderboard": "Leaderboard",
   "placed": "You placed ${place}",
