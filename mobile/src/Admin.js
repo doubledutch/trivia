@@ -16,7 +16,7 @@
 
 import React, { PureComponent } from 'react'
 import { View, StyleSheet, WebView, Text } from 'react-native'
-import { translate as t } from '@doubledutch/rn-client'
+import client, { translate as t } from '@doubledutch/rn-client'
 import Loading from './Loading'
 import colors from './colors'
 
@@ -27,6 +27,7 @@ export default class Admin extends PureComponent {
   render() {
     const { pageLoading } = this.state
     const uri = this.buildCompleteUrl()
+    const isWebKitVersion = client.clientVersion.major > 8 && client.clientVersion.minor > 2
     return (
       <View style={s.container}>
         {pageLoading && <Loading />}
@@ -35,7 +36,7 @@ export default class Admin extends PureComponent {
             source={{
               uri,
             }}
-            useWebKit={true}
+            useWebKit={isWebKitVersion}
             onLoadEnd={ ()=>this.setState({pageLoading: false}) }
           />
         </View>
