@@ -16,19 +16,30 @@
 
 import React, { PureComponent } from 'react'
 import { View, StyleSheet, WebView, Text } from 'react-native'
-import { translate as t } from '@doubledutch/rn-client'
+import client, { translate as t } from '@doubledutch/rn-client'
+import Loading from './Loading'
 import colors from './colors'
 
 export default class Admin extends PureComponent {
+  state = {
+    pageLoading: true,
+  }
   render() {
+    const { pageLoading } = this.state
     const uri = this.buildCompleteUrl()
+    const isWebKitVersion = client.clientVersion.major > 8 && client.clientVersion.minor > 2
     return (
-      <View style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
-        <WebView
-          source={{
-            uri,
-          }}
-        />
+      <View style={s.container}>
+        {pageLoading && <Loading />}
+        <View style={pageLoading ? s.webHidden : s.web}>
+          <WebView
+            source={{
+              uri,
+            }}
+            useWebKit={isWebKitVersion}
+            onLoadEnd={ ()=>this.setState({pageLoading: false}) }
+          />
+        </View>
       </View>
     )
   }
@@ -42,6 +53,18 @@ export default class Admin extends PureComponent {
   }
 }
 const s = StyleSheet.create({
+  web: {
+    flex: 1,
+    backgroundColor: '#F5F5F5'
+  },
+  webHidden: {
+    height: 1,
+    width: 1,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#EFEFEF',
+  },
   boxLeft: {
     backgroundColor: 'white',
     borderRadius: 10,
